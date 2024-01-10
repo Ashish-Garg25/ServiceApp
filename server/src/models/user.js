@@ -29,6 +29,9 @@ const addressSchema = new Schema({
 
 const users = new Schema(
   {
+    profilePic: {
+      type: String,
+    },
     firstName: {
       type: String,
       required: true,

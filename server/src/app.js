@@ -14,6 +14,7 @@ import userRouter from "./routes/user.js";
 import categoryRouter from "./routes/category.js";
 import serviceRouter from "./routes/service.js";
 import offerRouter from "./routes/offer.js";
+import taskRouter from "./routes/task.js";
 
 // Models
 import user from "./models/user.js";
@@ -35,7 +36,8 @@ const appVersion = "/api/v1";
 app.use(`${appVersion}/`, userRouter);
 app.use(`${appVersion}/category`, categoryRouter);
 app.use(`${appVersion}/service`, serviceRouter);
-app.use(`${appVersion}/offer`, offerRouter)
+app.use(`${appVersion}/offer`, offerRouter);
+app.use(`${appVersion}/task`, taskRouter);
 
 // app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 {
