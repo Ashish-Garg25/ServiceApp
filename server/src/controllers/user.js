@@ -51,7 +51,7 @@ export const login = async (req, res) => {
 
     const { userFound, exist } = await checkIfExist(email);
 
-    console.log(userFound, exist)
+    console.log(userFound, exist);
 
     if (!exist) {
       return res.status(400).json({
@@ -77,6 +77,59 @@ export const login = async (req, res) => {
     });
   } catch (err) {
     console.log(err);
+    res.json({ status: res.status, message: "Something went wrong" });
+  }
+};
+
+export const updateProfile = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const { profilePic, phone, address, country, city, state, zipCode } =
+      req.body;
+
+    const { exist } = await checkIfExist(phone);
+
+    if (exist) {
+      return res.status(400).json({
+        message: `Phone already exists`,
+        variant: "error"
+      });
+    }
+
+    const userExist = await user.findById(userId);
+
+    if (!userExist) {
+      return res.status(400).json({
+        message: `No user found with provided ID`,
+        variant: "error"
+      });
+    }
+
+    if (profilePic) userExist.profilePic = profilePic;
+    if (phone) userExist.phone = phone;
+
+    // ADDRESS UPDATE
+    if(address){
+      const location = {
+        address1: address,
+        city,
+        state,
+        country,
+        zipCode
+      };
+
+      userExist.address.push(location)
+    }
+
+    await userExist.save();
+
+    return res.json({
+      message: "Details updated successfully",
+      variant: "success",
+      data: userExist
+    });
+  } catch (err) {
+    console.log("err", err);
     res.json({ status: res.status, message: "Something went wrong" });
   }
 };

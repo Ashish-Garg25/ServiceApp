@@ -24,7 +24,7 @@ const tasks = new Schema(
       },
       required: true
     },
-    taskLocation: {
+    taskType: {
       type: String,
       enum: {
         values: ["Remote", "Offline"],
@@ -32,9 +32,22 @@ const tasks = new Schema(
       },
       required: true
     },
-    taskPlace: {
-      type: String
-    }
+    taskLocation: {
+      type: String,
+      required: true
+    },
+    taskDate: {
+      type: String,
+      required: true
+    },
+    taskImages: [{
+      type: String,
+    }],
+    categories: [{
+      type: Schema.Types.ObjectId,
+      ref: "Categorys",
+      required: true
+    }],
   },
   { timestamps: true }
 );

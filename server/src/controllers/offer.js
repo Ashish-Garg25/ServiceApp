@@ -1,4 +1,5 @@
 import offer from "../models/offer.js";
+import user from "../models/user.js";
 
 export const createOffer = async (req, res) => {
   try {
@@ -47,6 +48,33 @@ export const getOfferDetails = async (req, res) => {
       data: response,
       variant: "success"
     });
+  } catch (err) {
+    console.log("err", err);
+    res.json({ status: res.status, message: "Something went wrong" });
+  }
+};
+
+export const getAllOfferByUser = async (req, res) => {
+  try {
+    const { userId } = req.user;
+
+    const userExist = await user.findById(userId);
+
+    if (!userExist) {
+      return res.status(400).json({
+        message: `No user found with provided ID`,
+        variant: "error"
+      });
+    }
+
+    const allOffers = await offer.find({buyerId: userId});
+
+    if(allOffers.length > 0){
+      return res.json(allOffers)
+    } else {
+      return res.json({ status: res.status, message: "No Order Yet!" });
+    }
+
   } catch (err) {
     console.log("err", err);
     res.json({ status: res.status, message: "Something went wrong" });
