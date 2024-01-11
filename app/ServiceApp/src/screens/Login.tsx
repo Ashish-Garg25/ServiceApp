@@ -30,8 +30,10 @@ const Login = () => {
 
   const login = async () => {
     try {
+      console.log('Running');
       const payload = {email, password};
       const res = await loginM(payload).unwrap();
+      console.log('Response on login-> ', res);
       dispatch(setUserDetails(res));
       navigation.navigate('Home');
     } catch (err) {

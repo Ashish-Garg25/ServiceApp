@@ -1,6 +1,7 @@
 import * as React from 'react';
 import Svg, {Path} from 'react-native-svg';
 import {IconInterface} from '../../helpers/interfaces';
+import { COLORS } from '../../utils/color';
 
 function Lock(props: IconInterface) {
   return (
@@ -9,6 +10,7 @@ function Lock(props: IconInterface) {
       fill="currentColor"
       width={20}
       height={20}
+      color={COLORS.grey}
       {...props}>
       <Path
         fillRule="evenodd"

@@ -47,6 +47,7 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
   try {
+    console.log('Running');
     const { email, password } = req.body;
 
     const { userFound, exist } = await checkIfExist(email);

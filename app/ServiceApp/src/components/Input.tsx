@@ -59,6 +59,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.grey,
     paddingVertical: wp('4%'),
     flex: 1,
+    color: COLORS.black,
   },
   borderIpt: {
     borderWidth: 1,
