@@ -74,8 +74,8 @@ const FilterSheet = ({
 
             <Slider
               style={{width: wp('92%'), height: hp('2%')}}
-              minimumValue={1}
-              maximumValue={3}
+              minimumValue={100}
+              maximumValue={10000}
               minimumTrackTintColor={COLORS.primary}
               maximumTrackTintColor={COLORS.primaryLight}
               onSlidingComplete={value =>
@@ -86,8 +86,8 @@ const FilterSheet = ({
               }
             />
             <View style={styles.mainWrapper}>
-              <Text>Lowest</Text>
-              <Text>Highest</Text>
+              <Text>100</Text>
+              <Text>10,000</Text>
             </View>
           </View>
           <View style={styles.wrapper}>

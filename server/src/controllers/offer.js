@@ -3,14 +3,17 @@ import user from "../models/user.js";
 
 export const createOffer = async (req, res) => {
   try {
-    const { serviceId, sellerId, startDate, rate, additionalInfo } = req.body;
+    const { buyerId, service, sellerId, startDate, rate, additionalInfo } = req.body;
 
-    if (!serviceId || !sellerId || !startDate || !rate || !additionalInfo) {
+    console.log(req.body)
+
+    if (!buyerId || !service || !sellerId || !startDate || !rate || !additionalInfo) {
       return res.json({ msg: "All fields are required" });
     }
 
     const newOffer = new offer({
-      serviceId,
+      buyerId,
+      service,
       sellerId,
       startDate,
       rate,
@@ -21,6 +24,7 @@ export const createOffer = async (req, res) => {
 
     await newOffer.save();
     return res.json({
+      data: newOffer,
       message: "Offer created successfully",
       variant: "success"
     });
@@ -57,6 +61,7 @@ export const getOfferDetails = async (req, res) => {
 export const getAllOfferByUser = async (req, res) => {
   try {
     const { userId } = req.user;
+    const {sellerId} = req.params;
 
     const userExist = await user.findById(userId);
 
@@ -67,7 +72,7 @@ export const getAllOfferByUser = async (req, res) => {
       });
     }
 
-    const allOffers = await offer.find({buyerId: userId});
+    const allOffers = await offer.find({buyerId: userId, sellerId});
 
     if(allOffers.length > 0){
       return res.json(allOffers)

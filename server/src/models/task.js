@@ -27,7 +27,7 @@ const tasks = new Schema(
     taskType: {
       type: String,
       enum: {
-        values: ["Remote", "Offline"],
+        values: ["Remote", "In Person"],
         message: "{VALUE} is not supported"
       },
       required: true

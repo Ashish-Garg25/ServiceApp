@@ -8,7 +8,6 @@ import {
   View,
 } from 'react-native';
 import React, {useEffect} from 'react';
-import Search from '../components/Search';
 import {commonStyle} from '../helpers/commonStyles';
 import {
   widthPercentageToDP as wp,
@@ -21,9 +20,10 @@ import {useNavigation} from '@react-navigation/native';
 import {setCategory} from '../redux/slices/category';
 import {useDispatch, useSelector} from 'react-redux';
 import MainHeader from '../components/MainHeader';
+import SearchWrapper from '../components/SearchWrapper';
 
 const Home = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
   const dispatch = useDispatch();
   const {categories} = useSelector((state: any) => state.category);
 
@@ -52,12 +52,13 @@ const Home = () => {
           </View>
 
           <View style={styles.wrapper}>
-            <Search
-              placeholder={"Search for 'AC Service'"}
-              onChangeText={e => console.log(e)}
-              label={''}
-              value={''}
-              icon={undefined}
+            <SearchWrapper
+              handleClick={(value: any) =>
+                navigation.navigate('Providers', {
+                  id: value._id,
+                  name: value.name,
+                })
+              }
             />
 
             <FlatList
@@ -91,6 +92,7 @@ const Home = () => {
                 <ServiceCard item={item} navigation={navigation} />
               )}
               horizontal
+              showsHorizontalScrollIndicator={false}
               style={{marginTop: wp('4%')}}
             />
           </View>

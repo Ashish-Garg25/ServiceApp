@@ -4,7 +4,7 @@ import {COLORS} from '../utils/color';
 import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import SendIcon from '../assets/icons/SendIcon';
 
-const MessageInput = ({onChangeText, openPress}: any) => {
+const MessageInput = ({onChangeText, onPress}: any) => {
   return (
     <View>
       <TextInput
@@ -12,7 +12,7 @@ const MessageInput = ({onChangeText, openPress}: any) => {
         style={styles.input}
         onChangeText={onChangeText}
       />
-      <TouchableOpacity onPress={openPress}>
+      <TouchableOpacity onPress={onPress}>
         <SendIcon left={wp('82%')} bottom={wp('8.5%')} />
       </TouchableOpacity>
     </View>

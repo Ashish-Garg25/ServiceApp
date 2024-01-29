@@ -12,30 +12,60 @@ import ScreenHeader from '../components/ScreenHeader';
 import {useNavigation} from '@react-navigation/native';
 import Back from '../assets/icons/Back';
 import {COLORS} from '../utils/color';
-import Search from '../components/Search';
 import {commonStyle} from '../helpers/commonStyles';
 import ProviderCard from '../components/ProviderCard';
 import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import {StackNavigation} from '../helpers/interfaces';
-import {useGetServiceByCategoryMutation} from '../redux/services';
+import {
+  useFilterServiceMutation,
+  useGetServiceByCategoryMutation,
+} from '../redux/services';
 import Loading from '../components/Loading';
 import Empty from '../components/Empty';
 import FilterIcon from '../assets/icons/FilterIcon';
 import FilterSheet from '../components/FilterSheet';
+import SearchWrapper from '../components/SearchWrapper';
 
-const RenderHeader = ({length}: any) => {
+const RenderHeader = ({
+  length,
+  handleCatId,
+  name,
+  id,
+  handleProviders,
+}: any) => {
   const [show, setShow] = useState(false);
+
+  const [filterService] = useFilterServiceMutation();
+
+  const filterServices = async (type: {
+    rating?: any;
+    earning?: any;
+    radius?: any;
+  }) => {
+    console.log('=============', name);
+
+    try {
+      const response = await filterService({
+        category: id,
+        rating: type.rating.value,
+        earning: type.earning.value,
+        radius: type.radius.value,
+      }).unwrap();
+
+      console.log(response);
+      handleProviders(response);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <View style={styles.header}>
       <View style={styles.wrapper}>
         <View style={{width: wp('80%')}}>
-          <Search
-            placeholder={''}
-            onChangeText={e => console.log(e)}
-            label={''}
-            value={'Home Cleaning'}
-            icon={undefined}
+          <SearchWrapper
+            handleClick={(id: any) => handleCatId(id)}
+            name={name}
           />
         </View>
         <TouchableOpacity
@@ -55,7 +85,7 @@ const RenderHeader = ({length}: any) => {
       <FilterSheet
         isVisible={show}
         handleVisibility={() => setShow(false)}
-        handleClick={value => console.log(value)}
+        handleClick={value => filterServices(value)}
       />
     </View>
   );
@@ -70,14 +100,17 @@ const ProviderListings = ({route}: any) => {
   const [getServiceByCategory, {isLoading}] = useGetServiceByCategoryMutation();
 
   const [providers, setProviders] = useState([]);
+  const [catId, setCatId] = useState('');
 
-  const {id} = route.params;
+  const {id, name} = route.params;
+
+  console.log('ddd', catId);
 
   useEffect(() => {
     (async () => {
       try {
         const response = await getServiceByCategory({
-          category: id,
+          category: catId !== '' ? catId : id,
         }).unwrap();
         console.log(response);
         setProviders(response);
@@ -85,7 +118,9 @@ const ProviderListings = ({route}: any) => {
         console.log(error);
       }
     })();
-  }, []);
+  }, [catId]);
+
+  const handleProviders = (value: []) => setProviders(value);
 
   if (isLoading) {
     return <Loading />;
@@ -109,7 +144,15 @@ const ProviderListings = ({route}: any) => {
             <ProviderCard details={item} />
           </TouchableOpacity>
         )}
-        ListHeaderComponent={<RenderHeader length={providers.length} />}
+        ListHeaderComponent={
+          <RenderHeader
+            length={providers.length}
+            handleCatId={(categoryId: string) => setCatId(categoryId)}
+            name={name}
+            id={id}
+            handleProviders={handleProviders}
+          />
+        }
         ListEmptyComponent={RenderEmpty}
         showsVerticalScrollIndicator={false}
       />

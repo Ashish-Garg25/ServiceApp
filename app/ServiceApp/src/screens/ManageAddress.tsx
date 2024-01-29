@@ -1,5 +1,5 @@
 import {SafeAreaView, StyleSheet, View} from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -11,28 +11,40 @@ import ScreenHeader from '../components/ScreenHeader';
 import Back from '../assets/icons/Back';
 import {useNavigation} from '@react-navigation/native';
 import Checkbox from '../components/Checkbox';
+import {useUpdateUserMutation} from '../redux/services';
 
-type addressType = {
-  address: string;
-  country: string;
-  city: string;
-  state: string;
-  zipCode: number;
-};
+// type addressType = {
+//   address: string;
+//   country: string;
+//   city: string;
+//   state: string;
+//   zipCode: number;
+//   isPrimary: boolean;
+// };
 
-const ManageAddress = () => {
+const ManageAddress = ({route}: any) => {
   const navigation = useNavigation();
 
-  const [address, setAddress] = useState<addressType>({
-    address: '#21, Anvil Street',
-    country: 'US',
-    city: 'San Francisco',
-    state: 'CA',
-    zipCode: 100100,
-  });
+  const [updateUser] = useUpdateUserMutation();
 
-  const handleEdit = () => {
-    console.log('res', address);
+  const [address, setAddress] = useState<any>({});
+
+  useEffect(() => {
+    if (route.params) {
+      const {content} = route.params;
+      console.log(content);
+      setAddress({...content, address: content.address1});
+    }
+  }, [route.params]);
+
+  const handleEdit = async () => {
+    try {
+      const response = await updateUser(address).unwrap();
+
+      console.log('eeee', response.data.address);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -73,9 +85,15 @@ const ManageAddress = () => {
           keyboardType={'number-pad'}
           onChangeText={text => setAddress({...address, zipCode: Number(text)})}
           placeholder={'Enter Zip Code'}
-          value={address.zipCode as any}
+          value={String(address.zipCode) as any}
         />
-        <Checkbox label={'Set as primary'} isChecked={true} />
+        <Checkbox
+          label={'Set as primary'}
+          isChecked={address.isPrimary}
+          onPress={() =>
+            setAddress({...address, isPrimary: !address.isPrimary})
+          }
+        />
       </View>
       <Button
         title={'Save'}

@@ -127,7 +127,7 @@ const ProviderDetails = ({route}: any) => {
           <View style={styles.wrapper}>
             <Image
               source={{
-                uri: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2.jpg',
+                uri: serivce?.originalPoster?.profilePic,
               }}
               style={styles.dp}
               resizeMode="cover"

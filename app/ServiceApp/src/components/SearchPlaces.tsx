@@ -20,18 +20,21 @@ import Location from '../assets/icons/Location';
 import Add from '../assets/icons/Add';
 import {NavigationProp} from '@react-navigation/native';
 import Back from '../assets/icons/Back';
+import Button from './Button';
 
 navigator.geolocation = require('react-native-geolocation-service');
 
 type BottomSheetType = {
   isVisible: boolean;
   handleVisibility: () => void;
+  handleLocation: (value: string) => void;
   navigation: NavigationProp<any>;
 };
 
 const SearchPlaces = ({
   isVisible,
   handleVisibility,
+  handleLocation,
   navigation,
 }: BottomSheetType) => {
   const [location, setLocation] = useState('');
@@ -60,6 +63,7 @@ const SearchPlaces = ({
         console.log(e);
       }
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getAddress = async (latitude: number, longitude: number) => {
@@ -71,6 +75,7 @@ const SearchPlaces = ({
     const formattedAddress =
       converted.results[0]?.formatted_address || 'Address not found';
     setLocation(formattedAddress);
+    handleLocation(formattedAddress);
   };
 
   return (
@@ -88,11 +93,13 @@ const SearchPlaces = ({
           placeholder="Search area, street name .."
           onPress={(data: {description: string}) => {
             setLocation(data.description);
+            handleLocation(data.description);
           }}
           query={{
             key: 'AIzaSyCtuTgLxfy77-xIIF8ulUtByV-KtOqmvzo',
             language: 'en',
             components: 'country:ca',
+            types: 'address',
           }}
           minLength={3}
           styles={{
@@ -121,6 +128,7 @@ const SearchPlaces = ({
               alignSelf: 'center',
             },
           }}
+          renderDescription={row => row.structured_formatting.main_text}
           textInputProps={{
             InputComp: Input,
             leftIcon: <ChevronRight />,
@@ -131,7 +139,7 @@ const SearchPlaces = ({
           <View style={styles.locationWrapper}>
             <Location />
             <View style={{marginLeft: wp('2%')}}>
-              <Text style={styles.label}>Current Location</Text>
+              <Text style={styles.label}>Selected Address</Text>
               <Text style={styles.value}>{location}</Text>
             </View>
           </View>
@@ -153,6 +161,12 @@ const SearchPlaces = ({
             </Text>
           </TouchableOpacity>
         </View>
+
+        <Button
+          title="Save"
+          btnStyles={{width: wp('92%')}}
+          onPress={handleVisibility}
+        />
       </SafeAreaView>
     </Modal>
   );
@@ -188,10 +202,11 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     position: 'absolute',
     top: wp('52%'),
+    width: wp('92%'),
   },
   locationWrapper: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
   },
   heading: {

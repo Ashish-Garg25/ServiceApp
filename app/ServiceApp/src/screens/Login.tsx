@@ -32,7 +32,7 @@ const Login = () => {
     try {
       const payload = {email, password};
       const res = await loginM(payload).unwrap();
-      dispatch(setUserDetails(res));
+      dispatch(setUserDetails(res.userFound));
       navigation.navigate('Home');
     } catch (err) {
       Toast.show({

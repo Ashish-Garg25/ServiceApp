@@ -42,6 +42,21 @@ export const getCategory = async (req, res) => {
   }
 };
 
+export const getCategoryByName = async(req, res) => {
+  try{
+    const {name} = req.params;
+    const allCategory = await category.find({ 'name': new RegExp(name, 'i') });
+
+    if (Object.values(allCategory).length > 0) {
+      return res.json(allCategory);
+    } else {
+      return res.json({ msg: "No category found!" });
+    }
+  }catch(err){
+    console.log(err)
+  }
+}
+
 export const getCategoryById = async (req, res) => {
   try {
     const { id } = req.params;

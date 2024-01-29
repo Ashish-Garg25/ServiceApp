@@ -20,26 +20,39 @@ import Phone from '../assets/icons/Phone';
 import ScreenHeader from '../components/ScreenHeader';
 import Back from '../assets/icons/Back';
 import {useNavigation} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
+import {useUpdateUserMutation} from '../redux/services';
 
 type ProfileType = {
+  profilePic: string;
   firstName: string;
   lastName: string;
   email: string;
-  mobile: string;
+  phone: string;
 };
 
 const EditProfile = () => {
   const navigation = useNavigation();
+  const user = useSelector((state: any) => state.user);
+
+  const [updateUser] = useUpdateUserMutation();
 
   const [profile, setProfile] = useState<ProfileType>({
-    firstName: 'Ashish',
-    lastName: 'Garg',
-    email: 'gargash2581@gmail.com',
-    mobile: '+91 9228145678',
+    profilePic:
+      'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    phone: user.phone,
   });
 
-  const handleEdit = () => {
-    console.log('res', profile);
+  const handleEdit = async () => {
+    try {
+      const response = await updateUser(profile).unwrap();
+      console.log(response);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -51,7 +64,7 @@ const EditProfile = () => {
       />
       <Image
         source={{
-          uri: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+          uri: profile.profilePic,
         }}
         style={styles.image}
       />
@@ -71,7 +84,7 @@ const EditProfile = () => {
         />
         <Input
           label={'Last Name'}
-          onChangeText={text => setProfile({...profile, firstName: text})}
+          onChangeText={text => setProfile({...profile, lastName: text})}
           placeholder={'Enter Last Name'}
           value={profile.lastName}
           icon={<User fill={COLORS.grey} />}
@@ -81,7 +94,7 @@ const EditProfile = () => {
         />
         <Input
           label={'Email'}
-          onChangeText={text => setProfile({...profile, firstName: text})}
+          onChangeText={text => setProfile({...profile, email: text})}
           placeholder={'Enter Email'}
           value={profile.email}
           icon={<Mail fill={COLORS.grey} />}
@@ -91,9 +104,9 @@ const EditProfile = () => {
         />
         <Input
           label={'Phone Number'}
-          onChangeText={text => setProfile({...profile, firstName: text})}
+          onChangeText={text => setProfile({...profile, phone: text})}
           placeholder={'Enter Phone Number'}
-          value={profile.mobile}
+          value={profile.phone}
           icon={<Phone />}
         />
       </View>

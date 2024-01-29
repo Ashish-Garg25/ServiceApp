@@ -11,20 +11,23 @@ type ChatCardType = {
   subHeading: string;
   time: string;
   onPress: () => void;
+  content: any;
 };
 
-const ChatCard = ({subHeading, time, onPress}: ChatCardType) => {
+const ChatCard = ({subHeading, time, onPress, content}: ChatCardType) => {
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       <Image
         source={{
-          uri: 'https://images.unsplash.com/flagged/photo-1570612861542-284f4c12e75f?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+          uri: content.profilePic,
         }}
         style={styles.image}
       />
       <View style={{flexGrow: 1}}>
         <View style={styles.wrapper}>
-          <Text style={styles.name}>John Doe</Text>
+          <Text style={styles.name}>
+            {content.firstName + ' ' + content.lastName}
+          </Text>
           <Text style={styles.subText}>{time}</Text>
         </View>
         <Text style={styles.subText}>{subHeading}</Text>

@@ -26,24 +26,30 @@ import Camera from '../assets/icons/Camera';
 import Toast from 'react-native-toast-message';
 import Location from '../assets/icons/Location';
 import Back from '../assets/icons/Back';
+import SearchPlaces from '../components/SearchPlaces';
 
 type TaskPostType = {
   title: string;
-  taskType: null | 1 | 2;
-  taskCategory: string[];
+  description: string;
+  taskType: null | 'Remote' | 'In Person';
+  categories: any[];
+  taskLocation: string;
 };
 
 const CreatePost = () => {
   const [taskPost, setTaskPost] = useState<TaskPostType>({
     title: '',
+    description: '',
     taskType: null,
-    taskCategory: [],
+    categories: [],
+    taskLocation: '',
   });
   const {categories} = useSelector((state: any) => state.category);
 
   const [images, setImages] = useState<any>([]);
 
   // TODO: Google Places API
+  const [show, setShow] = useState(false);
 
   const navigation = useNavigation<StackNavigation>();
 
@@ -108,13 +114,13 @@ const CreatePost = () => {
           <View style={styles.pillsWrapper}>
             <Pills
               title={'In Person'}
-              onPress={() => setTaskPost({...taskPost, taskType: 1})}
-              selected={taskPost.taskType === 1}
+              onPress={() => setTaskPost({...taskPost, taskType: 'In Person'})}
+              selected={taskPost.taskType === 'In Person'}
             />
             <Pills
               title={'Remote'}
-              onPress={() => setTaskPost({...taskPost, taskType: 2})}
-              selected={taskPost.taskType === 2}
+              onPress={() => setTaskPost({...taskPost, taskType: 'Remote'})}
+              selected={taskPost.taskType === 'Remote'}
             />
           </View>
         </View>
@@ -122,23 +128,28 @@ const CreatePost = () => {
         <View style={{marginTop: wp('4%'), width: wp('90%')}}>
           <Text style={styles.label}>Select Category</Text>
           <View style={styles.pillsWrapper}>
-            {categories?.map((item: {name: string}) => (
+            {categories?.map((item: {_id: string; name: string}) => (
               <Pills
                 title={item.name}
                 onPress={() =>
-                  taskPost.taskCategory?.some(cat => cat === item.name)
+                  taskPost.categories?.some(cat => cat._id === item._id)
                     ? setTaskPost({
                         ...taskPost,
-                        taskCategory: taskPost.taskCategory.filter(
-                          cat => cat !== item.name,
+                        categories: taskPost.categories.filter(
+                          cat => cat._id !== item._id && cat,
                         ),
                       })
                     : setTaskPost({
                         ...taskPost,
-                        taskCategory: [...taskPost.taskCategory, item.name],
+                        categories: [
+                          ...taskPost.categories,
+                          {_id: item._id, name: item.name},
+                        ],
                       })
                 }
-                selected={taskPost.taskCategory?.some(cat => cat === item.name)}
+                selected={taskPost.categories?.some(
+                  cat => cat._id === item._id,
+                )}
               />
             ))}
           </View>
@@ -158,21 +169,35 @@ const CreatePost = () => {
         <Input
           label="Description"
           placeholder="Write here .."
-          value={taskPost.title}
-          onChangeText={(e: string) => setTaskPost({...taskPost, title: e})}
+          value={taskPost.description}
+          onChangeText={(e: string) =>
+            setTaskPost({...taskPost, description: e})
+          }
           bordered
           multiline
           numberOfLines={4}
           inputStyles={{height: hp('15%'), paddingTop: wp('4%')}}
         />
-        <Input
-          label="Task Location"
-          placeholder="Select Task Location"
-          value={taskPost.title}
-          onChangeText={(e: string) => console.log(e)}
-          icon={<Location />}
-          helperText={
-            'Please select the task location. Enter the location manually or press the pin icon to fetch your location.'
+        <TouchableOpacity onPress={() => setShow(true)}>
+          <View pointerEvents="none">
+            <Input
+              label="Task Location"
+              placeholder="Select Task Location"
+              value={taskPost.taskLocation}
+              onChangeText={() => null}
+              icon={<Location />}
+              helperText={
+                'Please select the task location. Enter the location manually or press the pin icon to fetch your location.'
+              }
+            />
+          </View>
+        </TouchableOpacity>
+        <SearchPlaces
+          isVisible={show}
+          handleVisibility={() => setShow(false)}
+          navigation={navigation}
+          handleLocation={(value: string) =>
+            setTaskPost({...taskPost, taskLocation: value})
           }
         />
         <View style={{marginTop: wp('8%')}}>
@@ -212,7 +237,12 @@ const CreatePost = () => {
       </ScrollView>
       <Button
         title={'Continue'}
-        onPress={() => navigation.navigate('PostComplete')}
+        onPress={() =>
+          navigation.navigate('PostComplete', {
+            taskPost: taskPost,
+            images: images,
+          })
+        }
         btnStyles={{width: wp('90%'), marginBottom: wp('4%')}}
       />
     </SafeAreaView>

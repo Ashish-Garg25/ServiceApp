@@ -24,13 +24,16 @@ const addressSchema = new Schema({
   zipCode: {
     type: Number,
     trim: true
+  },
+  isPrimary: {
+    type: Boolean
   }
 });
 
 const users = new Schema(
   {
     profilePic: {
-      type: String,
+      type: String
     },
     firstName: {
       type: String,
@@ -61,6 +64,9 @@ const users = new Schema(
       type: String,
       trim: true
     },
+    code: {
+      type: Number
+    },
     businessName: {
       type: String
     },
@@ -79,6 +85,17 @@ const users = new Schema(
         message: "{VALUE} is not supported"
       },
       default: null
+    },
+    earning: {
+      type: String
+    },
+    location: {
+      latitude: {
+        type: String
+      },
+      longitude: {
+        type: String
+      }
     },
     badge: {
       type: String,

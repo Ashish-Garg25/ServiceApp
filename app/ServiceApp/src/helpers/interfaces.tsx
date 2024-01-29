@@ -13,11 +13,13 @@ export type RootStackParamList = {
   ProviderDetails: any;
   Post: any;
   CreatePost: undefined;
-  PostComplete: undefined;
-  Message: undefined;
+  PostComplete: any;
+  Message: any;
   ManageAddress: undefined;
   EditProfile: undefined;
   AccountSettings: undefined;
+  PostDetails: any;
+  Providers: any;
 };
 
 export type StackNavigation = NativeStackNavigationProp<RootStackParamList>;
@@ -38,6 +40,7 @@ export interface ButtonInterface {
   title: string;
   onPress: () => void;
   btnStyles?: StyleProp<TextStyle> | undefined;
+  textStyles?: StyleProp<TextStyle> | undefined;
   disabled?: boolean;
   outline?: boolean;
   color?: string;

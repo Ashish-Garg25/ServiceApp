@@ -37,6 +37,9 @@ import PushNotificationIOS, {
 } from '@react-native-community/push-notification-ios';
 import AccountSettings from './src/screens/AccountSettings';
 import Verification from './src/screens/Verification';
+import HelpCenter from './src/screens/HelpCenter';
+import PostDetails from './src/screens/PostDetails';
+import ResetPassword from './src/screens/ResetPassword';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -132,6 +135,8 @@ const ProfileStack = () => {
       <Stack.Screen name={'EditProfile'} component={EditProfile} />
       <Stack.Screen name={'SavedAddress'} component={SavedAddress} />
       <Stack.Screen name={'ManageAddress'} component={ManageAddress} />
+      <Stack.Screen name={'ResetPassword'} component={ResetPassword} />
+      <Stack.Screen name={'HelpCenter'} component={HelpCenter} />
       <Stack.Screen name={'AccountSettings'} component={AccountSettings} />
       <Stack.Screen name={'Verification'} component={Verification} />
     </Stack.Navigator>
@@ -194,6 +199,7 @@ const App = () => {
           <Stack.Screen name="ChooseType" component={ChooseType} />
           <Stack.Screen name="Home" component={BottomTab} />
           <Stack.Screen name={'Message'} component={Chat} />
+          <Stack.Screen name={'PostDetails'} component={PostDetails} />
         </Stack.Navigator>
       </NavigationContainer>
       <Toast config={ToastConfig} />
