@@ -1,14 +1,38 @@
 import { Schema, model } from "mongoose";
 
-const messageSchema = new Schema(
+// const messageSchema = new Schema(
+//   {
+//     sender: {
+//       type: Schema.Types.ObjectId,
+//       ref: "Users",
+//       required: true,
+//       trim: true
+//     },
+//     receiver: {
+//       type: Schema.Types.ObjectId,
+//       ref: "Users",
+//       required: true,
+//       trim: true
+//     },
+//     content: {
+//       type: String,
+//       required: true
+//     }
+//   },
+//   { timestamps: true }
+// );
+
+const chats = new Schema(
   {
     sender: {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: "Users",
       required: true,
       trim: true
     },
     receiver: {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: "Users",
       required: true,
       trim: true
     },
@@ -16,17 +40,6 @@ const messageSchema = new Schema(
       type: String,
       required: true
     }
-  },
-  { timestamps: true }
-);
-
-const chats = new Schema(
-  {
-    room: {
-        type: String,
-        required: true,
-    },
-    message: [messageSchema]
   },
   { timestamps: true }
 );

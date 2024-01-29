@@ -4,13 +4,9 @@ import {COLORS} from '../utils/color';
 import Tick from '../assets/icons/Tick';
 import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 
-const Checkbox = ({label, onToggle, isChecked}: any) => {
-  const handleToggle = () => {
-    onToggle && onToggle(!isChecked);
-  };
-
+const Checkbox = ({label, onPress, isChecked}: any) => {
   return (
-    <TouchableOpacity onPress={handleToggle} style={styles.checkboxContainer}>
+    <TouchableOpacity onPress={onPress} style={styles.checkboxContainer}>
       <View style={[styles.checkbox, isChecked && styles.checked]}>
         {isChecked ? (
           <Tick color={COLORS.white} width={16} height={16} strokeWidth={3} />

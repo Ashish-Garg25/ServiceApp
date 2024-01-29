@@ -18,7 +18,9 @@ const ServiceCard = ({item, navigation}: CategoryType) => {
   return (
     <TouchableOpacity
       style={{margin: wp('1.8%')}}
-      onPress={() => navigation.navigate('Providers', {id: item._id})}>
+      onPress={() =>
+        navigation.navigate('Providers', {id: item._id, name: item.name})
+      }>
       <Image
         source={{
           uri: item.image,

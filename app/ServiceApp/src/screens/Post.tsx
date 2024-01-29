@@ -1,10 +1,10 @@
 import {
+  FlatList,
   SafeAreaView,
-  ScrollView,
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import ScreenHeader from '../components/ScreenHeader';
 import {
   widthPercentageToDP as wp,
@@ -15,20 +15,35 @@ import PostCard from '../components/PostCard';
 import Add from '../assets/icons/Add';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigation} from '../helpers/interfaces';
+import {useGetTaskMutation} from '../redux/services';
 
 const Post = () => {
   const navigation = useNavigation<StackNavigation>();
+  const [tasks, setTasks] = useState([]);
 
-  // TODO: Google Places API
+  const [getTask] = useGetTaskMutation();
+
+  useEffect(() => {
+    (async () => {
+      const response = await getTask({}).unwrap();
+      setTasks(response);
+    })();
+  }, [getTask]);
 
   return (
     <SafeAreaView style={styles.container}>
       <ScreenHeader title={'My Tasks'} />
-      <ScrollView
-        style={{marginTop: wp('4%'), marginBottom: wp('10%')}}
-        showsVerticalScrollIndicator={false}>
-        <PostCard />
-      </ScrollView>
+      <FlatList
+        data={tasks}
+        keyExtractor={(item: any) => item._id}
+        renderItem={({item}) => (
+          <TouchableOpacity
+            onPress={() => navigation.navigate('PostDetails', {id: item._id})}>
+            <PostCard content={item} />
+          </TouchableOpacity>
+        )}
+      />
+
       <TouchableOpacity
         style={styles.floatingBtn}
         onPress={() => navigation.navigate('CreatePost')}>

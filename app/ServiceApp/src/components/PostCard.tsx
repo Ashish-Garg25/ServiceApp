@@ -8,39 +8,49 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {COLORS} from '../utils/color';
+import moment from 'moment';
+import {useSelector} from 'react-redux';
 
-const PostCard = () => {
+const PostCard = ({content}: any) => {
+  const {createdAt, description, status, taskDate, taskType, title} = content;
+
+  const user = useSelector((state: any) => state.user);
+
   return (
     <View style={styles.container}>
       <View>
         <View style={styles.wrapper}>
           <Location color={COLORS.primary} />
-          <Text style={styles.text}>Remote</Text>
+          <Text style={styles.text}>{taskType}</Text>
         </View>
         <View style={[styles.wrapper, {marginVertical: wp('2%')}]}>
           <Time color={COLORS.primary} />
-          <Text style={styles.text}>Tomorrow - 12:45 pm</Text>
+          <Text style={styles.text}>
+            {moment(taskDate).add(1, 'days').calendar()}
+          </Text>
         </View>
-        <Text style={styles.mainText}>Replacement mouse required</Text>
-        <Text style={styles.text}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut ...
+        <Text style={styles.mainText}>{title}</Text>
+        <Text style={styles.text} numberOfLines={3} ellipsizeMode="tail">
+          {description}
         </Text>
       </View>
       <View style={styles.flex}>
         <Image
           source={{
-            uri: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+            uri: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
           }}
           style={styles.image}
           resizeMode="cover"
         />
-        <View style={{paddingLeft: wp('2%'), paddingRight: wp('12%')}}>
-          <Text style={styles.name}>John Doe</Text>
-          <Text style={styles.text}>Posted 2 hrs ago</Text>
+        <View style={{paddingLeft: wp('2%')}}>
+          <Text
+            style={styles.name}
+            numberOfLines={1}
+            ellipsizeMode="tail">{`${user.firstName} ${user.lastName}`}</Text>
+          <Text style={styles.text}>Posted {moment(createdAt).fromNow()}</Text>
         </View>
         <Button
-          title={'In Progress'}
+          title={status}
           onPress={() => console.log('www')}
           btnStyles={{
             width: wp('30%'),
@@ -73,6 +83,8 @@ const styles = StyleSheet.create({
     borderColor: COLORS.primary,
     padding: wp('4%'),
     marginHorizontal: wp('2%'),
+    width: wp('92%'),
+    marginTop: wp('4%'),
   },
   name: {
     color: 'black',
@@ -80,6 +92,7 @@ const styles = StyleSheet.create({
     fontSize: hp('1.6%'),
     paddingLeft: wp('1%'),
     paddingBottom: wp('1%'),
+    width: wp('35%'),
   },
   text: {
     color: COLORS.secondary,
@@ -102,5 +115,6 @@ const styles = StyleSheet.create({
     borderColor: COLORS.primaryLight,
     marginTop: wp('2%'),
     paddingTop: wp('3%'),
+    width: wp('83%'),
   },
 });

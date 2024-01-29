@@ -10,7 +10,7 @@ import { authencateToken } from "../middlewares/auth.js";
 const router = express.Router();
 
 router.get("/:offerId", authencateToken, getOfferDetails);
-router.get('/', authencateToken, getAllOfferByUser);
+router.get('/offerByUser/:sellerId', authencateToken, getAllOfferByUser);
 router.post("/", authencateToken, createOffer);
 router.put("/", authencateToken, updateOffer);
 

@@ -9,6 +9,7 @@ const Button = ({
   title,
   onPress,
   btnStyles,
+  textStyles,
   disabled,
   outline,
 }: ButtonInterface) => {
@@ -26,6 +27,7 @@ const Button = ({
         style={[
           styles.btnText,
           outline ? styles.outlineText : styles.primaryText,
+          textStyles,
         ]}>
         {title}
       </Text>

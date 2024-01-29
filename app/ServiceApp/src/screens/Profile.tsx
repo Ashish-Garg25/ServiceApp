@@ -49,7 +49,7 @@ const ACTIONS = [
   {
     icon: <Lock />,
     title: 'Reset Password',
-    link: 'Reset',
+    link: 'ResetPassword',
   },
   {
     icon: <HelpIcon />,

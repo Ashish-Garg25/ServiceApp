@@ -8,24 +8,29 @@ import {
 } from 'react-native-responsive-screen';
 import Pills from './Pills';
 
-const AddressCard = ({navigation}: any) => {
+const AddressCard = ({content, navigation}: any) => {
   return (
     <View style={styles.container}>
       <View style={{flexGrow: 1}}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Text style={styles.mainText}>#23, Anvil Street</Text>
+          <Text style={styles.mainText}>{content.address1}</Text>
           <View
             style={{
               width: wp('24%'),
               transform: [{scale: 0.8}],
               marginTop: wp('-2%'),
             }}>
-            <Pills title={'Primary'} selected />
+            {content.isPrimary && <Pills title={'Primary'} selected />}
           </View>
         </View>
-        <Text style={styles.subText}>CA, San Francisco, US, 152002</Text>
+        <Text style={styles.subText}>
+          {content.city}, {content.state}, {content.country}, {content.zipCode}
+        </Text>
       </View>
-      <TouchableOpacity onPress={() => navigation.navigate('ManageAddress')}>
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate('ManageAddress', {content: content})
+        }>
         <Text>Change</Text>
       </TouchableOpacity>
     </View>
@@ -43,6 +48,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    width: wp('92%'),
   },
   mainText: {
     fontSize: hp('1.8%'),

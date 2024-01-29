@@ -19,20 +19,53 @@ import RadioBox from '../components/RadioBox';
 import {useNavigation} from '@react-navigation/native';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
+import {useCreateTaskMutation} from '../redux/services';
+import Toast from 'react-native-toast-message';
+import {StackNavigation} from '../helpers/interfaces';
 
-type TaskPostType = {
-  title: string;
-  taskStartDate: Date;
-};
-
-const PostComplete = () => {
-  const [taskPost, setTaskPost] = useState<TaskPostType>({
-    title: '',
-    taskStartDate: new Date(),
-  });
+const PostComplete = ({route}: any) => {
   const [isOpen, setIsOpen] = useState<null | number>(null);
+  const [taskDate, setTaskDate] = useState(new Date());
 
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigation>();
+
+  const [createTask] = useCreateTaskMutation();
+
+  const {taskPost, images} = route.params;
+
+  console.log(images);
+
+  const postTask = async () => {
+    try {
+      const payload = {
+        ...taskPost,
+        categories: taskPost.categories?.map((item: {_id: any}) => item._id),
+        taskDate,
+      };
+
+      console.log('payload ====', payload, taskPost.categories);
+
+      const response = await createTask(payload).unwrap();
+      console.log(response);
+
+      if (response.variant === 'success') {
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: response.message,
+        });
+
+        navigation.navigate('Post');
+      }
+    } catch (err) {
+      console.log(err);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Somethong went wrong!',
+      });
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -54,7 +87,7 @@ const PostComplete = () => {
               value={moment(taskPost.taskStartDate).format(
                 'MMMM Do YYYY, h:mm a',
               )}
-              onChangeText={(e: string) => setTaskPost({...taskPost, title: e})}
+              onChangeText={() => null}
               caretHidden
             />
           </View>
@@ -63,10 +96,10 @@ const PostComplete = () => {
         <DatePicker
           modal
           open={isOpen === 1}
-          date={taskPost.taskStartDate}
+          date={taskDate}
           onConfirm={date => {
             setIsOpen(1);
-            setTaskPost({...taskPost, taskStartDate: date});
+            setTaskDate(date);
           }}
           onCancel={() => {
             setIsOpen(null);
@@ -89,7 +122,7 @@ const PostComplete = () => {
       </View>
       <Button
         title={'Post Task'}
-        onPress={() => console.log('www')}
+        onPress={postTask}
         btnStyles={{width: wp('90%'), marginBottom: wp('4%')}}
       />
     </SafeAreaView>
