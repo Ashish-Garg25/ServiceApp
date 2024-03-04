@@ -45,7 +45,7 @@ import Back from '../../assets/icons/Back';
             title: 'Cupboard Repair Request',
             _id: '000012133',
             category: 'Completed',
-            clientName: 'Johnny',
+            clientName: 'Maddy',
             //clientLocation: 'Winnipeg, Manitoba',
             remainingTime: '25 minutes',
         },
@@ -58,7 +58,7 @@ import Back from '../../assets/icons/Back';
             title: 'Cupboard Repair Request',
             _id: '000012134',
             category: 'Completed',
-            clientName: 'Johnny',
+            clientName: 'John',
             //clientLocation: 'Winnipeg, Manitoba',
             remainingTime: '39 minutes',
         },
@@ -90,24 +90,25 @@ import Back from '../../assets/icons/Back';
             remainingTime: '50 minutes',
         },
     ]);
-    const [filtered, setFiltered] = useState([{}]);
+    const [filtered, setFiltered] = useState(tasks);
     const [currentFilter, setCurrentFilter] = useState('Ongoing');
   
     //const [getTask] = useGetTaskMutation();
   
     useEffect(() => {
+    setFiltered(tasks);
     //   (async () => {
     //     const response = await getTask({}).unwrap();
     //     setTasks(response);
     //   })();
-    }, 
+    }, []
         //[getTask]
     );
     
     const handlePress =(val: any)=> {
         setCurrentFilter(val);
         console.log("Clicked", val)
-        const filteredTasks = tasks.filter(item=> item.category!==val);
+        const filteredTasks = tasks.filter(item=> item.category===val);
         setFiltered(filteredTasks);
     }
 
@@ -131,8 +132,8 @@ import Back from '../../assets/icons/Back';
         {/* My Task Filters Container Ends*/}
 
         <FlatList
-          data={tasks}
-          extraData={filtered}
+          data={filtered}
+          extraData={currentFilter}
           keyExtractor={(item: any) => item._id}
           renderItem={({item}) => (
             <TouchableOpacity
