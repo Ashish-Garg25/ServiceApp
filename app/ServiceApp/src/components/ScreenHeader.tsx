@@ -5,6 +5,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {NavigationProp} from '@react-navigation/native';
+import { COLORS } from '../utils/color';
 
 type ScreenHeaderType = {
   title: string;
@@ -45,9 +46,11 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: 'Inter-SemiBold',
-    fontSize: hp('1.8%'),
+    //fontSize: hp('1.8%'), 
+    fontSize: hp('2%'),
     lineHeight: hp('2%'),
     textAlign: 'center',
     width: wp('90%'),
+    color: COLORS.black,
   },
 });

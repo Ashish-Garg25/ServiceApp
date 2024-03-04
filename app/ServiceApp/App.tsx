@@ -40,6 +40,7 @@ import Verification from './src/screens/Verification';
 import HelpCenter from './src/screens/HelpCenter';
 import PostDetails from './src/screens/PostDetails';
 import ResetPassword from './src/screens/ResetPassword';
+import Tasks from './src/provider/screens/Tasks';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -113,7 +114,7 @@ const HomeStack = () => {
 const PostStack = () => {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen name="Post" component={Post} />
+      <Stack.Screen name="Post" component={Tasks} />
       <Stack.Screen name="CreatePost" component={CreatePost} />
       <Stack.Screen name="PostComplete" component={PostComplete} />
     </Stack.Navigator>

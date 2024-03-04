@@ -9,8 +9,8 @@ function Back(props: IconInterface) {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="#000"
-      width={20}
-      height={20}
+      width={24}
+      height={24}
       {...props}>
       <Path
         strokeLinecap="round"

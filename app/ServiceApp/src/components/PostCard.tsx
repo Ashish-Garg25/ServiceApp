@@ -10,15 +10,23 @@ import {
 import {COLORS} from '../utils/color';
 import moment from 'moment';
 import {useSelector} from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigation } from '../helpers/interfaces';
 
-const PostCard = ({content}: any) => {
-  const {createdAt, description, status, taskDate, taskType, title} = content;
+const PostCard = ({content, isProvider}: any) => {
+  const {createdAt, description, status, taskDate, taskType, title, clientName, remainingTime, hireStatus} = content;
 
   const user = useSelector((state: any) => state.user);
+  const navigation = useNavigation<StackNavigation>();
 
   return (
     <View style={styles.container}>
       <View>
+        {
+          isProvider && (
+            <Text style={[styles.mainText, {fontSize: hp('2.4%'), paddingBottom: wp('4%'), color: COLORS.primary}]}>Request from {clientName}</Text>
+          )
+        }
         <View style={styles.wrapper}>
           <Location color={COLORS.primary} />
           <Text style={styles.text}>{taskType}</Text>
@@ -26,7 +34,7 @@ const PostCard = ({content}: any) => {
         <View style={[styles.wrapper, {marginVertical: wp('2%')}]}>
           <Time color={COLORS.primary} />
           <Text style={styles.text}>
-            {moment(taskDate).add(1, 'days').calendar()}
+            {isProvider ? `Time Left: ${remainingTime}` : moment(taskDate).add(1, 'days').calendar()}
           </Text>
         </View>
         <Text style={styles.mainText}>{title}</Text>
@@ -35,30 +43,82 @@ const PostCard = ({content}: any) => {
         </Text>
       </View>
       <View style={styles.flex}>
-        <Image
-          source={{
-            uri: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-          }}
-          style={styles.image}
-          resizeMode="cover"
-        />
-        <View style={{paddingLeft: wp('2%')}}>
-          <Text
-            style={styles.name}
-            numberOfLines={1}
-            ellipsizeMode="tail">{`${user.firstName} ${user.lastName}`}</Text>
-          <Text style={styles.text}>Posted {moment(createdAt).fromNow()}</Text>
-        </View>
-        <Button
-          title={status}
-          onPress={() => console.log('www')}
-          btnStyles={{
-            width: wp('30%'),
-            transform: [{scale: 0.9}],
-            backgroundColor: COLORS.primaryLight1,
-          }}
-          outline
-        />
+        { isProvider ? (
+          <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
+            { hireStatus==='hired' ? (
+              <Button
+                title={'Complete Task'}
+                onPress={() => console.log('Complete the task to confirm the task.')}
+                btnStyles={{
+                  width: wp('80%'),
+                  transform: [{scale: 0.9}],
+                  backgroundColor: COLORS.success,
+                }}
+              />
+            ) :
+            <>
+              <Button
+                title={'Decline'}
+                onPress={() => console.log('Sure to decline?')}
+                btnStyles={{
+                  width: wp('40%'),
+                  transform: [{scale: 0.9}],
+                  backgroundColor: COLORS.danger,
+                }}
+              />
+              <Button
+                title={'Chat'}
+                onPress={() => {
+                  console.log('Yay!! Work it up.');
+                  navigation.navigate('Message', {
+                      content: {
+                        _id: '93094', 
+                        profilePic: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                        createdAt: '20240304',
+                        content: 'Hi there',
+                        firstName: 'John',
+                        lastName: 'Doe',
+                      }
+                  });
+                }}
+                btnStyles={{
+                  width: wp('45%'),
+                  transform: [{scale: 0.9}],
+                  backgroundColor: COLORS.primary,
+                }}
+              />
+            </>
+            }
+          </View>
+          ) : (
+          <>
+            <Image
+              source={{
+                uri: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+              }}
+              style={styles.image}
+              resizeMode="cover"
+            />
+            <View style={{paddingLeft: wp('2%')}}>
+              <Text
+                style={styles.name}
+                numberOfLines={1}
+                ellipsizeMode="tail">{`${user.firstName} ${user.lastName}`}</Text>
+              <Text style={styles.text}>Posted {moment(createdAt).fromNow()}</Text>
+            </View>
+            <Button
+              title={status}
+              onPress={() => console.log('www')}
+              btnStyles={{
+                width: wp('30%'),
+                transform: [{scale: 0.9}],
+                backgroundColor: COLORS.primaryLight1,
+              }}
+              outline
+            />
+          </>
+          )
+        }
       </View>
     </View>
   );
