@@ -124,6 +124,6 @@ const start = async () => {
 
 start();
 
-// http.createServer(app).listen(port, (req, res) => {
-//   console.log(`SERVER STARTED ON PORT ${port}`)
-// })
+http.createServer(app).listen(port, (req, res) => {
+  console.log(`SERVER STARTED ON PORT ${port}`)
+})
