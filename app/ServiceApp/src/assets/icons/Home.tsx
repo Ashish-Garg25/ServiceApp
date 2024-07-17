@@ -6,7 +6,7 @@ function HomeIcon(props: IconInterface) {
   return (
     <Svg
       viewBox="0 0 24 24"
-      fill="currentColor"
+      fill="#000"
       width={20}
       height={20}
       {...props}>

@@ -1,39 +1,31 @@
-/* eslint-disable react-native/no-inline-styles */
-import {
-  Alert,
-  ImageBackground,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {Alert, SafeAreaView, StyleSheet} from 'react-native';
 import React from 'react';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {COLORS} from '../utils/color';
-import ActionCard from '../components/ActionCard';
-import DocIcon from '../assets/icons/DocIcon';
-// import PaymentIcon from '../assets/icons/PaymentIcon';
+import {COLORS} from '../../utils/color';
+import ActionCard from '../../components/ActionCard';
+import DocIcon from '../../assets/icons/DocIcon';
+// import PaymentIcon from '../../assets/icons/PaymentIcon';
 import {CommonActions, useNavigation} from '@react-navigation/native';
-import {StackNavigation} from '../helpers/interfaces';
-import PaymentIcon from '../assets/icons/PaymentIcon';
-import ScreenHeader from '../components/ScreenHeader';
-import Back from '../assets/icons/Back';
-import Logout from '../assets/icons/Logout';
-import Delete from '../assets/icons/Delete';
+import {StackNavigation} from '../../helpers/interfaces';
+import RadioBox from '../../components/RadioBox';
+import PaymentIcon from '../../assets/icons/PaymentIcon';
+import ScreenHeader from '../../components/ScreenHeader';
+import Back from '../../assets/icons/Back';
+import Logout from '../../assets/icons/Logout';
+import Delete from '../../assets/icons/Delete';
 
 const ACTIONS = [
   {
     icon: <DocIcon />,
-    title: 'Identity Verification',
+    title: 'Document Check',
     link: 'Verification',
   },
   {
     icon: <PaymentIcon />,
-    title: 'Payment',
+    title: 'Add Bank Account',
     link: 'Payment',
   },
   {
@@ -48,7 +40,7 @@ const ACTIONS = [
   },
 ];
 
-const AccountSettings = () => {
+const TaskerAccountSettings = () => {
   const navigation = useNavigation<StackNavigation>();
 
   const handleLogout = () => {
@@ -81,43 +73,23 @@ const AccountSettings = () => {
         navigation={navigation}
         renderPrefix={<Back />}
       />
-      <TouchableOpacity
+
+      <RadioBox
+        title={'Switch to Client Account'}
+        subTitle={'Switch Back'}
         onPress={() => {
           navigation.dispatch(
             CommonActions.reset({
               index: 0,
               routes: [
-                {name: 'TaskerRoutes'},
+                {name: 'Home'},
                 // Add more routes here if necessary
               ],
             }),
           );
-        }}>
-        <ImageBackground
-          source={{
-            uri: 'https://images.pexels.com/photos/3768914/pexels-photo-3768914.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-          }}
-          style={{
-            width: wp('92%'),
-            height: hp('20%'),
-          }}
-          imageStyle={{borderRadius: wp('4%')}}
-          resizeMode="cover">
-          <View
-            style={{
-              width: wp('92%'),
-              height: hp('20%'),
-              backgroundColor: 'rgba(0,0,0,0.3)',
-              borderRadius: wp('4%'),
-            }}
-          />
-
-          <View style={{position: 'absolute', left: wp('4%'), top: wp('8%')}}>
-            <Text style={styles.mainText}>Become a Tasker</Text>
-            <Text style={styles.subText}>Become a Tasker</Text>
-          </View>
-        </ImageBackground>
-      </TouchableOpacity>
+        }}
+        selected={false}
+      />
       {ACTIONS.map(({title, icon, link}) => (
         <ActionCard
           title={title}
@@ -135,7 +107,7 @@ const AccountSettings = () => {
   );
 };
 
-export default AccountSettings;
+export default TaskerAccountSettings;
 
 const styles = StyleSheet.create({
   container: {
@@ -182,16 +154,5 @@ const styles = StyleSheet.create({
   },
   value: {
     color: COLORS.green,
-  },
-  mainText: {
-    fontSize: hp('4%'),
-    fontWeight: '700',
-    color: COLORS.white,
-  },
-
-  subText: {
-    fontSize: hp('2%'),
-    fontWeight: '500',
-    color: COLORS.white,
   },
 });

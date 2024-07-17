@@ -1,10 +1,12 @@
 /* eslint-disable react-native/no-inline-styles */
 import {
   KeyboardAvoidingView,
+  Platform,
   SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import React, {useState} from 'react';
@@ -18,7 +20,7 @@ import User from '../assets/icons/User';
 import Location from '../assets/icons/Location';
 import {useDispatch} from 'react-redux';
 import {setUserDetails} from '../redux/slices/user';
-import {emptyString} from '../helpers/helpers';
+import {emptyString, requestLocation} from '../helpers/helpers';
 import Phone from '../assets/icons/Phone';
 
 const Register = () => {
@@ -28,6 +30,8 @@ const Register = () => {
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
 
+  const [loading, setLoading] = useState(false);
+
   const dispatch = useDispatch();
 
   const handleNext = () => {
@@ -35,13 +39,30 @@ const Register = () => {
     navigation.navigate('RegisterNext');
   };
 
+  const fetchLocation = async () => {
+    setLoading(true);
+    try {
+      requestLocation((formattedAddress: string) => {
+        // Define the callback
+        console.log('ffff', formattedAddress);
+        setAddress(formattedAddress as any);
+        setLoading(false);
+      });
+    } catch (e) {
+      console.log(e);
+      setLoading(false);
+    }
+  };
+
   return (
     <SafeAreaView style={commonStyle.container}>
       <KeyboardAvoidingView
-        behavior="padding"
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{flex: 1}}
-        keyboardVerticalOffset={wp('4%')}>
-        <ScrollView contentContainerStyle={{flexGrow: 1}}>
+        keyboardVerticalOffset={wp('8%')}>
+        <ScrollView
+          contentContainerStyle={{flexGrow: 1, marginBottom: wp('4%')}}
+          keyboardShouldPersistTaps="handled">
           <View style={styles.wrapper}>
             <Text style={commonStyle.heading}>Tell us about yourself</Text>
             <Text style={commonStyle.subHeading}>
@@ -68,7 +89,13 @@ const Register = () => {
                 placeholder="Enter Address"
                 value={address}
                 onChangeText={(e: string) => setAddress(e)}
-                icon={<Location />}
+                icon={
+                  <TouchableOpacity
+                    style={{zIndex: 99999}}
+                    onPress={fetchLocation}>
+                    <Location />
+                  </TouchableOpacity>
+                }
                 helperText={
                   'Service App is currently operating in Canada. Enter your address manually or press the pin icon to fetch your location.'
                 }
@@ -85,16 +112,19 @@ const Register = () => {
             </View>
           </View>
           <Button
-            title={'Next'}
+            title={loading ? 'fetching..' : 'Next'}
             onPress={handleNext}
             btnStyles={{
               marginTop: wp('6%'),
               width: wp('90%'),
               alignSelf: 'center',
             }}
-            disabled={[firstName, lastName, address, phone].some(item =>
-              emptyString(item),
-            )}
+            disabled={
+              loading ||
+              [firstName, lastName, address, phone].some(item =>
+                emptyString(item),
+              )
+            }
           />
         </ScrollView>
       </KeyboardAvoidingView>

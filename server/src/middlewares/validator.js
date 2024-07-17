@@ -3,6 +3,7 @@ const validate =
   async (req, res, next) => {
     const body = req.body;
     try {
+      console.log(body)
       await schema.validate(body);
       next();
     } catch (error) {

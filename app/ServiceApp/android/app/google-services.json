@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "922470554649",
+    "project_id": "service-app-efdfd",
+    "storage_bucket": "service-app-efdfd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:922470554649:android:ca47a754174a92de411e88",
+        "android_client_info": {
+          "package_name": "com.serviceapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDeME9LYaBuw7aE2GUVESngvfWt_yh4EWQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

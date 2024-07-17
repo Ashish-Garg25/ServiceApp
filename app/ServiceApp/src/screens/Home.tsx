@@ -43,9 +43,10 @@ const Home = () => {
 
   return (
     <View style={commonStyle.container}>
-      <ScrollView nestedScrollEnabled>
+      <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="always">
         <View style={styles.card}>
           <MainHeader navigation={navigation} />
+
           <View>
             <Text style={styles.text}>Good Evening Ashish!</Text>
             <Text style={styles.subText}>What are you looking for?</Text>

@@ -20,6 +20,9 @@ export type RootStackParamList = {
   AccountSettings: undefined;
   PostDetails: any;
   Providers: any;
+  TaskerBottomTab: any;
+  TaskerRegister: any;
+  TaskerTaskDetails: any;
 };
 
 export type StackNavigation = NativeStackNavigationProp<RootStackParamList>;

@@ -1,6 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import {
   KeyboardAvoidingView,
+  Platform,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -39,10 +40,12 @@ const RegisterNext = () => {
   return (
     <SafeAreaView style={commonStyle.container}>
       <KeyboardAvoidingView
-        behavior="padding"
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{flex: 1}}
-        keyboardVerticalOffset={wp('4%')}>
-        <ScrollView contentContainerStyle={{flexGrow: 1}}>
+        keyboardVerticalOffset={wp('8%')}>
+        <ScrollView
+          contentContainerStyle={{flexGrow: 1}}
+          keyboardShouldPersistTaps={'handled'}>
           <View style={styles.wrapper}>
             <Text style={commonStyle.heading}>Tell us about yourself</Text>
             <Text style={commonStyle.subHeading}>
