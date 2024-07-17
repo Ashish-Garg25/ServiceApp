@@ -32,6 +32,8 @@ const Login = () => {
     try {
       const payload = {email, password};
       const res = await loginM(payload).unwrap();
+
+      console.log('rrrr', res);
       dispatch(setUserDetails(res.userFound));
       navigation.navigate('Home');
     } catch (err) {

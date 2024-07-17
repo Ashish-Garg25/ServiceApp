@@ -8,25 +8,71 @@ import {
 import {COLORS} from '../utils/color';
 import Button from '../components/Button';
 import RadioBox from '../components/RadioBox';
-import {useSelector} from 'react-redux';
-import {useCreateUserMutation} from '../redux/services';
+import {useDispatch, useSelector} from 'react-redux';
+import {useCreateUserMutation, useLoginMutation} from '../redux/services';
+import Toast from 'react-native-toast-message';
+// import {setUserDetails} from '../redux/slices/user';
+import {useNavigation} from '@react-navigation/native';
+import {StackNavigation} from '../helpers/interfaces';
+import {setUserDetails} from '../redux/slices/user';
 
 const ChooseType = () => {
   const [userType, setUserType] = useState(0);
   const [createUser] = useCreateUserMutation();
+  const [loginM] = useLoginMutation();
 
-  const user = useSelector((state: any) => state.user);
+  const {firstName, lastName, email, password, address, phone} = useSelector(
+    (state: any) => state.user,
+  );
+
+  const dispatch = useDispatch();
+  const navigation = useNavigation<StackNavigation>();
 
   const submit = async () => {
     try {
       const payload = {
-        ...user,
+        firstName,
+        lastName,
+        email,
+        password,
+        phone,
+        address,
         userType: userType === 1 ? 'Buyer' : userType === 2 ? 'Seller' : 'Both',
       };
 
+      console.log('payload =====', payload);
+
       const res = await createUser(payload).unwrap();
-      console.log('RES ==', res);
-    } catch (err) {
+
+      console.log('RESPONSE ======', res);
+
+      if (res.variant === 'success') {
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: 'Account created successfully!',
+        });
+
+        // IF SUCCESS NAVIGATE TO HOME
+        // const loginPayload = {email, password};
+        // console.log('rrrr', loginPayload);
+        // const resLogin = await loginM(loginPayload).unwrap();
+
+        // if (resLogin.variant === 'success') {
+        //   dispatch(setUserDetails(resLogin.userFound));
+        //   navigation.navigate('Home');
+        // } else {
+        //   throw res;
+        // }
+      } else {
+        throw res;
+      }
+    } catch (err: any) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: err?.data?.message ?? 'Something went wrong',
+      });
       console.log(err);
     }
   };
@@ -66,7 +112,7 @@ const ChooseType = () => {
       <Button
         title={'Submit'}
         onPress={submit}
-        btnStyles={{marginTop: wp('6%'), width: wp('90%')}}
+        btnStyles={{marginVertical: wp('4%'), width: wp('90%')}}
         disabled={!userType || userType === 0}
       />
     </SafeAreaView>

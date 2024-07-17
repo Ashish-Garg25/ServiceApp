@@ -20,7 +20,7 @@ export const register = async (req, res) => {
 
     const newUser = new user({
       email,
-      hashedPassword,
+      password: hashedPassword,
       firstName,
       lastName,
       phone,
@@ -40,7 +40,7 @@ export const register = async (req, res) => {
     return res.json({
       message: "User created successfully",
       variant: "success",
-      data: { firstName, lastName, phone, userType }
+      data: { firstName, lastName, phone, userType, token }
     });
   } catch (err) {
     console.log("err", err);
@@ -49,8 +49,11 @@ export const register = async (req, res) => {
 };
 
 export const login = async (req, res) => {
+  console.log("gggg")
   try {
     const { email, password } = req.body;
+
+    console.log(req.body)
 
     const { userFound, exist } = await checkIfExist(email);
 

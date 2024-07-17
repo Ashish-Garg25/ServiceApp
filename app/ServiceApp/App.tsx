@@ -23,7 +23,7 @@ import RegisterNext from './src/screens/RegisterNext';
 import ProviderListings from './src/screens/ProviderListings';
 import ProviderDetails from './src/screens/ProviderDetails';
 import Profile from './src/screens/Profile';
-import {Alert, Image, Platform} from 'react-native';
+import {Image, PermissionsAndroid, Platform} from 'react-native';
 
 import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import ChatList from './src/screens/ChatList';
@@ -40,6 +40,15 @@ import Verification from './src/screens/Verification';
 import HelpCenter from './src/screens/HelpCenter';
 import PostDetails from './src/screens/PostDetails';
 import ResetPassword from './src/screens/ResetPassword';
+import TaskerRegisterScreen from './src/screens/Tasker/TaskerRegisterScreen';
+import TaskerWelcome from './src/screens/Tasker/TaskerWelcomw';
+import TaskerHome from './src/screens/Tasker/TaskerHome';
+import TaskerTasks from './src/screens/Tasker/TaskerTasks';
+import TaskerChat from './src/screens/Tasker/TaskerChat';
+import TaskerProfile from './src/screens/Tasker/TaskerProfile';
+import TaskerAccountSettings from './src/screens/Tasker/TaskerAccountSettings';
+import TaskerTaskDetails from './src/screens/Tasker/TaskerTaskDetails';
+import Terms from './src/screens/Terms';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -133,21 +142,102 @@ const ProfileStack = () => {
     <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name={'Profile'} component={Profile} />
       <Stack.Screen name={'EditProfile'} component={EditProfile} />
-      <Stack.Screen name={'SavedAddress'} component={SavedAddress} />
-      <Stack.Screen name={'ManageAddress'} component={ManageAddress} />
       <Stack.Screen name={'ResetPassword'} component={ResetPassword} />
       <Stack.Screen name={'HelpCenter'} component={HelpCenter} />
+      <Stack.Screen name={'Terms'} component={Terms} />
       <Stack.Screen name={'AccountSettings'} component={AccountSettings} />
       <Stack.Screen name={'Verification'} component={Verification} />
     </Stack.Navigator>
   );
 };
 
+const TaskerBottomTab = () => {
+  return (
+    <Tab.Navigator
+      initialRouteName="HomeScreen"
+      screenOptions={{headerShown: false}}>
+      <Tab.Screen
+        name="TaskerHome"
+        component={TaskerHome}
+        options={{
+          tabBarLabel: 'Home',
+          tabBarIcon: ({color}) => <HomeIcon color={color} />,
+        }}
+      />
+      <Tab.Screen
+        name="TaskerTasks"
+        component={TaskerTasks}
+        options={{
+          tabBarLabel: 'My Tasks',
+          tabBarIcon: ({color}) => <PostIcon color={color} />,
+        }}
+      />
+      <Tab.Screen
+        name="Messages"
+        component={TaskerChatStack}
+        options={{
+          tabBarLabel: 'Messages',
+          tabBarIcon: ({color}) => <MessageIcon color={color} />,
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={TaskerProfileStack}
+        options={{
+          tabBarLabel: 'Profile',
+          tabBarIcon: () => (
+            <Image
+              source={{
+                uri: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+              }}
+              style={{width: wp('6%'), height: wp('6%'), borderRadius: 999}}
+            />
+          ),
+        }}
+      />
+    </Tab.Navigator>
+  );
+};
+
+const TaskerChatStack = () => {
+  return (
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Screen name="ChatList" component={ChatList} />
+    </Stack.Navigator>
+  );
+};
+
+const TaskerProfileStack = () => {
+  return (
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Screen name={'Profile'} component={TaskerProfile} />
+      <Stack.Screen name={'EditProfile'} component={EditProfile} />
+      <Stack.Screen name={'ResetPassword'} component={ResetPassword} />
+      <Stack.Screen name={'HelpCenter'} component={HelpCenter} />
+      <Stack.Screen
+        name={'TaskerAccountSettings'}
+        component={TaskerAccountSettings}
+      />
+    </Stack.Navigator>
+  );
+};
+
+const TaskerRoutes = () => {
+  return (
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Screen name="TaskerWelcome" component={TaskerWelcome} />
+      <Stack.Screen name="TaskerRegister" component={TaskerRegisterScreen} />
+      <Stack.Screen name="TaskerBottomTab" component={TaskerBottomTab} />
+      <Stack.Screen name="Message" component={TaskerChat} />
+      <Stack.Screen name="TaskerTaskDetails" component={TaskerTaskDetails} />
+    </Stack.Navigator>
+  );
+};
+
 const App = () => {
   useEffect(() => {
+    getNotificationPermission();
     if (Platform.OS === 'ios') {
-      getNotificationPermission();
-
       const type = 'notification';
       PushNotificationIOS.addEventListener(type, onRemoteNotification);
 
@@ -158,18 +248,44 @@ const App = () => {
   });
 
   const getNotificationPermission = async () => {
-    await PushNotificationIOS.requestPermissions();
-    PushNotificationIOS.checkPermissions(permissions => {
-      if (permissions.alert) {
-        PushNotificationIOS.getInitialNotification().then(notification => {
-          if (notification) {
-            console.log('Initial Notification:', notification);
-          }
-        });
-      } else {
-        Alert.alert('Please grant notification permission!');
-      }
-    });
+    // await PushNotificationIOS.requestPermissions();
+    // PushNotificationIOS.checkPermissions(permissions => {
+    //   if (permissions.alert) {
+    //     PushNotificationIOS.getInitialNotification().then(notification => {
+    //       if (notification) {
+    //         console.log('Initial Notification:', notification);
+    //       }
+    //     });
+    //   } else {
+    //     Alert.alert('Please grant notification permission!');
+    //   }
+    // });
+
+    const result =
+      Platform.OS === 'android'
+        ? await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+            {
+              title: 'Service App wants to send you notifications',
+              message: 'Enable notifications to receive job post updates 🥳.',
+              buttonNegative: 'Cancel',
+              buttonPositive: 'Grant',
+            },
+          )
+        : await PushNotificationIOS.requestPermissions();
+
+    const granted =
+      Platform.OS === 'android'
+        ? result === PermissionsAndroid.RESULTS.GRANTED
+        : (!!result.alert as any);
+
+    if (granted) {
+      Toast.show({
+        type: 'success',
+        text1: 'Success',
+        text2: 'You have opted in to receive notifications!',
+      });
+    }
   };
 
   const onRemoteNotification = (notification: PushNotification) => {
@@ -198,8 +314,11 @@ const App = () => {
           <Stack.Screen name="RegisterNext" component={RegisterNext} />
           <Stack.Screen name="ChooseType" component={ChooseType} />
           <Stack.Screen name="Home" component={BottomTab} />
+          <Stack.Screen name={'SavedAddress'} component={SavedAddress} />
+          <Stack.Screen name={'ManageAddress'} component={ManageAddress} />
           <Stack.Screen name={'Message'} component={Chat} />
           <Stack.Screen name={'PostDetails'} component={PostDetails} />
+          <Stack.Screen name="TaskerRoutes" component={TaskerRoutes} />
         </Stack.Navigator>
       </NavigationContainer>
       <Toast config={ToastConfig} />

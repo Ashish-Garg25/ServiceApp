@@ -13,16 +13,12 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import Input from './Input';
-import Geolocation from 'react-native-geolocation-service';
-import ChevronRight from '../assets/icons/ChevronRight';
 import Location from '../assets/icons/Location';
 import Add from '../assets/icons/Add';
 import {NavigationProp} from '@react-navigation/native';
 import Back from '../assets/icons/Back';
 import Button from './Button';
-
-navigator.geolocation = require('react-native-geolocation-service');
+import {requestLocation} from '../helpers/helpers';
 
 type BottomSheetType = {
   isVisible: boolean;
@@ -42,41 +38,16 @@ const SearchPlaces = ({
   useEffect(() => {
     (async () => {
       try {
-        const permission = await Geolocation.requestAuthorization('whenInUse');
-        console.log(permission);
-        if (permission === 'granted') {
-          Geolocation.getCurrentPosition(
-            position => {
-              const {latitude, longitude} = position.coords;
-
-              getAddress(latitude, longitude);
-              console.log(position);
-              //   setLocation(position);
-            },
-            error => {
-              console.log(error.code, error.message);
-            },
-            {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-          );
-        }
+        requestLocation((formattedAddress: string) => {
+          setLocation(formattedAddress as any);
+          handleLocation(formattedAddress as any);
+        });
       } catch (e) {
         console.log(e);
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const getAddress = async (latitude: number, longitude: number) => {
-    const response = await fetch(
-      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=AIzaSyCtuTgLxfy77-xIIF8ulUtByV-KtOqmvzo`,
-    );
-    const converted = await response.json();
-
-    const formattedAddress =
-      converted.results[0]?.formatted_address || 'Address not found';
-    setLocation(formattedAddress);
-    handleLocation(formattedAddress);
-  };
 
   return (
     <Modal
@@ -89,24 +60,26 @@ const SearchPlaces = ({
           <Back />
           <Text style={styles.heading}>Select a location</Text>
         </TouchableOpacity>
+
         <GooglePlacesAutocomplete
           placeholder="Search area, street name .."
-          onPress={(data: {description: string}) => {
+          onPress={(data: any, details: any) => {
+            console.log('data ====', data, details);
             setLocation(data.description);
             handleLocation(data.description);
           }}
           query={{
-            key: 'AIzaSyCtuTgLxfy77-xIIF8ulUtByV-KtOqmvzo',
+            key: 'AIzaSyALXQL_Sn6aM-gxI3eqAEBhsBMV3tZGFY0',
             language: 'en',
             components: 'country:ca',
             types: 'address',
           }}
-          minLength={3}
           styles={{
             container: {
               alignItems: 'center',
               height: 'auto',
-              zIndex: 9999,
+              elevation: 6,
+              zIndex: 999999,
             },
             textInput: {
               height: 50,
@@ -115,25 +88,21 @@ const SearchPlaces = ({
               borderRadius: 9999,
               paddingLeft: wp('7%'),
               backgroundColor: COLORS.primaryLight,
+              marginTop: wp('8%'),
             },
             listView: {
               zIndex: 9999,
+              elevation: 6,
               marginHorizontal: wp('4%'),
             },
             poweredContainer: {
-              alignSelf: 'center',
-            },
-            powered: {
-              width: 100,
-              alignSelf: 'center',
+              display: 'none',
             },
           }}
           renderDescription={row => row.structured_formatting.main_text}
-          textInputProps={{
-            InputComp: Input,
-            leftIcon: <ChevronRight />,
-            errorStyle: {color: 'red'},
-          }}
+          // textInputProps={{
+          //   InputComp: Input,
+          // }}
         />
         <View style={styles.wrapper}>
           <View style={styles.locationWrapper}>
@@ -180,7 +149,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: wp('4%'),
     alignSelf: 'flex-start',
-    paddingLeft: wp('6%'),
   },
   modalContainer: {
     flex: 1,
@@ -188,7 +156,8 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: wp('4%'),
     paddingBottom: wp('8%'),
-    elevation: 6,
+    elevation: 4,
+    zIndex: 0,
     shadowColor: COLORS.secondary,
     shadowOpacity: 0.2,
     shadowRadius: 24,
@@ -222,6 +191,7 @@ const styles = StyleSheet.create({
   value: {
     fontSize: hp('1.7%'),
     fontWeight: '600',
+    width: wp('80%'),
   },
   align: {alignSelf: 'flex-start'},
 });

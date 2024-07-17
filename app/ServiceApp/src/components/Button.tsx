@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import {Pressable, StyleSheet, Text} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity} from 'react-native';
 import React from 'react';
 import {COLORS} from '../utils/color';
 import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
@@ -14,7 +14,7 @@ const Button = ({
   outline,
 }: ButtonInterface) => {
   return (
-    <Pressable
+    <TouchableOpacity
       onPress={onPress}
       style={[
         styles.btnContainer,
@@ -31,7 +31,7 @@ const Button = ({
         ]}>
         {title}
       </Text>
-    </Pressable>
+    </TouchableOpacity>
   );
 };
 

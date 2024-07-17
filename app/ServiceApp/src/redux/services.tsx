@@ -1,7 +1,8 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
 import commonSlice from './slices/common';
 
-const baseUrl = 'http://localhost:5001/api/v1'; // SERVER BASE URL
+// const baseUrl = 'http://localhost:5001/api/v1'; // SERVER BASE URL
+const baseUrl = 'https://serviceapp-ujet.onrender.com/api/v1';
 
 const baseQuery = fetchBaseQuery({
   baseUrl,
