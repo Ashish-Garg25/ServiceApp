@@ -32,15 +32,18 @@ export const register = async (req, res) => {
       process.env.ACCESS_TOKEN_SECRET
     );
 
-    console.log(token);
+    console.log("token ===", token);
 
     newUser.token = token;
 
     await newUser.save();
+
+    delete newUser.password;
+
     return res.json({
       message: "User created successfully",
       variant: "success",
-      data: { firstName, lastName, phone, userType, token }
+      data: newUser
     });
   } catch (err) {
     console.log("err", err);
