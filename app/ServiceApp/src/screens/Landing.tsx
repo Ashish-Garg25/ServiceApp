@@ -1,14 +1,44 @@
 import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import Logo from '../assets/icons/Logo';
 import {COLORS} from '../utils/color';
 import Button from '../components/Button';
 import {commonStyle} from '../helpers/commonStyles';
 import {StackNavigation} from '../helpers/interfaces';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Loading from '../components/Loading';
+import {setUserDetails} from '../redux/slices/user';
+import {useDispatch} from 'react-redux';
 
 const Landing = () => {
   const navigation = useNavigation<StackNavigation>();
+  const [isLoading, setIsLoading] = useState(true);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await AsyncStorage.getItem('user');
+        if (response) {
+          const parsedResponse = JSON.parse(response);
+          dispatch(setUserDetails(parsedResponse));
+          navigation.navigate('Home');
+        }
+
+        setIsLoading(false);
+      } catch (err) {
+        console.log(err);
+        setIsLoading(false);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navigation]);
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <View

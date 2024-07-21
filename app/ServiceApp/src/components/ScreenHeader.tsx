@@ -22,12 +22,27 @@ const ScreenHeader = ({
   return (
     <View style={styles.headerWrapper}>
       {renderPrefix && (
-        <TouchableOpacity onPress={() => navigation?.goBack()}>
+        <TouchableOpacity
+          onPress={() => navigation?.goBack()}
+          style={{
+            width: wp('8%'),
+            height: wp('8%'),
+            paddingHorizontal: wp('1%'),
+            paddingVertical: wp('1.4%'),
+          }}>
           {renderPrefix}
         </TouchableOpacity>
       )}
       <Text style={styles.title}>{title}</Text>
-      {renderSuffix && <View>{renderSuffix}</View>}
+      <View
+        style={{
+          width: wp('8%'),
+          height: wp('8%'),
+          paddingHorizontal: wp('1%'),
+          paddingVertical: wp('1.4%'),
+        }}>
+        {renderSuffix && renderSuffix}
+      </View>
     </View>
   );
 };
@@ -38,16 +53,16 @@ const styles = StyleSheet.create({
   headerWrapper: {
     width: wp('100%'),
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: wp('3%'),
-    paddingVertical: wp('1%'),
+    height: hp('4%'),
   },
   title: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: hp('1.8%'),
-    lineHeight: hp('2%'),
+    fontWeight: '600',
+    fontSize: hp('2.3%'),
+    lineHeight: hp('3%'),
     textAlign: 'center',
-    width: wp('90%'),
+    width: wp('80%'),
   },
 });

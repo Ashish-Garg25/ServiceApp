@@ -19,7 +19,7 @@ const tasks = new Schema(
     status: {
       type: String,
       enum: {
-        values: ["In Progress", "Complete", "Cancelled", "Dispute"],
+        values: ["Submitted", "In Progress", "Complete", "Cancelled", "Dispute"],
         message: "{VALUE} is not supported"
       },
       required: true
@@ -48,6 +48,12 @@ const tasks = new Schema(
       ref: "Categorys",
       required: true
     }],
+    invited: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Users",
+      }
+    ]
   },
   { timestamps: true }
 );

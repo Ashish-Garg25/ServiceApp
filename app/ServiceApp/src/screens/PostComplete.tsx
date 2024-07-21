@@ -33,12 +33,12 @@ const PostComplete = ({route}: any) => {
 
   const {taskPost, images} = route.params;
 
-  console.log(images);
-
   const postTask = async () => {
+    console.log('WPORKOING ==========');
     try {
       const payload = {
         ...taskPost,
+        taskImages: images,
         categories: taskPost.categories?.map((item: {_id: any}) => item._id),
         taskDate,
       };
@@ -56,9 +56,15 @@ const PostComplete = ({route}: any) => {
         });
 
         navigation.navigate('Post');
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'All Fields are required',
+        });
       }
     } catch (err) {
-      console.log(err);
+      console.log('err22 ===', err);
       Toast.show({
         type: 'error',
         text1: 'Error',
@@ -117,7 +123,7 @@ const PostComplete = ({route}: any) => {
         </Text>
         <Text style={styles.helper}>
           Note: Your post will be reviewed by our team and will be made live
-          with 24 hours.
+          within 24 hours.
         </Text>
       </View>
       <Button
@@ -155,11 +161,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   helper: {
-    fontSize: hp('1.3%'),
+    fontSize: hp('1.6%'),
     color: COLORS.grey,
     lineHeight: 20,
     paddingTop: wp('4%'),
     width: wp('90%'),
   },
-  custom: {textAlign: 'center', paddingTop: wp('1%')},
+  custom: {textAlign: 'center', paddingTop: wp('2%')},
 });

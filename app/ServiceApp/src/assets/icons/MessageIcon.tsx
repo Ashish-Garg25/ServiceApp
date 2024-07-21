@@ -6,7 +6,7 @@ function MessageIcon(props: any) {
     <Svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
-      fill="#000"
+      fill={props.color ?? '#000'}
       width={20}
       height={20}
       {...props}>

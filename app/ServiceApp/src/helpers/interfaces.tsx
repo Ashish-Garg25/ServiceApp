@@ -20,6 +20,7 @@ export type RootStackParamList = {
   AccountSettings: undefined;
   PostDetails: any;
   Providers: any;
+  TaskerRoutes: any;
   TaskerBottomTab: any;
   TaskerRegister: any;
   TaskerTaskDetails: any;
@@ -40,7 +41,7 @@ export interface IconInterface extends SvgProps {
 }
 
 export interface ButtonInterface {
-  title: string;
+  title: string | React.ReactNode;
   onPress: () => void;
   btnStyles?: StyleProp<TextStyle> | undefined;
   textStyles?: StyleProp<TextStyle> | undefined;
