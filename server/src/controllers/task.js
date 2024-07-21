@@ -66,26 +66,27 @@ export const getMyTasks = async (req, res) => {
 
 export const getAllTasks = async (req, res) => {
   try {
-    const allTasks = await task.find({ status: ["Submitted", "In Progress"] });
-    if (allTasks.length > 0) {
-      return res.json(allTasks);
-    } else {
-      return res.json([]);
-    }
-  } catch (err) {
-    console.log("err", err);
-    res.json({ status: res.status, message: "Something went wrong" });
-  }
-};
 
-export const getCompletedTasks = async (req, res) => {
-  try {
-    const completedTasks = await task.find({ status: "Completed" });
-    if (completedTasks.length > 0) {
-      return res.json(completedTasks);
-    } else {
-      return res.json([]);
+    const {type} = req.params;
+
+    if(type === 'all'){
+      const allTasks = await task.find({ status: ["Submitted", "In Progress"] });
+      if (allTasks.length > 0) {
+        return res.json(allTasks);
+      } else {
+        return res.json([]);
+      }
+    } 
+    
+    if(type === 'completed') {
+      const completedTasks = await task.find({ status: "Completed" });
+      if (completedTasks.length > 0) {
+        return res.json(completedTasks);
+      } else {
+        return res.json([]);
+      }
     }
+
   } catch (err) {
     console.log("err", err);
     res.json({ status: res.status, message: "Something went wrong" });
