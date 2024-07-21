@@ -1,4 +1,5 @@
-// import http from 'http'
+
+import http from 'http'
 import AdminJS from "adminjs";
 import AdminJSExpress from "@adminjs/express";
 import express from "express";
@@ -55,7 +56,7 @@ app.get("/", (req, res) => {
 });
 
 const port = process.env.PORT || 5001;
-app.listen(port, () => console.log(`Server started on PORT ${port}`));
+// app.listen(port, () => console.log(`Server started on PORT ${port}`));
 
 const start = async () => {
   const app = express();
@@ -125,6 +126,6 @@ const start = async () => {
 
 start();
 
-// http.createServer(app).listen(port, (req, res) => {
-//   console.log(`SERVER STARTED ON PORT ${port}`)
-// })
+http.createServer(app).listen(port, (req, res) => {
+  console.log(`SERVER STARTED ON PORT ${port}`)
+})
