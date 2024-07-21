@@ -16,18 +16,41 @@ import {
 import ServiceCard from '../components/ServiceCard';
 import {COLORS} from '../utils/color';
 import {useGetCategoryMutation} from '../redux/services';
-import {useNavigation} from '@react-navigation/native';
+import {CommonActions, useNavigation} from '@react-navigation/native';
 import {setCategory} from '../redux/slices/category';
 import {useDispatch, useSelector} from 'react-redux';
 import MainHeader from '../components/MainHeader';
 import SearchWrapper from '../components/SearchWrapper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const Home = () => {
   const navigation = useNavigation<any>();
   const dispatch = useDispatch();
   const {categories} = useSelector((state: any) => state.category);
+  const user = useSelector((state: any) => state.user);
 
   const [getCategory] = useGetCategoryMutation();
+
+  useEffect(() => {
+    (async () => {
+      try {
+        if (user._id) {
+          await AsyncStorage.setItem('user', JSON.stringify(user));
+          console.log('User data stored successfully');
+        } else {
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{name: 'Login'}],
+            }),
+          );
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    })();
+  }, [navigation, user]);
 
   useEffect(() => {
     (async () => {
@@ -52,29 +75,24 @@ const Home = () => {
             <Text style={styles.subText}>What are you looking for?</Text>
           </View>
 
-          <View style={styles.wrapper}>
-            <SearchWrapper
-              handleClick={(value: any) =>
-                navigation.navigate('Providers', {
-                  id: value._id,
-                  name: value.name,
-                })
-              }
-            />
+          <TouchableOpacity
+            style={styles.wrapper}
+            onPress={() => navigation.navigate('Providers')}>
+            <SearchWrapper noClick={true} />
+          </TouchableOpacity>
 
-            <FlatList
-              data={[...categories].splice(0, 6)}
-              renderItem={({item}) => (
-                <ServiceCard item={item} navigation={navigation} />
-              )}
-              numColumns={3}
-              style={{marginTop: wp('6%')}}
-              columnWrapperStyle={{
-                justifyContent: 'space-evenly',
-                alignSelf: 'flex-start',
-              }}
-            />
-          </View>
+          <FlatList
+            data={[...categories].splice(0, 6)}
+            renderItem={({item}) => (
+              <ServiceCard item={item} navigation={navigation} />
+            )}
+            numColumns={3}
+            style={{marginTop: wp('6%'), marginLeft: wp('4%')}}
+            columnWrapperStyle={{
+              justifyContent: 'space-evenly',
+              alignSelf: 'flex-start',
+            }}
+          />
 
           <Image
             source={{

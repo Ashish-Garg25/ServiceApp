@@ -13,6 +13,10 @@ export function emptyString(str: string) {
   }
 }
 
+export function getCharAt(str: string, position: number): String {
+  return str?.toUpperCase()?.charAt(position);
+}
+
 export function triggerLocalNotification() {
   PushNotification.configure({
     onRegister: function (token: any) {

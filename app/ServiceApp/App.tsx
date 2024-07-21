@@ -23,9 +23,7 @@ import RegisterNext from './src/screens/RegisterNext';
 import ProviderListings from './src/screens/ProviderListings';
 import ProviderDetails from './src/screens/ProviderDetails';
 import Profile from './src/screens/Profile';
-import {Image, PermissionsAndroid, Platform} from 'react-native';
-
-import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
+import {PermissionsAndroid, Platform} from 'react-native';
 import ChatList from './src/screens/ChatList';
 import MessageIcon from './src/assets/icons/MessageIcon';
 import Chat from './src/screens/Chat';
@@ -49,6 +47,8 @@ import TaskerProfile from './src/screens/Tasker/TaskerProfile';
 import TaskerAccountSettings from './src/screens/Tasker/TaskerAccountSettings';
 import TaskerTaskDetails from './src/screens/Tasker/TaskerTaskDetails';
 import Terms from './src/screens/Terms';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import CustomImage from './src/components/CustomImage';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -65,7 +65,14 @@ export const BottomTab = () => {
   return (
     <Tab.Navigator
       initialRouteName="HomeScreen"
-      screenOptions={{headerShown: false}}>
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: {
+          paddingTop: 4,
+          paddingBottom: 12,
+          height: 60,
+        },
+      }}>
       <Tab.Screen
         name="HomeStack"
         component={HomeStack}
@@ -95,14 +102,7 @@ export const BottomTab = () => {
         component={ProfileStack}
         options={{
           tabBarLabel: 'Profile',
-          tabBarIcon: () => (
-            <Image
-              source={{
-                uri: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-              }}
-              style={{width: wp('6%'), height: wp('6%'), borderRadius: 999}}
-            />
-          ),
+          tabBarIcon: () => <CustomImage />,
         }}
       />
     </Tab.Navigator>
@@ -155,7 +155,14 @@ const TaskerBottomTab = () => {
   return (
     <Tab.Navigator
       initialRouteName="HomeScreen"
-      screenOptions={{headerShown: false}}>
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: {
+          paddingTop: 4,
+          paddingBottom: 12,
+          height: 60,
+        },
+      }}>
       <Tab.Screen
         name="TaskerHome"
         component={TaskerHome}
@@ -185,14 +192,7 @@ const TaskerBottomTab = () => {
         component={TaskerProfileStack}
         options={{
           tabBarLabel: 'Profile',
-          tabBarIcon: () => (
-            <Image
-              source={{
-                uri: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-              }}
-              style={{width: wp('6%'), height: wp('6%'), borderRadius: 999}}
-            />
-          ),
+          tabBarIcon: () => <CustomImage />,
         }}
       />
     </Tab.Navigator>
@@ -303,26 +303,29 @@ const App = () => {
   };
 
   return (
-    <Provider store={store}>
-      <NavigationContainer theme={MyTheme}>
-        <Stack.Navigator
-          initialRouteName="Landing"
-          screenOptions={{headerShown: false}}>
-          <Stack.Screen name="Landing" component={Landing} />
-          <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name="Register" component={Register} />
-          <Stack.Screen name="RegisterNext" component={RegisterNext} />
-          <Stack.Screen name="ChooseType" component={ChooseType} />
-          <Stack.Screen name="Home" component={BottomTab} />
-          <Stack.Screen name={'SavedAddress'} component={SavedAddress} />
-          <Stack.Screen name={'ManageAddress'} component={ManageAddress} />
-          <Stack.Screen name={'Message'} component={Chat} />
-          <Stack.Screen name={'PostDetails'} component={PostDetails} />
-          <Stack.Screen name="TaskerRoutes" component={TaskerRoutes} />
-        </Stack.Navigator>
-      </NavigationContainer>
-      <Toast config={ToastConfig} />
-    </Provider>
+    <GestureHandlerRootView style={{flex: 1}}>
+      <Provider store={store}>
+        <NavigationContainer theme={MyTheme}>
+          <Stack.Navigator
+            initialRouteName="Landing"
+            screenOptions={{headerShown: false}}>
+            <Stack.Screen name="Landing" component={Landing} />
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="Register" component={Register} />
+            <Stack.Screen name="RegisterNext" component={RegisterNext} />
+            <Stack.Screen name="ChooseType" component={ChooseType} />
+            <Stack.Screen name="Home" component={BottomTab} />
+            <Stack.Screen name={'SavedAddress'} component={SavedAddress} />
+            <Stack.Screen name={'ManageAddress'} component={ManageAddress} />
+            <Stack.Screen name={'Message'} component={Chat} />
+            <Stack.Screen name="Post" component={Post} />
+            <Stack.Screen name={'PostDetails'} component={PostDetails} />
+            <Stack.Screen name="TaskerRoutes" component={TaskerRoutes} />
+          </Stack.Navigator>
+        </NavigationContainer>
+        <Toast config={ToastConfig} />
+      </Provider>
+    </GestureHandlerRootView>
   );
 };
 

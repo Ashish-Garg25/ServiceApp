@@ -134,6 +134,7 @@ import moment from 'moment';
 import {useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigation} from '../helpers/interfaces';
+import PlaceholderProfilePic from './PlaceholderProfilePic';
 
 const PostCard = ({content, isProvider}: any) => {
   const {
@@ -241,13 +242,17 @@ const PostCard = ({content, isProvider}: any) => {
           </View>
         ) : (
           <>
-            <Image
-              source={{
-                uri: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-              }}
-              style={styles.image}
-              resizeMode="cover"
-            />
+            {user?.profilePic ? (
+              <Image
+                source={{
+                  uri: user?.profilePic,
+                }}
+                style={styles.image}
+                resizeMode="cover"
+              />
+            ) : (
+              <PlaceholderProfilePic name={user?.firstName} position={0} />
+            )}
             <View style={{paddingLeft: wp('2%')}}>
               <Text
                 style={styles.name}

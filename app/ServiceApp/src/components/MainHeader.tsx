@@ -22,13 +22,15 @@ const MainHeader = ({navigation}: ScreenHeaderType) => {
 
   const [show, setShow] = useState(false);
 
+  console.log('DATA =====', data);
+
   return (
     <View style={styles.headerWrapper}>
       <TouchableOpacity style={styles.wrapper} onPress={() => setShow(true)}>
         <Location />
         <View style={{marginLeft: wp('2%'), width: wp('60%')}}>
           <Text style={styles.name} numberOfLines={1}>
-            {data?.address ?? data?.address1}
+            {Array.isArray(data) ? data?.address[0]?.address1 : data?.address}
           </Text>
 
           <Text style={styles.label}>Home</Text>

@@ -25,14 +25,9 @@ import Empty from '../components/Empty';
 import FilterIcon from '../assets/icons/FilterIcon';
 import FilterSheet from '../components/FilterSheet';
 import SearchWrapper from '../components/SearchWrapper';
+import {useSelector} from 'react-redux';
 
-const RenderHeader = ({
-  length,
-  handleCatId,
-  name,
-  id,
-  handleProviders,
-}: any) => {
+const RenderHeader = ({length, name, id, handleProviders}: any) => {
   const [show, setShow] = useState(false);
 
   const [filterService] = useFilterServiceMutation();
@@ -42,8 +37,6 @@ const RenderHeader = ({
     earning?: any;
     radius?: any;
   }) => {
-    console.log('=============', name);
-
     try {
       const response = await filterService({
         category: id,
@@ -63,13 +56,15 @@ const RenderHeader = ({
     <View style={styles.header}>
       <View style={styles.wrapper}>
         <View style={{width: wp('80%')}}>
-          <SearchWrapper
-            handleClick={(id: any) => handleCatId(id)}
-            name={name}
-          />
+          <SearchWrapper name={name} />
         </View>
         <TouchableOpacity
-          style={{width: wp('8%')}}
+          style={{
+            width: wp('8%'),
+            height: wp('8%'),
+            paddingVertical: wp('1.5%'),
+            paddingHorizontal: wp('1.5%'),
+          }}
           onPress={() => setShow(true)}>
           <FilterIcon />
         </TouchableOpacity>
@@ -95,36 +90,30 @@ const RenderEmpty = () => {
   return <Empty />;
 };
 
-const ProviderListings = ({route}: any) => {
+const ProviderListings = () => {
   const navigation = useNavigation<StackNavigation>();
+  const {singleCategory} = useSelector((state: any) => state.category);
   const [getServiceByCategory, {isLoading}] = useGetServiceByCategoryMutation();
 
+  console.log('SINGLE =====', singleCategory);
+
   const [providers, setProviders] = useState([]);
-  const [catId, setCatId] = useState('');
 
-  const {id, name} = route.params;
-
-  console.log('ddd', catId);
+  // const {id, name} = route.params;
 
   useEffect(() => {
     (async () => {
       try {
         const response = await getServiceByCategory({
-          category: catId !== '' ? catId : id,
+          category: singleCategory?._id,
         }).unwrap();
         console.log(response);
         setProviders(response);
       } catch (error) {
-        console.log(error);
+        console.log('err ==', error);
       }
     })();
-  }, [catId]);
-
-  const handleProviders = (value: []) => setProviders(value);
-
-  if (isLoading) {
-    return <Loading />;
-  }
+  }, [singleCategory]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -133,6 +122,8 @@ const ProviderListings = ({route}: any) => {
         renderPrefix={<Back />}
         navigation={navigation}
       />
+
+      <RenderHeader length={0} name={''} id={''} navigation={navigation} />
 
       <FlatList
         data={providers}
@@ -144,16 +135,7 @@ const ProviderListings = ({route}: any) => {
             <ProviderCard details={item} />
           </TouchableOpacity>
         )}
-        ListHeaderComponent={
-          <RenderHeader
-            length={providers.length}
-            handleCatId={(categoryId: string) => setCatId(categoryId)}
-            name={name}
-            id={id}
-            handleProviders={handleProviders}
-          />
-        }
-        ListEmptyComponent={RenderEmpty}
+        ListEmptyComponent={isLoading ? <Loading /> : RenderEmpty}
         showsVerticalScrollIndicator={false}
       />
     </SafeAreaView>

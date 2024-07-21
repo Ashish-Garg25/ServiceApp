@@ -19,107 +19,30 @@ import {useNavigation} from '@react-navigation/native';
 import {StackNavigation} from '../../helpers/interfaces';
 import Button from '../../components/Button';
 import Back from '../../assets/icons/Back';
+import {useGetTaskMutation} from '../../redux/services';
 //import {useGetTaskMutation} from '../../redux/services';
 
 const TaskerTasks = () => {
   const navigation = useNavigation<StackNavigation>();
-  const [tasks] = useState([
-    {
-      createdAt: '20240304',
-      description:
-        'This is the first task you have been choosen for. Do the task with full devotion.',
-      status: 'Completed',
-      taskDate: '20240304',
-      taskType: 'Yarmouth, NS, Canada',
-      title: 'Cupboard Repair Request',
-      _id: '000012136',
-      category: 'Completed',
-      hireStatus: 'hired',
-      clientName: 'Johnny',
-      //clientLocation: 'Winnipeg, Manitoba',
-      remainingTime: '50 minutes',
-    },
-    {
-      createdAt: '20240304',
-      description:
-        'This is the first task you have been choosen for. Do the task with full devotion.',
-      status: 'In Progress',
-      taskDate: '20240304',
-      taskType: 'Remote',
-      title: 'Cupboard Repair Request',
-      _id: '000012132',
-      category: 'Ongoing',
-      clientName: 'Johnny',
-      //clientLocation: 'Winnipeg, Manitoba',
-      remainingTime: '1 hour',
-    },
-    {
-      createdAt: '20240304',
-      description:
-        'This is the first task you have been choosen for. Do the task with full devotion.',
-      status: 'In Progress',
-      taskDate: '20240304',
-      taskType: 'Winnipeg, Manitoba',
-      title: 'Cupboard Repair Request',
-      _id: '000012133',
-      category: 'Completed',
-      clientName: 'Maddy',
-      //clientLocation: 'Winnipeg, Manitoba',
-      remainingTime: '25 minutes',
-      isCompleted: true,
-    },
-    {
-      createdAt: '20240304',
-      description:
-        'This is the first task you have been choosen for. Do the task with full devotion.',
-      status: 'In Progress',
-      taskDate: '20240304',
-      taskType: 'Toronto',
-      title: 'Cupboard Repair Request',
-      _id: '000012134',
-      category: 'Completed',
-      clientName: 'John',
-      //clientLocation: 'Winnipeg, Manitoba',
-      remainingTime: '39 minutes',
-      isCompleted: true,
-    },
-    {
-      createdAt: '20240304',
-      description:
-        'This is the first task you have been choosen for. Do the task with full devotion.',
-      status: 'In Progress',
-      taskDate: '20240304',
-      taskType: 'Yarmouth, NS, Canada',
-      title: 'Cupboard Repair Request',
-      _id: '000012135',
-      category: 'Ongoing',
-      clientName: 'Johnny',
-      //clientLocation: 'Winnipeg, Manitoba',
-      remainingTime: '50 minutes',
-    },
-  ]);
+  const [tasks, setTasks] = useState([]);
+
   const [filtered, setFiltered] = useState(tasks);
-  const [currentFilter, setCurrentFilter] = useState('Ongoing');
+  const [currentFilter, setCurrentFilter] = useState('All');
 
-  //const [getTask] = useGetTaskMutation();
+  const [getTask] = useGetTaskMutation();
 
-  useEffect(
-    () => {
-      setFiltered(tasks);
-      //   (async () => {
-      //     const response = await getTask({}).unwrap();
-      //     setTasks(response);
-      //   })();
-    },
-    [],
-    //[getTask]
-  );
+  useEffect(() => {
+    (async () => {
+      const response = await getTask({}).unwrap();
+      console.log('response =====', response);
+    })();
+  }, []);
 
   const handlePress = (val: any) => {
     setCurrentFilter(val);
     console.log('Clicked', val);
-    const filteredTasks = tasks.filter(item => item.category === val);
-    setFiltered(filteredTasks);
+    // const filteredTasks = tasks.filter(item => item.category === val);
+    // setFiltered(filteredTasks);
   };
 
   return (
@@ -140,9 +63,9 @@ const TaskerTasks = () => {
           justifyContent: 'space-evenly',
         }}>
         <Button
-          title="Ongoing"
-          onPress={() => handlePress('Ongoing')}
-          outline={currentFilter === 'Ongoing' ? false : true}
+          title="All Tasks"
+          onPress={() => handlePress('All')}
+          outline={currentFilter === 'All' ? false : true}
           btnStyles={{padding: 12, width: wp('40%'), borderRadius: 30}}
         />
         <Button

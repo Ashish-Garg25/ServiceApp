@@ -1,5 +1,13 @@
 /* eslint-disable react-native/no-inline-styles */
-import {SafeAreaView, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {
+  Alert,
+  Image,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {COLORS} from '../utils/color';
 import {
@@ -14,10 +22,17 @@ import {useNavigation} from '@react-navigation/native';
 import {StackNavigation} from '../helpers/interfaces';
 import ScreenHeader from '../components/ScreenHeader';
 import Back from '../assets/icons/Back';
+import Button from '../components/Button';
 
 export const MoreInfo = ({label, title, right, fullWidth, pill}: any) => {
   return (
-    <View style={{flex: 1, width: fullWidth ? wp('80%') : wp('40%')}}>
+    <View
+      style={{
+        flex: 1,
+        width: fullWidth ? wp('80%') : wp('30%'),
+        marginRight: wp('8%'),
+        marginBottom: wp('4%'),
+      }}>
       <Text
         style={[
           styles.text,
@@ -64,6 +79,10 @@ const PostDetails = ({route}: any) => {
     })();
   }, [route.params.id, taskDetails]);
 
+  const cancelTask = async () => {
+    console.log('Delete Task');
+  };
+
   if (isLoading) {
     return <Loading />;
   }
@@ -75,8 +94,19 @@ const PostDetails = ({route}: any) => {
         renderPrefix={<Back />}
         navigation={navigation}
       />
-      <SafeAreaView style={styles.container}>
-        <ScrollView style={{marginBottom: wp('4%')}}>
+      <SafeAreaView style={[styles.container, {paddingHorizontal: wp('4%')}]}>
+        <ScrollView
+          style={{marginBottom: wp('4%')}}
+          showsVerticalScrollIndicator={false}>
+          {details?.taskImages?.length > 0 && (
+            <Image
+              source={{
+                uri: details?.taskImages[0],
+              }}
+              style={styles.image}
+              resizeMode="contain"
+            />
+          )}
           <View style={{width: wp('96%'), marginVertical: wp('4%')}}>
             <Text style={[styles.name, {marginVertical: wp('4%')}]}>
               {details.title}
@@ -122,6 +152,37 @@ const PostDetails = ({route}: any) => {
               fullWidth
             />
           </View>
+
+          {details?.status === 'In Progress' && (
+            <Button
+              title={'Cancel Task'}
+              onPress={() =>
+                Alert.alert(
+                  'Cancel Task ?',
+                  'Are you sure you want to cancel this task?',
+                  [
+                    {
+                      text: 'No',
+                      onPress: () => {
+                        console.log('cancel');
+                      },
+                      style: 'default',
+                    },
+                    {
+                      text: 'Confirm',
+                      onPress: () => cancelTask(),
+                      style: 'destructive',
+                    },
+                  ],
+                )
+              }
+              btnStyles={{
+                width: wp('90%'),
+                backgroundColor: COLORS.danger,
+                marginVertical: wp('4%'),
+              }}
+            />
+          )}
         </ScrollView>
       </SafeAreaView>
     </SafeAreaView>
@@ -139,7 +200,10 @@ const styles = StyleSheet.create({
   },
   image: {
     width: wp('100%'),
-    height: wp('50%'),
+    height: wp('75%'),
+    marginTop: wp('4%'),
+    borderWidth: 1,
+    borderColor: COLORS.lightGrey,
   },
   name: {
     color: 'black',

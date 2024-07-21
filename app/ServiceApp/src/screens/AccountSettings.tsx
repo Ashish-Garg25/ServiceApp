@@ -24,6 +24,7 @@ import ScreenHeader from '../components/ScreenHeader';
 import Back from '../assets/icons/Back';
 import Logout from '../assets/icons/Logout';
 import Delete from '../assets/icons/Delete';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ACTIONS = [
   {
@@ -51,8 +52,18 @@ const ACTIONS = [
 const AccountSettings = () => {
   const navigation = useNavigation<StackNavigation>();
 
-  const handleLogout = () => {
-    console.log('logout');
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem('user');
+
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [
+          {name: 'Login'},
+          // Add more routes here if necessary
+        ],
+      }),
+    );
   };
 
   const handleDelete = () => {

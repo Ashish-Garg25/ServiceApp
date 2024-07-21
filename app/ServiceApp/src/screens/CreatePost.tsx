@@ -55,14 +55,14 @@ const CreatePost = () => {
 
   const uploadImages = async () => {
     const options: any = {
-      includeBase64: false,
+      includeBase64: true,
       multiple: true,
-      maxWidth: 300,
-      maxHeight: 300,
+      maxWidth: 600,
+      maxHeight: 600,
       cropping: true,
-      compressImageMaxWidth: 300,
-      compressImageMaxHeight: 300,
-      compressImageQuality: 0.3,
+      compressImageMaxWidth: 600,
+      compressImageMaxHeight: 600,
+      compressImageQuality: 0.8,
       maxFiles: 3,
     };
 
@@ -81,7 +81,8 @@ const CreatePost = () => {
           });
           return;
         } else {
-          uploadedImages?.push(item);
+          let base64Item = `data:${item.mime};base64,${item.data}`;
+          uploadedImages?.push(base64Item);
         }
       }
 
@@ -204,12 +205,9 @@ const CreatePost = () => {
           <Text style={styles.label}>Upload Images (Max 3)</Text>
           <ScrollView horizontal style={{width: wp('90%')}}>
             {images?.length > 0 &&
-              images?.map((item: ImageOrVideo) => (
+              images?.map((item: any) => (
                 <View>
-                  <Image
-                    source={{uri: item?.path}}
-                    style={styles.borderImage}
-                  />
+                  <Image source={{uri: item}} style={styles.borderImage} />
                   <TouchableOpacity
                     style={styles.close}
                     onPress={() =>

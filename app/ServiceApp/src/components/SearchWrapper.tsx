@@ -3,14 +3,25 @@ import Search from './Search';
 import Dropdown from './Dropdown';
 import useDebounce from '../helpers/hooks/useDebounce';
 import {useGetCategoryByNameMutation} from '../redux/services';
+import {useDispatch, useSelector} from 'react-redux';
+import category from '../redux/slices/category';
+import {View} from 'react-native';
 
-const SearchWrapper = ({handleClick, name}: any) => {
-  const [searchText, setSearchText] = useState(name ?? '');
+const SearchWrapper = ({noClick = false}: any) => {
+  const dispatch = useDispatch();
+  const {singleCategory} = useSelector((state: any) => state.category);
+
+  const [searchText, setSearchText] = useState('');
   const [searchedCategories, setSearchedCategories] = useState([]);
 
   const [getCategoryByName] = useGetCategoryByNameMutation();
 
-  useEffect(() => setSearchedCategories([]), []);
+  useEffect(() => {
+    if (singleCategory?.name) {
+      setSearchText(singleCategory?.name);
+    }
+    setSearchedCategories([]);
+  }, [singleCategory]);
 
   useDebounce(
     async () => {
@@ -18,12 +29,12 @@ const SearchWrapper = ({handleClick, name}: any) => {
       console.log(response);
       setSearchedCategories(response);
     },
-    [getCategoryByName, searchText],
+    [searchText],
     800,
   );
 
   return (
-    <>
+    <View pointerEvents={noClick ? 'none' : 'box-none'}>
       <Search
         placeholder={"Search for 'AC Service'"}
         onChangeText={e => setSearchText(e)}
@@ -32,16 +43,16 @@ const SearchWrapper = ({handleClick, name}: any) => {
         icon={undefined}
       />
 
-      {searchedCategories.length > 0 && (
+      {searchText !== '' && searchedCategories.length > 0 && (
         <Dropdown
           dropdownListContent={searchedCategories}
           handleDropdown={(value: string) => {
             setSearchedCategories([]);
-            handleClick(value);
+            dispatch(category.actions.setSingleCategory(value));
           }}
         />
       )}
-    </>
+    </View>
   );
 };
 

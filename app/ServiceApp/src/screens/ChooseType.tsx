@@ -9,17 +9,17 @@ import {COLORS} from '../utils/color';
 import Button from '../components/Button';
 import RadioBox from '../components/RadioBox';
 import {useDispatch, useSelector} from 'react-redux';
-import {useCreateUserMutation, useLoginMutation} from '../redux/services';
+import {useCreateUserMutation} from '../redux/services';
 import Toast from 'react-native-toast-message';
 // import {setUserDetails} from '../redux/slices/user';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigation} from '../helpers/interfaces';
 import {setUserDetails} from '../redux/slices/user';
+import Loading from '../components/Loading';
 
 const ChooseType = () => {
   const [userType, setUserType] = useState(0);
-  const [createUser] = useCreateUserMutation();
-  const [loginM] = useLoginMutation();
+  const [createUser, {isLoading}] = useCreateUserMutation();
 
   const {firstName, lastName, email, password, address, phone} = useSelector(
     (state: any) => state.user,
@@ -40,11 +40,7 @@ const ChooseType = () => {
         userType: userType === 1 ? 'Buyer' : userType === 2 ? 'Seller' : 'Both',
       };
 
-      console.log('payload =====', payload);
-
       const res = await createUser(payload).unwrap();
-
-      console.log('RESPONSE ======', res);
 
       if (res.variant === 'success') {
         Toast.show({
@@ -53,17 +49,12 @@ const ChooseType = () => {
           text2: 'Account created successfully!',
         });
 
-        // IF SUCCESS NAVIGATE TO HOME
-        // const loginPayload = {email, password};
-        // console.log('rrrr', loginPayload);
-        // const resLogin = await loginM(loginPayload).unwrap();
-
-        // if (resLogin.variant === 'success') {
-        //   dispatch(setUserDetails(resLogin.userFound));
-        //   navigation.navigate('Home');
-        // } else {
-        //   throw res;
-        // }
+        dispatch(setUserDetails(res.data));
+        if (res?.data?.userType === 'Buyer') {
+          navigation.navigate('Home');
+        } else {
+          navigation.navigate('TaskerRoutes', {screen: 'TaskerBottomTab'});
+        }
       } else {
         throw res;
       }
@@ -110,10 +101,10 @@ const ChooseType = () => {
         </View>
       </View>
       <Button
-        title={'Submit'}
+        title={isLoading ? <Loading /> : 'Submit'}
         onPress={submit}
         btnStyles={{marginVertical: wp('4%'), width: wp('90%')}}
-        disabled={!userType || userType === 0}
+        disabled={isLoading || !userType || userType === 0}
       />
     </SafeAreaView>
   );

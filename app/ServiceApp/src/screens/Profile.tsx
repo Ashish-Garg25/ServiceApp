@@ -24,6 +24,8 @@ import User from '../assets/icons/User';
 import {StackNavigation} from '../helpers/interfaces';
 import Order from '../assets/icons/Order';
 import Lock from '../assets/icons/Lock';
+import {useSelector} from 'react-redux';
+import PlaceholderProfilePic from '../components/PlaceholderProfilePic';
 
 const ACTIONS = [
   {
@@ -70,6 +72,7 @@ const ACTIONS = [
 
 const Profile = () => {
   const navigation = useNavigation<StackNavigation>();
+  const user = useSelector((state: any) => state.user);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -77,18 +80,30 @@ const Profile = () => {
         <TouchableOpacity
           onPress={() => navigation.navigate('EditProfile')}
           style={{alignSelf: 'center'}}>
-          <Image
-            source={{
-              uri: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-            }}
-            style={styles.image}
-          />
-          <Text style={styles.name}>Sarah Dame</Text>
+          {user.profilePic ? (
+            <Image
+              source={{
+                uri: user.profilePic,
+              }}
+              style={styles.image}
+            />
+          ) : (
+            <View style={styles.thumbnail}>
+              <PlaceholderProfilePic
+                name={user.firstName}
+                position={0}
+                size={'20%'}
+              />
+            </View>
+          )}
+
+          <Text
+            style={styles.name}>{`${user?.firstName} ${user?.lastName}`}</Text>
         </TouchableOpacity>
         <View style={styles.wrapper}>
           <View>
             <Text style={[styles.name, styles.value]}>$500.00</Text>
-            <Text style={styles.label}>Amount Spent</Text>
+            <Text style={styles.label}>Last Spent</Text>
           </View>
           <View style={styles.hr} />
           <View>
@@ -133,6 +148,7 @@ const styles = StyleSheet.create({
   name: {
     fontSize: hp('1.8%'),
     fontWeight: '600',
+    alignSelf: 'center',
   },
   wrapper: {
     flexDirection: 'row',
@@ -161,5 +177,11 @@ const styles = StyleSheet.create({
   },
   value: {
     color: COLORS.green,
+  },
+  thumbnail: {
+    width: wp('20%'),
+    height: wp('20%'),
+    borderRadius: 999,
+    marginVertical: wp('6%'),
   },
 });

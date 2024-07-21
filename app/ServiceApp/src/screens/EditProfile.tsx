@@ -20,11 +20,15 @@ import Phone from '../assets/icons/Phone';
 import ScreenHeader from '../components/ScreenHeader';
 import Back from '../assets/icons/Back';
 import {useNavigation} from '@react-navigation/native';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {useUpdateUserMutation} from '../redux/services';
+import ImagePicker from 'react-native-image-crop-picker';
+import PlaceholderProfilePic from '../components/PlaceholderProfilePic';
+import Toast from 'react-native-toast-message';
+import {setUserDetails} from '../redux/slices/user';
 
 type ProfileType = {
-  profilePic: string;
+  profilePic: null | string;
   firstName: string;
   lastName: string;
   email: string;
@@ -33,13 +37,14 @@ type ProfileType = {
 
 const EditProfile = () => {
   const navigation = useNavigation();
+
+  const dispatch = useDispatch();
   const user = useSelector((state: any) => state.user);
 
   const [updateUser] = useUpdateUserMutation();
 
   const [profile, setProfile] = useState<ProfileType>({
-    profilePic:
-      'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    profilePic: null,
     firstName: user.firstName,
     lastName: user.lastName,
     email: user.email,
@@ -49,9 +54,37 @@ const EditProfile = () => {
   const handleEdit = async () => {
     try {
       const response = await updateUser(profile).unwrap();
-      console.log(response);
+      if (response.variant === 'success') {
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: 'Profile Updated successfully',
+        });
+
+        dispatch(setUserDetails(response.data));
+      }
     } catch (err) {
       console.log(err);
+    }
+  };
+
+  const uploadImages = async () => {
+    const options: any = {
+      includeBase64: true,
+      maxWidth: 200,
+      maxHeight: 200,
+      cropping: true,
+      compressImageQuality: 0.4,
+    };
+
+    try {
+      const result: any = await ImagePicker.openPicker(options);
+
+      let base64Item = `data:${result.mime};base64,${result.data}`;
+      setProfile({...profile, profilePic: base64Item});
+    } catch (error) {
+      // Handle any errors that occur during the image selection
+      console.log(error);
     }
   };
 
@@ -62,13 +95,25 @@ const EditProfile = () => {
         renderPrefix={<Back />}
         navigation={navigation}
       />
-      <Image
-        source={{
-          uri: profile.profilePic,
-        }}
-        style={styles.image}
-      />
-      <TouchableOpacity>
+
+      {profile.profilePic ? (
+        <Image
+          source={{
+            uri: profile.profilePic,
+          }}
+          style={styles.image}
+        />
+      ) : (
+        <View style={styles.thumbnail}>
+          <PlaceholderProfilePic
+            name={user.firstName}
+            position={0}
+            size={'20%'}
+          />
+        </View>
+      )}
+
+      <TouchableOpacity onPress={uploadImages}>
         <Text style={styles.edit}>Edit Profile Pic</Text>
       </TouchableOpacity>
       <View style={styles.wrapper}>
@@ -142,5 +187,11 @@ const styles = StyleSheet.create({
   },
   wrapper: {
     flexGrow: 1,
+  },
+  thumbnail: {
+    width: wp('20%'),
+    height: wp('20%'),
+    borderRadius: 999,
+    marginVertical: wp('6%'),
   },
 });

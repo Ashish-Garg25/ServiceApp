@@ -64,18 +64,66 @@ export const getMyTasks = async (req, res) => {
   }
 };
 
+export const getAllTasks = async (req, res) => {
+  try {
+    const allTasks = await task.find({ status: ["Submitted", "In Progress"] });
+    if (allTasks.length > 0) {
+      return res.json(allTasks);
+    } else {
+      return res.json([]);
+    }
+  } catch (err) {
+    console.log("err", err);
+    res.json({ status: res.status, message: "Something went wrong" });
+  }
+};
+
+export const getCompletedTasks = async (req, res) => {
+  try {
+    const completedTasks = await task.find({ status: "Completed" });
+    if (completedTasks.length > 0) {
+      return res.json(completedTasks);
+    } else {
+      return res.json([]);
+    }
+  } catch (err) {
+    console.log("err", err);
+    res.json({ status: res.status, message: "Something went wrong" });
+  }
+};
+
+export const getInvitedTasks = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const invitedTasks = await task.find({
+      $and: [
+        { $or: [{ status: "Submitted" }, { status: "In Progress" }] },
+        { invited: { $in: [userId] } }
+      ]
+    });
+    if (invitedTasks.length > 0) {
+      return res.json(invitedTasks);
+    } else {
+      return res.json([]);
+    }
+  } catch (err) {
+    console.log("err", err);
+    res.json({ status: res.status, message: "Something went wrong" });
+  }
+};
+
 export const getTaskDetails = async (req, res) => {
   try {
     const { id } = req.params;
 
-    console.log(id)
+    console.log(id);
 
-    const taskDetails = await task.findById(id).populate('categories');;
+    const taskDetails = await task.findById(id).populate("categories");
 
     if (!taskDetails) {
       return res.json({});
     }
-    console.log(taskDetails)
+    console.log(taskDetails);
     return res.json(taskDetails);
   } catch (err) {
     console.log("err", err);
