@@ -132,6 +132,23 @@ export const api = createApi({
       }),
       invalidatesTags: ['Task'],
     }),
+
+    getTaskByType: builder.mutation({
+      query: (type = 'all') => ({
+        url: `/task/${type}`,
+        method: 'GET',
+      }),
+      invalidatesTags: ['Task'],
+    }),
+
+    getInvitedTasks: builder.mutation({
+      query: () => ({
+        url: '/task/invited',
+        method: 'GET',
+      }),
+      invalidatesTags: ['Task'],
+    }),
+
     getChatList: builder.mutation({
       query: () => ({
         url: '/chat/',
