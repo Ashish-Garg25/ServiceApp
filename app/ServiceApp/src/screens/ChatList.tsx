@@ -45,7 +45,7 @@ const ChatList = () => {
             keyExtractor={(item: any) => item._id}
             renderItem={({item}) => (
               <ChatCard
-                subHeading={'Need Replacement Mouse ...'}
+                subHeading={'...'}
                 time={'8 hours ago'}
                 onPress={() => navigation.navigate('Message', {content: item})}
                 content={item}

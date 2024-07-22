@@ -7,7 +7,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React from 'react';
 import {COLORS} from '../../utils/color';
 import {
   widthPercentageToDP as wp,
@@ -18,6 +18,9 @@ import ScreenHeader from '../../components/ScreenHeader';
 import Back from '../../assets/icons/Back';
 import {useNavigation} from '@react-navigation/native';
 import Button from '../../components/Button';
+import {StackNavigation} from '../../helpers/interfaces';
+import {useSendMessageMutation} from '../../redux/services';
+import {useSelector} from 'react-redux';
 
 export const MoreInfo = ({
   label,
@@ -63,68 +66,100 @@ export const MoreInfo = ({
 };
 
 const TaskerTaskDetails = ({route}: any) => {
-  const navigation = useNavigation();
-
-  const [isAccepted, setIsAccepted] = useState(false);
+  const navigation = useNavigation<StackNavigation>();
+  const user = useSelector((state: any) => state.user);
+  const [sendMessage] = useSendMessageMutation();
 
   const {content} = route?.params;
+
+  const createChat = async () => {
+    try {
+      const payload = JSON.stringify({
+        sender: user._id,
+        receiver: content.user,
+        content: "Hi! I saw your post and I'm interested",
+      });
+
+      const response = await sendMessage(payload).unwrap();
+      console.log(response);
+      navigation.navigate('TaskerBottomTab', {screen: 'Messages'});
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <ScreenHeader
-        title={'Cupboard Repair Request'}
+        title={content.title}
         renderPrefix={<Back />}
         navigation={navigation}
       />
       <SafeAreaView style={styles.container}>
         <ScrollView style={{marginBottom: wp('4%')}}>
-          <Image
-            source={{
-              uri: 'https://images.pexels.com/photos/4393668/pexels-photo-4393668.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-            }}
-            style={styles.image}
-            resizeMode="cover"
-          />
+          {content?.taskImages?.length > 0 ? (
+            <Image
+              source={{
+                uri: content?.taskImages[0],
+              }}
+              style={styles.image}
+              resizeMode="cover"
+            />
+          ) : (
+            <Image
+              source={{
+                uri: 'https://images.ctfassets.net/rz1oowkt5gyp/1IgVe0tV9yDjWtp68dAZJq/36ca564d33306d407dabe39c33322dd9/TaskManagement-hero.png',
+              }}
+              style={styles.image}
+              resizeMode="cover"
+            />
+          )}
           <View style={{marginVertical: wp('4%'), marginHorizontal: wp('4%')}}>
             <Text style={[styles.name, {marginVertical: wp('4%')}]}>
-              Cupboard Repair Request
+              {content.title}
             </Text>
             <View style={{paddingVertical: wp('4%')}}>
               <Text style={styles.name}>About This task</Text>
-              <Text style={styles.text}>
-                This is the first task you have been choosen for. Do the task
-                with full devotion.
-              </Text>
+              <Text style={styles.text}>{content.description}</Text>
             </View>
           </View>
           <View style={styles.extraContainer}>
             <View style={styles.extraWrapper}>
-              <MoreInfo label={'Type'} title={'Remote'} />
-              <MoreInfo
-                label={'Status'}
-                title={content?.status}
-                right
-                pill
-                completed
-              />
+              <MoreInfo label={'Type'} title={content?.taskType} />
+              <MoreInfo label={'Status'} title={content?.status} right pill />
             </View>
             <View style={{width: 1, height: 8}} />
             <MoreInfo
               label={'Task Date'}
-              title={moment(new Date()).format('MMMM Do YYYY, h:mm:ss a')}
+              title={moment(content?.createdAt).format(
+                'MMMM Do YYYY, h:mm:ss a',
+              )}
               fullWidth
             />
             <View style={{width: 1, height: 8}} />
 
             <MoreInfo
               label={'Task Location'}
-              title={'Anvil Street'}
+              title={content?.taskLocation}
               fullWidth
             />
           </View>
         </ScrollView>
 
-        {content?.hireStatus === 'hired' ? (
+        {content?.status === 'Submitted' && (
+          <Button
+            title={'Send Profile'}
+            onPress={createChat}
+            btnStyles={{
+              width: wp('92%'),
+              transform: [{scale: 0.9}],
+              backgroundColor: COLORS.green,
+              marginBottom: wp('4%'),
+            }}
+          />
+        )}
+
+        {/* {content?.hireStatus === 'hired' ? (
           <View />
         ) : isAccepted ? (
           <View>
@@ -163,7 +198,7 @@ const TaskerTaskDetails = ({route}: any) => {
               }}
             />
           </View>
-        )}
+        )} */}
       </SafeAreaView>
     </SafeAreaView>
   );

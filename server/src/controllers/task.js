@@ -1,5 +1,6 @@
 import task from "../models/task.js";
 import user from "../models/user.js";
+import offer from "../models/offer.js";
 
 export const createTask = async (req, res) => {
   try {
@@ -79,7 +80,7 @@ export const getAllTasks = async (req, res) => {
     } 
     
     if(type === 'completed') {
-      const completedTasks = await task.find({ status: "Completed" });
+      const completedTasks = await task.find({ status: "Complete" });
       if (completedTasks.length > 0) {
         return res.json(completedTasks);
       } else {

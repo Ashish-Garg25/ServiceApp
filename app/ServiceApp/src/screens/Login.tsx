@@ -35,7 +35,11 @@ const Login = () => {
 
       console.log('rrrr', res);
       dispatch(setUserDetails(res.userFound));
-      navigation.navigate('Home');
+      if (res?.userFound?.userType === 'Buyer') {
+        navigation.navigate('Home');
+      } else {
+        navigation.navigate('TaskerRoutes', {screen: 'TaskerBottomTab'});
+      }
     } catch (err) {
       Toast.show({
         type: 'error',

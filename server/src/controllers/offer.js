@@ -1,19 +1,37 @@
 import offer from "../models/offer.js";
+import task from "../models/task.js";
 import user from "../models/user.js";
 
 export const createOffer = async (req, res) => {
   try {
-    const { buyerId, service, sellerId, startDate, rate, additionalInfo } = req.body;
+    const {
+      buyerId,
+      service,
+      task,
+      sellerId,
+      startDate,
+      rate,
+      additionalInfo
+    } = req.body;
 
-    console.log(req.body)
+    console.log(req.body);
 
-    if (!buyerId || !service || !sellerId || !startDate || !rate || !additionalInfo) {
+    if (
+      !buyerId ||
+      !service ||
+      !task ||
+      !sellerId ||
+      !startDate ||
+      !rate ||
+      !additionalInfo
+    ) {
       return res.json({ msg: "All fields are required" });
     }
 
     const newOffer = new offer({
       buyerId,
       service,
+      task,
       sellerId,
       startDate,
       rate,
@@ -61,7 +79,7 @@ export const getOfferDetails = async (req, res) => {
 export const getAllOfferByUser = async (req, res) => {
   try {
     const { userId } = req.user;
-    const {sellerId} = req.params;
+    const { sellerId } = req.params;
 
     const userExist = await user.findById(userId);
 
@@ -72,14 +90,13 @@ export const getAllOfferByUser = async (req, res) => {
       });
     }
 
-    const allOffers = await offer.find({buyerId: userId, sellerId});
+    const allOffers = await offer.find({ buyerId: userId, sellerId });
 
-    if(allOffers.length > 0){
-      return res.json(allOffers)
+    if (allOffers.length > 0) {
+      return res.json(allOffers);
     } else {
       return res.json({ status: res.status, message: "No Order Yet!" });
     }
-
   } catch (err) {
     console.log("err", err);
     res.json({ status: res.status, message: "Something went wrong" });
@@ -91,6 +108,8 @@ export const updateOffer = async (req, res) => {
     const { offerId, status } = req.body;
 
     const fetchedOffer = await offer.findById(offerId);
+    const fetchedPost = await task.findById(fetchedOffer.task);
+
     if (!fetchedOffer) {
       return res.status(400).json({
         status: 400,
@@ -107,16 +126,19 @@ export const updateOffer = async (req, res) => {
       case 2:
         fetchedOffer.status = 2;
         fetchedOffer.statusText = "In Progress";
+        fetchedPost.status = "In Progress";
         break;
 
       case 3:
         fetchedOffer.status = 3;
         fetchedOffer.statusText = "Cancelled";
+        fetchedPost.status = "Cancelled";
         break;
 
       case 4:
         fetchedOffer.status = 4;
         fetchedOffer.statusText = "Completed";
+        fetchedPost.status = "Complete";
         break;
 
       default:
@@ -125,6 +147,8 @@ export const updateOffer = async (req, res) => {
     }
 
     const updatedOffer = await fetchedOffer.save();
+    await fetchedPost.save();
+
     return res.json({
       data: updatedOffer,
       variant: "success"

@@ -4,6 +4,7 @@ import {
   FlatList,
   SafeAreaView,
   StyleSheet,
+  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -19,31 +20,51 @@ import {useNavigation} from '@react-navigation/native';
 import {StackNavigation} from '../../helpers/interfaces';
 import Button from '../../components/Button';
 import Back from '../../assets/icons/Back';
-import {useGetTaskMutation} from '../../redux/services';
+import {
+  useGetInvitedTasksMutation,
+  useGetTaskByTypeMutation,
+} from '../../redux/services';
+import Loading from '../../components/Loading';
+import ChevronRight from '../../assets/icons/ChevronRight';
 //import {useGetTaskMutation} from '../../redux/services';
 
 const TaskerTasks = () => {
   const navigation = useNavigation<StackNavigation>();
+
+  const [getTaskByType, {isLoading}] = useGetTaskByTypeMutation();
+  const [getInvitedTasks] = useGetInvitedTasksMutation();
+
   const [tasks, setTasks] = useState([]);
-
-  const [filtered, setFiltered] = useState(tasks);
-  const [currentFilter, setCurrentFilter] = useState('All');
-
-  const [getTask] = useGetTaskMutation();
+  const [invitedTasks, setInvitedTasks] = useState([]);
+  const [currentFilter, setCurrentFilter] = useState('all');
 
   useEffect(() => {
-    (async () => {
-      const response = await getTask({}).unwrap();
-      console.log('response =====', response);
-    })();
-  }, []);
+    getTasks();
+    currentFilter === 'all' && getInvited();
+  }, [currentFilter]);
 
-  const handlePress = (val: any) => {
-    setCurrentFilter(val);
-    console.log('Clicked', val);
-    // const filteredTasks = tasks.filter(item => item.category === val);
-    // setFiltered(filteredTasks);
+  const getTasks = async () => {
+    try {
+      const response = await getTaskByType({type: currentFilter}).unwrap();
+      console.log('Response ===', response);
+      setTasks(response);
+    } catch (err) {
+      console.log(err);
+    }
   };
+
+  const getInvited = async () => {
+    try {
+      const response = await getInvitedTasks({}).unwrap();
+      setInvitedTasks(response);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -64,21 +85,31 @@ const TaskerTasks = () => {
         }}>
         <Button
           title="All Tasks"
-          onPress={() => handlePress('All')}
-          outline={currentFilter === 'All' ? false : true}
+          onPress={() => setCurrentFilter('all')}
+          outline={currentFilter === 'all' ? false : true}
           btnStyles={{padding: 12, width: wp('40%'), borderRadius: 30}}
         />
         <Button
           title="Completed"
-          onPress={() => handlePress('Completed')}
-          outline={currentFilter === 'Completed' ? false : true}
+          onPress={() => setCurrentFilter('completed')}
+          outline={currentFilter === 'completed' ? false : true}
           btnStyles={{padding: 12, width: wp('40%'), borderRadius: 30}}
         />
       </View>
       {/* My Task Filters Container Ends*/}
 
+      {invitedTasks?.length > 0 && (
+        <TouchableOpacity style={styles.wrapper}>
+          <View>
+            <Text style={styles.text}>You have new invitation</Text>
+            <Text style={styles.smallText}>Click to view them</Text>
+          </View>
+          <ChevronRight />
+        </TouchableOpacity>
+      )}
+
       <FlatList
-        data={filtered}
+        data={tasks}
         extraData={currentFilter}
         keyExtractor={(item: any) => item._id}
         renderItem={({item}) => (
@@ -148,5 +179,26 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 24,
     right: 24,
+  },
+  wrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: wp('6%'),
+    backgroundColor: COLORS.lightGreen,
+    width: wp('92%'),
+    borderRadius: 16,
+  },
+  text: {
+    fontSize: hp('2%'),
+    fontWeight: '600',
+    color: COLORS.black,
+    lineHeight: 24,
+  },
+  smallText: {
+    fontSize: hp('1.6%'),
+    fontWeight: '400',
+    color: COLORS.black,
+    lineHeight: 14,
   },
 });

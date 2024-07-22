@@ -27,8 +27,9 @@ import Close from '../../assets/icons/Close';
 import {useGetChatMutation, useSendMessageMutation} from '../../redux/services';
 import {useSelector} from 'react-redux';
 import Toast from 'react-native-toast-message';
+import PlaceholderProfilePic from '../../components/PlaceholderProfilePic';
 
-const Sender = ({content}: any) => {
+const Sender = ({content, user}: any) => {
   return (
     <View
       style={{
@@ -66,13 +67,19 @@ const Sender = ({content}: any) => {
             </Text>
           </View>
         </View>
-        <Image
-          source={{
-            uri: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-          }}
-          style={[styles.image, {marginRight: wp(0), marginLeft: wp('4%')}]}
-          resizeMode="cover"
-        />
+        {user?.profilePic ? (
+          <Image
+            source={{
+              uri: user?.profilePic,
+            }}
+            style={[styles.image, {marginRight: wp(0), marginLeft: wp('4%')}]}
+            resizeMode="cover"
+          />
+        ) : (
+          <View>
+            <PlaceholderProfilePic name={user?.firstName} position={0} />
+          </View>
+        )}
       </View>
     </View>
   );
@@ -143,6 +150,7 @@ const TaskerChat = ({route}: any) => {
   const getChatMessages = async () => {
     try {
       const response = await getChat({id: content._id}).unwrap();
+      console.log(response.chat);
       setChats(response.chat);
     } catch (err) {
       console.log(err);
@@ -180,6 +188,14 @@ const TaskerChat = ({route}: any) => {
     }
   };
 
+  const sendContract = async () => {
+    try {
+      console.log('www');
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={[styles.main, styles.wrapper, {marginLeft: wp('4%')}]}>
@@ -203,9 +219,9 @@ const TaskerChat = ({route}: any) => {
             </Text>
           </View>
           <Button
-            title="Reschedule"
+            title="Propose Contract"
             btnStyles={{
-              width: wp('30%'),
+              width: wp('36%'),
               marginRight: wp('8%'),
               paddingVertical: wp('2%'),
             }}
@@ -227,9 +243,9 @@ const TaskerChat = ({route}: any) => {
             keyExtractor={(item: any) => item._id}
             renderItem={({item}) =>
               item.sender === user._id ? (
-                <Sender content={item} />
+                <Sender content={item} user={user} />
               ) : (
-                <Receiver content={item} user={content} />
+                <Receiver content={item} />
               )
             }
           />
@@ -321,7 +337,7 @@ const TaskerChat = ({route}: any) => {
               />
 
               <View style={{marginBottom: wp('4%')}} />
-              <Button title="Send Offer" onPress={() => console.log('www')} />
+              <Button title="Propose Contract" onPress={() => sendContract} />
             </View>
           </View>
         </View>
@@ -338,7 +354,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primaryLight1,
     justifyContent: 'flex-start',
     alignItems: 'center',
-    paddingTop: wp('16%'),
+    paddingTop: wp('4%'),
   },
   main: {
     paddingVertical: wp('2%'),

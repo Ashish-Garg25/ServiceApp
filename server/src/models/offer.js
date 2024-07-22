@@ -12,38 +12,43 @@ const offers = new Schema(
       ref: "Services",
       required: true
     },
+    task: {
+      type: Schema.Types.ObjectId,
+      ref: "Tasks",
+      required: true
+    },
     sellerId: {
-        type: Schema.Types.ObjectId,
-        ref: "Users",
-        required: true
+      type: Schema.Types.ObjectId,
+      ref: "Users",
+      required: true
     },
     startDate: {
-        type: Date,
-        required: true,
+      type: Date,
+      required: true
     },
     rate: {
-        type: Number,
-        required: true
+      type: Number,
+      required: true
     },
     status: {
-        type: String,
+      type: String,
       enum: {
         values: [1, 2, 3, 4], // 1 -> Created, 2 -> In Progress, 3 -> Cancelled, 4 -> Completed
         message: "{VALUE} is not supported"
       },
-      required: true,
+      required: true
     },
     statusText: {
-        type: String,
+      type: String,
       enum: {
         values: ["Created", "In Progress", "Cancelled", "Completed"],
         message: "{VALUE} is not supported"
       },
-      required: true,
+      required: true
     },
     additionalInfo: {
-        type: String,
-    },
+      type: String
+    }
   },
   { timestamps: true }
 );

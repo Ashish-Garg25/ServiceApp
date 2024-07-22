@@ -36,9 +36,26 @@ const chats = new Schema(
       required: true,
       trim: true
     },
+    type: {
+      type: String,
+      enum: {
+        values: ["Chat", "Offer"],
+        message: "{VALUE} is not supported"
+      },
+      required: true
+    },
+    offer: {
+      type: Schema.Types.ObjectId,
+      ref: "Offers",
+      required: function () {
+        return this.type === "Offer";
+      }
+    },
     content: {
       type: String,
-      required: true
+      required: function () {
+        return this.type === "Chat";
+      }
     }
   },
   { timestamps: true }

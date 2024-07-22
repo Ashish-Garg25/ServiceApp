@@ -145,9 +145,6 @@ const PostCard = ({content, isProvider}: any) => {
     taskType,
     title,
     clientName,
-    remainingTime,
-    hireStatus,
-    isCompleted,
   } = content;
 
   const user = useSelector((state: any) => state.user);
@@ -176,9 +173,7 @@ const PostCard = ({content, isProvider}: any) => {
         <View style={[styles.wrapper, {marginVertical: wp('2%')}]}>
           <Time color={COLORS.primary} />
           <Text style={styles.text}>
-            {isProvider
-              ? `Time Left: ${remainingTime}`
-              : moment(taskDate).add(1, 'days').calendar()}
+            Created on {moment(taskDate).add(1, 'days').calendar()}
           </Text>
         </View>
         <Text style={styles.mainText}>{title}</Text>
@@ -189,55 +184,16 @@ const PostCard = ({content, isProvider}: any) => {
       <View style={styles.flex}>
         {isProvider ? (
           <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
-            {hireStatus === 'hired' ? (
+            {(status === 'Submitted' || 'In Progress') && (
               <Button
-                title={'Hired'}
-                onPress={() => null}
-                disabled={true}
+                title={'Apply'}
+                onPress={() => navigation.navigate('Message')}
                 btnStyles={{
-                  width: wp('80%'),
+                  width: wp('84%'),
                   transform: [{scale: 0.9}],
-                  backgroundColor: COLORS.grey,
+                  backgroundColor: COLORS.green,
                 }}
               />
-            ) : (
-              <>
-                {!isCompleted && (
-                  <>
-                    <Button
-                      title={'Decline'}
-                      onPress={() => console.log('Sure to decline?')}
-                      btnStyles={{
-                        width: wp('40%'),
-                        transform: [{scale: 0.9}],
-                        backgroundColor: COLORS.danger,
-                      }}
-                    />
-                    <Button
-                      title={'Chat'}
-                      onPress={() => {
-                        console.log('Yay!! Work it up.');
-                        navigation.navigate('Message', {
-                          content: {
-                            _id: '93094',
-                            profilePic:
-                              'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                            createdAt: '20240304',
-                            content: 'Hi there',
-                            firstName: 'John',
-                            lastName: 'Doe',
-                          },
-                        });
-                      }}
-                      btnStyles={{
-                        width: wp('45%'),
-                        transform: [{scale: 0.9}],
-                        backgroundColor: COLORS.primary,
-                      }}
-                    />
-                  </>
-                )}
-              </>
             )}
           </View>
         ) : (

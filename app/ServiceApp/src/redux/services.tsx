@@ -134,7 +134,7 @@ export const api = createApi({
     }),
 
     getTaskByType: builder.mutation({
-      query: (type = 'all') => ({
+      query: ({type = 'all'}) => ({
         url: `/task/${type}`,
         method: 'GET',
       }),
@@ -203,6 +203,8 @@ export const {
   useCreateTaskMutation,
   useGetTaskMutation,
   useGetTaskDetailsMutation,
+  useGetTaskByTypeMutation,
+  useGetInvitedTasksMutation,
   useGetChatListMutation,
   useGetChatMutation,
   useSendMessageMutation,

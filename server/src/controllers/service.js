@@ -1,11 +1,48 @@
 import ServiceModel from "../models/serivce.js";
 import UserModel from "../models/user.js";
 
+export const createService = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const { name, image, serviceCategory, about, availability, rate } =
+      req.body;
+
+    const service = await ServiceModel.find({ user: userId });
+
+    if (service?.length > 2) {
+      return res
+        .status(404)
+        .json({ msg: "You have reached the service limit!" });
+    }
+
+    const newService = new ServiceModel({
+      user: userId,
+      name,
+      image,
+      serviceCategory,
+      about,
+      availability,
+      rate
+    });
+
+    await newService.save();
+
+    return res.json({
+      message: "Service created successfully",
+      variant: "success",
+      data: newService
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(400).json({ msg: "Something went wrong!" });
+  }
+};
+
 export const getServices = async (req, res) => {
   try {
     const services = await ServiceModel.find({});
     if (services.length > 0) {
-      res.status(202).json({ services });
+      res.status(201).json({ services });
     } else {
       res.status(404).json({ msg: "No service found!" });
     }
@@ -43,7 +80,7 @@ export const getFilteredService = async (req, res) => {
   try {
     const { Category, Rating, Earning, Radius } = req.query;
 
-    console.log(req.query)
+    console.log(req.query);
 
     const services = await ServiceModel.find({ serviceCategory: Category });
     if (services.length > 0) {
@@ -54,7 +91,7 @@ export const getFilteredService = async (req, res) => {
         })
       );
 
-      console.log('rrr', serviceWithDetails)
+      console.log("rrr", serviceWithDetails);
       // Filter services based on Rating
       if (Rating) {
         serviceWithDetails = serviceWithDetails.filter(
@@ -62,7 +99,7 @@ export const getFilteredService = async (req, res) => {
         );
       }
 
-      console.log('eee', serviceWithDetails)
+      console.log("eee", serviceWithDetails);
 
       // Filter services based on Earning
       if (Earning) {
@@ -71,7 +108,7 @@ export const getFilteredService = async (req, res) => {
         );
       }
 
-      console.log('rara', serviceWithDetails)
+      console.log("rara", serviceWithDetails);
 
       // Filter services based on Radius
       if (Radius) {
@@ -126,6 +163,51 @@ export const getSingleService = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(400).json({ msg: "Something went wrong!" });
+  }
+};
+
+export const updateService = async (req, res) => {
+  try {
+    const { _id, name, image, serviceCategory, about, availaility, rate } =
+      req.body;
+
+    const service = await ServiceModel.updateOne(
+      { _id: _id },
+      { $set: { name, image, serviceCategory, about, availaility, rate } }
+    );
+
+    if (service.matchedCount > 0) {
+      const updatedService = await ServiceModel.findById(_id);
+      return res.json({
+        message: "Service updated successfully",
+        variant: "success",
+        data: updatedService
+      });
+    } else {
+      return res.status(400).json({ msg: "Service does not exist!" });
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(400).json({ msg: "Something went wrong!" });
+  }
+};
+
+export const deleteService = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const response = await ServiceModel.deleteOne({ _id });
+
+    if (response.deletedCount > 0) {
+      return res.json({
+        message: "Service deleted successfully",
+        variant: "success"
+      });
+    } else {
+      return res.status(400).json({ msg: "Service does not exist!" });
+    }
+  } catch (err) {
+    console.log(err);
   }
 };
 
