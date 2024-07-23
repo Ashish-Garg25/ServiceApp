@@ -37,7 +37,7 @@ type ServiceType = {
   name: string;
   image: null | string;
   about: string;
-  availability: Date;
+  availaility: Date;
   serviceCategory: any[];
   rate: string;
 };
@@ -56,7 +56,7 @@ const TaskerService = () => {
     name: '',
     image: null,
     about: '',
-    availability: new Date(),
+    availaility: new Date(),
     rate: '',
     serviceCategory: [],
   });
@@ -94,11 +94,12 @@ const TaskerService = () => {
       console.log('SERVICE ===', service);
       setLoading(true);
       const response = await createService(service).unwrap();
+      console.log('response ====', response);
       if (response.variant === 'success') {
         Toast.show({
           type: 'success',
           text1: 'Success',
-          text2: 'Details updated successfully!',
+          text2: 'Service created successfully!',
         });
         setLoading(false);
         navigation.navigate('TaskerBottomTab');

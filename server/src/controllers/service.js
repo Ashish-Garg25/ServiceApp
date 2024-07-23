@@ -4,7 +4,7 @@ import UserModel from "../models/user.js";
 export const createService = async (req, res) => {
   try {
     const { userId } = req.user;
-    const { name, image, serviceCategory, about, availability, rate } =
+    const { name, image, serviceCategory, about, availaility, rate } =
       req.body;
 
     const service = await ServiceModel.find({ user: userId });
@@ -21,7 +21,7 @@ export const createService = async (req, res) => {
       image,
       serviceCategory,
       about,
-      availability,
+      availaility,
       rate
     });
 
