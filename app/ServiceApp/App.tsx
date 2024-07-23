@@ -49,6 +49,8 @@ import TaskerTaskDetails from './src/screens/Tasker/TaskerTaskDetails';
 import Terms from './src/screens/Terms';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import CustomImage from './src/components/CustomImage';
+import TaskerServiceOnboard from './src/screens/Tasker/TaskerServiceOnboard';
+import TaskerService from './src/screens/Tasker/TaskerService';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -226,6 +228,11 @@ const TaskerRoutes = () => {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name="TaskerWelcome" component={TaskerWelcome} />
+      <Stack.Screen
+        name="TaskerServiceOnboard"
+        component={TaskerServiceOnboard}
+      />
+      <Stack.Screen name="TaskerService" component={TaskerService} />
       <Stack.Screen name="TaskerRegister" component={TaskerRegisterScreen} />
       <Stack.Screen name="TaskerBottomTab" component={TaskerBottomTab} />
       <Stack.Screen name="Message" component={TaskerChat} />

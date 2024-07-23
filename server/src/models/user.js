@@ -70,6 +70,16 @@ const users = new Schema(
     businessName: {
       type: String
     },
+    gender: {
+      type: String,
+      enum: {
+        values: ["Male", "Female", "Others"],
+        message: "{VALUE} is not supported"
+      },
+    },
+    dob: {
+      type: String,
+    },
     userType: {
       type: String,
       enum: {

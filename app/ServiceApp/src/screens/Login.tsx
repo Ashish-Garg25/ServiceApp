@@ -22,8 +22,8 @@ import Lock from '../assets/icons/Lock';
 
 const Login = () => {
   const navigation = useNavigation<StackNavigation>();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('Test3@gmail.com');
+  const [password, setPassword] = useState('Pass@123');
 
   const [loginM] = useLoginMutation();
   const dispatch = useDispatch();
@@ -38,7 +38,7 @@ const Login = () => {
       if (res?.userFound?.userType === 'Buyer') {
         navigation.navigate('Home');
       } else {
-        navigation.navigate('TaskerRoutes', {screen: 'TaskerBottomTab'});
+        navigation.navigate('TaskerRoutes');
       }
     } catch (err) {
       Toast.show({

@@ -24,6 +24,8 @@ export type RootStackParamList = {
   TaskerBottomTab: any;
   TaskerRegister: any;
   TaskerTaskDetails: any;
+  TaskerServiceOnboard: any;
+  TaskerService: any;
 };
 
 export type StackNavigation = NativeStackNavigationProp<RootStackParamList>;

@@ -81,10 +81,10 @@ const ManageAddress = ({route}: any) => {
           value={address.city}
         />
         <Input
-          label={'Zip Code'}
+          label={'Postal Code'}
           keyboardType={'number-pad'}
           onChangeText={text => setAddress({...address, zipCode: Number(text)})}
-          placeholder={'Enter Zip Code'}
+          placeholder={'Enter Postal Code'}
           value={String(address.zipCode) as any}
         />
         <Checkbox

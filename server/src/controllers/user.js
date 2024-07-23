@@ -227,6 +227,9 @@ export const updateProfile = async (req, res) => {
     const { userId } = req.user;
     const {
       profilePic,
+      businessName,
+      gender,
+      dob,
       phone,
       address,
       country,
@@ -255,6 +258,9 @@ export const updateProfile = async (req, res) => {
     }
 
     if (profilePic) userExist.profilePic = profilePic;
+    if(businessName) userExist.businessName = businessName;
+    if(gender) userExist.gender = gender;
+    if(dob) userExist.dob = dob;
     if (phone) userExist.phone = phone;
 
     // ADDRESS UPDATE

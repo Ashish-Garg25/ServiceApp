@@ -17,11 +17,11 @@ const services = new Schema(
       required: true,
       trim: true
     },
-    serviceCategory: {
+    serviceCategory: [{
       type: Schema.Types.ObjectId,
       ref: "Categorys",
       required: true
-    },
+    }],
     about: {
       type: String,
       required: true

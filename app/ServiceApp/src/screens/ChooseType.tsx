@@ -53,7 +53,7 @@ const ChooseType = () => {
         if (res?.data?.userType === 'Buyer') {
           navigation.navigate('Home');
         } else {
-          navigation.navigate('TaskerRoutes', {screen: 'TaskerBottomTab'});
+          navigation.navigate('TaskerRoutes');
         }
       } else {
         throw res;

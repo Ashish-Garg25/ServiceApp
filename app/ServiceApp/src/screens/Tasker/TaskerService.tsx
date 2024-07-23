@@ -1,6 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import {
   Image,
+  Modal,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -8,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -16,57 +17,57 @@ import {
 import {COLORS} from '../../utils/color';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
-import User from '../../assets/icons/User';
 import {useNavigation} from '@react-navigation/native';
-import {useSelector} from 'react-redux';
 import Pills from '../../components/Pills';
-import DatePicker from 'react-native-date-picker';
-import moment from 'moment';
-import Phone from '../../assets/icons/Phone';
-import Location from '../../assets/icons/Location';
 import {StackNavigation} from '../../helpers/interfaces';
-import PlaceholderProfilePic from '../../components/PlaceholderProfilePic';
+import Close from '../../assets/icons/Close';
 import ImagePicker from 'react-native-image-crop-picker';
-import {requestLocation} from '../../helpers/helpers';
-import {useUpdateUserMutation} from '../../redux/services';
+import {
+  useCreateServiceMutation,
+  useGetCategoryMutation,
+} from '../../redux/services';
 import Toast from 'react-native-toast-message';
+import Camera from '../../assets/icons/Camera';
+import ScreenHeader from '../../components/ScreenHeader';
+import Back from '../../assets/icons/Back';
+import Dollar from '../../assets/icons/Dollar';
+import BriefCase from '../../assets/icons/BriefCase';
 
-type ProfileType = {
-  profilePic: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  businessName: string;
-  categories: any[];
-  gender: string;
-  dob: string;
-  address: string;
+type ServiceType = {
+  name: string;
+  image: null | string;
+  about: string;
+  availability: Date;
+  serviceCategory: any[];
+  rate: string;
 };
 
-const TaskerRegisterScreen = () => {
+const TaskerService = () => {
   const navigation = useNavigation<StackNavigation>();
-  const user = useSelector((state: any) => state.user);
-
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [dob, setDob] = useState(new Date());
 
   const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [categories, setCategories] = useState([]);
 
-  const [updateUser] = useUpdateUserMutation();
+  const [getCategory] = useGetCategoryMutation();
+  const [createService] = useCreateServiceMutation();
 
-  const [profile, setProfile] = useState<ProfileType>({
-    profilePic: '',
-    firstName: user.firstName,
-    lastName: user.lastName,
-    email: user.email,
-    phone: user.phone,
-    businessName: user.businessName,
-    categories: [],
-    gender: user.gender,
-    dob: user.email,
-    address: user.address.length > 0 ? `${user.address[0].address1},` : '',
+  const [service, setService] = useState<ServiceType>({
+    name: '',
+    image: null,
+    about: '',
+    availability: new Date(),
+    rate: '',
+    serviceCategory: [],
   });
+
+  useEffect(() => {
+    (async () => {
+      const response = await getCategory({}).unwrap();
+      setCategories(response.category);
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const uploadImages = async () => {
     const options: any = {
@@ -81,34 +82,18 @@ const TaskerRegisterScreen = () => {
       const result: any = await ImagePicker.openPicker(options);
 
       let base64Item = `data:${result.mime};base64,${result.data}`;
-      setProfile({...profile, profilePic: base64Item});
+      setService({...service, image: base64Item});
     } catch (error) {
       // Handle any errors that occur during the image selection
       console.log(error);
     }
   };
 
-  const fetchLocation = async () => {
-    setLoading(true);
-    try {
-      requestLocation((formattedAddress: string) => {
-        // Define the callback
-        console.log('ffff', formattedAddress);
-        setProfile({...profile, address: formattedAddress});
-        setLoading(false);
-      });
-    } catch (e) {
-      console.log(e);
-      setLoading(false);
-    }
-  };
-
   const saveDetails = async () => {
     try {
-      console.log('wwwww');
+      console.log('SERVICE ===', service);
       setLoading(true);
-      const response = await updateUser(profile).unwrap();
-      console.log('response ====', response);
+      const response = await createService(service).unwrap();
       if (response.variant === 'success') {
         Toast.show({
           type: 'success',
@@ -116,7 +101,7 @@ const TaskerRegisterScreen = () => {
           text2: 'Details updated successfully!',
         });
         setLoading(false);
-        navigation.navigate('TaskerServiceOnboard');
+        navigation.navigate('TaskerBottomTab');
       } else {
         throw response;
       }
@@ -132,70 +117,56 @@ const TaskerRegisterScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <ScreenHeader
+        title={'Add Service'}
+        renderPrefix={<Back />}
+        navigation={navigation}
+      />
       <ScrollView
         contentContainerStyle={{alignItems: 'center'}}
         showsVerticalScrollIndicator={false}>
-        {profile.profilePic ? (
-          <Image
-            source={{
-              uri: profile.profilePic,
-            }}
-            style={styles.image}
-          />
-        ) : (
-          <View style={{paddingVertical: wp('4%')}}>
-            <PlaceholderProfilePic
-              name={profile.firstName}
-              position={0}
-              size="20"
-            />
-          </View>
-        )}
-        <TouchableOpacity onPress={uploadImages}>
-          <Text style={styles.edit}>Edit Profile Pic</Text>
-        </TouchableOpacity>
         <View style={styles.wrapper}>
           <Input
-            onChangeText={() => null}
-            label={'First Name'}
-            placeholder={'Enter First Name'}
-            value={`${profile.firstName} ${profile.lastName}`}
-            icon={<User fill={COLORS.grey} />}
-            caretHidden
-            editable={false}
-            inputStyles={{color: COLORS.grey}}
+            onChangeText={(e: string) => setService({...service, name: e})}
+            label={'Service Name'}
+            placeholder={'Enter Service Name'}
+            value={service.name}
+            icon={<BriefCase />}
           />
           <Input
-            label={'Business Name'}
-            onChangeText={text => setProfile({...profile, businessName: text})}
-            placeholder={'Enter Business Name'}
-            value={profile.businessName}
-            icon={<User />}
+            label="About this service"
+            placeholder="Write here .."
+            value={service.about}
+            onChangeText={(e: string) => setService({...service, about: e})}
+            bordered
+            multiline
+            numberOfLines={4}
+            inputStyles={{height: hp('15%'), paddingTop: wp('4%')}}
           />
 
-          {/* <View style={{marginTop: wp('4%'), width: wp('90%')}}>
+          <View style={{marginTop: wp('4%'), width: wp('90%')}}>
             <Text style={styles.label}>Select Category</Text>
             <View style={styles.pillsWrapper}>
               {categories?.map((item: {_id: string; name: string}) => (
                 <Pills
                   title={item.name}
                   onPress={() =>
-                    profile.categories?.some(cat => cat._id === item._id)
-                      ? setProfile({
-                          ...profile,
-                          categories: profile.categories.filter(
+                    service.serviceCategory?.some(cat => cat._id === item._id)
+                      ? setService({
+                          ...service,
+                          serviceCategory: service.serviceCategory.filter(
                             cat => cat._id !== item._id && cat,
                           ),
                         })
-                      : setProfile({
-                          ...profile,
-                          categories: [
-                            ...profile.categories,
+                      : setService({
+                          ...service,
+                          serviceCategory: [
+                            ...service.serviceCategory,
                             {_id: item._id, name: item.name},
                           ],
                         })
                   }
-                  selected={profile.categories?.some(
+                  selected={service.serviceCategory?.some(
                     cat => cat._id === item._id,
                   )}
                 />
@@ -242,22 +213,24 @@ const TaskerRegisterScreen = () => {
                     <Pills
                       title={item.name}
                       onPress={() =>
-                        profile.categories?.some(cat => cat._id === item._id)
-                          ? setProfile({
-                              ...profile,
-                              categories: profile.categories.filter(
+                        service.serviceCategory?.some(
+                          cat => cat._id === item._id,
+                        )
+                          ? setService({
+                              ...service,
+                              serviceCategory: service.serviceCategory.filter(
                                 cat => cat._id !== item._id && cat,
                               ),
                             })
-                          : setProfile({
-                              ...profile,
-                              categories: [
-                                ...profile.categories,
+                          : setService({
+                              ...service,
+                              serviceCategory: [
+                                ...service.serviceCategory,
                                 {_id: item._id, name: item.name},
                               ],
                             })
                       }
-                      selected={profile.categories?.some(
+                      selected={service.serviceCategory?.some(
                         cat => cat._id === item._id,
                       )}
                     />
@@ -265,7 +238,7 @@ const TaskerRegisterScreen = () => {
                 </View>
                 <Button
                   title={'Done'}
-                  onPress={() => setShowModal(true)}
+                  onPress={() => setShowModal(false)}
                   btnStyles={{
                     width: wp('32%'),
                     marginTop: wp('8%'),
@@ -276,76 +249,44 @@ const TaskerRegisterScreen = () => {
                 />
               </View>
             </Modal>
-
-          </View> */}
-
-          <Input
-            onChangeText={() => null}
-            label={'Address'}
-            placeholder={'Enter Address'}
-            value={profile.address}
-            icon={
-              <TouchableOpacity style={{zIndex: 99999}} onPress={fetchLocation}>
-                <Location />
-              </TouchableOpacity>
-            }
-            inputStyles={{color: COLORS.grey}}
-          />
-
-          <Input
-            label={'Phone Number'}
-            onChangeText={text => setProfile({...profile, phone: text})}
-            placeholder={'Enter Phone Number'}
-            value={profile.phone}
-            icon={<Phone fill={COLORS.grey} />}
-            caretHidden
-            editable={false}
-            inputStyles={{color: COLORS.grey}}
-          />
-
-          <View style={{marginVertical: wp('4%'), width: wp('90%')}}>
-            <Text style={styles.label}>Select Gender</Text>
-            <View style={styles.pillsWrapper}>
-              {['Male', 'Female', 'Other']?.map(item => (
-                <Pills
-                  title={item}
-                  onPress={() => setProfile({...profile, gender: item})}
-                  selected={profile.gender === item}
-                />
-              ))}
-            </View>
           </View>
 
-          <TouchableOpacity
-            onPress={() => {
-              console.log('red');
-              setIsOpen(true);
-            }}>
-            <View pointerEvents="none">
-              <Input
-                label="Date of Birth"
-                placeholder="DD-MM-YY"
-                onChangeText={() => null}
-                value={moment(dob).format('YYYY-MM-DD')}
-                caretHidden
-              />
-            </View>
-          </TouchableOpacity>
-
-          <DatePicker
-            modal
-            mode="date"
-            open={isOpen}
-            date={dob}
-            onConfirm={date => {
-              console.log(date);
-              setIsOpen(false);
-              setDob(date);
-            }}
-            onCancel={() => {
-              setIsOpen(false);
-            }}
+          <Input
+            label={'Rate'}
+            onChangeText={text => setService({...service, rate: text})}
+            placeholder={'$5 ..'}
+            value={service.rate}
+            icon={<Dollar />}
           />
+
+          <View style={{marginTop: wp('8%')}}>
+            <Text style={styles.label}>Upload Image</Text>
+            {service?.image !== null ? (
+              <View>
+                <Image
+                  source={{uri: service?.image}}
+                  style={styles.borderImage}
+                />
+                <TouchableOpacity
+                  style={styles.close}
+                  onPress={() =>
+                    setService({
+                      ...service,
+                      image: null,
+                    })
+                  }>
+                  <Close />
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <TouchableOpacity
+                style={styles.borderImage}
+                onPress={() => uploadImages()}>
+                <Camera />
+                <Text style={styles.mt1}>Upload Image</Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
         <Button
           title={loading ? 'fetching..' : 'Save'}
@@ -362,7 +303,7 @@ const TaskerRegisterScreen = () => {
   );
 };
 
-export default TaskerRegisterScreen;
+export default TaskerService;
 
 const styles = StyleSheet.create({
   container: {
@@ -417,5 +358,26 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 8,
+  },
+  borderImage: {
+    borderWidth: 1,
+    borderColor: COLORS.primaryLight,
+    backgroundColor: COLORS.primaryLight,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: wp('35%'),
+    height: wp('30%'),
+    marginTop: wp('4%'),
+    marginRight: wp('2%'),
+  },
+  mt1: {
+    marginTop: wp('2%'),
+  },
+  close: {
+    backgroundColor: COLORS.white,
+    borderRadius: 9999,
+    padding: wp('1%'),
+    position: 'absolute',
   },
 });

@@ -88,6 +88,14 @@ export const api = createApi({
       }),
       invalidatesTags: ['Category'],
     }),
+    createService: builder.mutation({
+      query: payload => ({
+        url: '/service/create',
+        method: 'POST',
+        body: payload,
+      }),
+      invalidatesTags: ['Service'],
+    }),
     getServiceByCategory: builder.mutation({
       query: payload => ({
         url: `/service/category/${payload.category}`,
@@ -197,6 +205,7 @@ export const {
   useGetAddressMutation,
   useGetCategoryMutation,
   useGetCategoryByNameMutation,
+  useCreateServiceMutation,
   useGetServiceByCategoryMutation,
   useGetServiceDetailsMutation,
   useFilterServiceMutation,
