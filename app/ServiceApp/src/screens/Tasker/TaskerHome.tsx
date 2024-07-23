@@ -25,7 +25,6 @@ const screenWidth = Dimensions.get('window').width;
 
 const TaskerHome = () => {
   const navigation = useNavigation<StackNavigation>();
-
   const [date] = useState(new Date());
 
   return (
@@ -99,7 +98,7 @@ const TaskerHome = () => {
             // Initially visible month. Default = Date()
             current={String(date)}
             // Handler which gets executed on day press. Default = undefined
-            onDayPress={day => {
+            onDayPress={(day: any) => {
               console.log('selected day', day);
             }}
             // Month format in calendar title. Formatting values: http://arshaw.com/xdate/#Formatting

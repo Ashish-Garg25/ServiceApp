@@ -32,6 +32,8 @@ import ScreenHeader from '../../components/ScreenHeader';
 import Back from '../../assets/icons/Back';
 import Dollar from '../../assets/icons/Dollar';
 import BriefCase from '../../assets/icons/BriefCase';
+import {useDispatch} from 'react-redux';
+import ServiceSlice from '../../redux/slices/service';
 
 type ServiceType = {
   name: string;
@@ -44,6 +46,7 @@ type ServiceType = {
 
 const TaskerService = () => {
   const navigation = useNavigation<StackNavigation>();
+  const dispatch = useDispatch();
 
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -91,16 +94,15 @@ const TaskerService = () => {
 
   const saveDetails = async () => {
     try {
-      console.log('SERVICE ===', service);
       setLoading(true);
       const response = await createService(service).unwrap();
-      console.log('response ====', response);
       if (response.variant === 'success') {
         Toast.show({
           type: 'success',
           text1: 'Success',
           text2: 'Service created successfully!',
         });
+        dispatch(ServiceSlice.actions.setService(response?.data));
         setLoading(false);
         navigation.navigate('TaskerBottomTab');
       } else {
@@ -113,6 +115,7 @@ const TaskerService = () => {
         text1: 'Error',
         text2: err.message ?? 'Something went wrong',
       });
+      setLoading(false);
     }
   };
 

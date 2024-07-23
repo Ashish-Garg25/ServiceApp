@@ -4,8 +4,7 @@ import UserModel from "../models/user.js";
 export const createService = async (req, res) => {
   try {
     const { userId } = req.user;
-    const { name, image, serviceCategory, about, availaility, rate } =
-      req.body;
+    const { name, image, serviceCategory, about, availaility, rate } = req.body;
 
     const service = await ServiceModel.find({ user: userId });
 
@@ -49,6 +48,21 @@ export const getServices = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(400).json({ msg: "Something went wrong!" });
+  }
+};
+
+export const getServiceBySellerId = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const service = await ServiceModel.find({ user: userId });
+
+    if (!service) {
+      res.status(404).json({ msg: "No service found for this user!" });
+    }
+
+    res.status(202).json(service);
+  } catch (err) {
+    console.log(err);
   }
 };
 
