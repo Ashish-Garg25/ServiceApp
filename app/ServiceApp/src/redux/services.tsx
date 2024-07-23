@@ -9,7 +9,6 @@ const baseQuery = fetchBaseQuery({
   // FOR AUTH HEADERS
   prepareHeaders(headers, {getState}) {
     const token = (getState() as any).user.token;
-    console.log('TOKEN', getState());
     if (token) {
       headers.set('Authorization', `Token ${token}`);
     }
@@ -93,6 +92,13 @@ export const api = createApi({
         url: '/service/create',
         method: 'POST',
         body: payload,
+      }),
+      invalidatesTags: ['Service'],
+    }),
+    getMyService: builder.mutation({
+      query: () => ({
+        url: '/service/seller',
+        method: 'GET',
       }),
       invalidatesTags: ['Service'],
     }),
@@ -206,6 +212,7 @@ export const {
   useGetCategoryMutation,
   useGetCategoryByNameMutation,
   useCreateServiceMutation,
+  useGetMyServiceMutation,
   useGetServiceByCategoryMutation,
   useGetServiceDetailsMutation,
   useFilterServiceMutation,

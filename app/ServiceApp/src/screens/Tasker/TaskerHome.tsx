@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -20,12 +20,28 @@ import SummaryCard from '../../components/SummaryCard';
 import {LineChart} from 'react-native-chart-kit';
 import {StackNavigation} from '../../helpers/interfaces';
 import {Calendar} from 'react-native-calendars';
+import {useGetMyServiceMutation} from '../../redux/services';
+import {useSelector} from 'react-redux';
 
 const screenWidth = Dimensions.get('window').width;
 
 const TaskerHome = () => {
   const navigation = useNavigation<StackNavigation>();
   const [date] = useState(new Date());
+
+  const user = useSelector((state: any) => state.user);
+  const [getMyService] = useGetMyServiceMutation();
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await getMyService({id: user._id}).unwrap();
+        console.log('res ==', response);
+      } catch (err) {
+        console.log('err ==', err);
+      }
+    })();
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
