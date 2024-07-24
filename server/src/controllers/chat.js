@@ -165,7 +165,7 @@ export const sendMessage = async (req, res) => {
     }
 
     if (type === "Offer") {
-      myOffer = await Offers.findById(service);
+      myOffer = await Offers.findById(offer);
     }
 
     const chatMessage = new ChatModel({
