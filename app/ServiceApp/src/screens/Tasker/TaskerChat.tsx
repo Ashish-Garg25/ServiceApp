@@ -159,7 +159,7 @@ const TaskerChat = ({route}: any) => {
     additionalInfo: '',
   });
 
-  const [chats, setChats] = useState([]);
+  const [chats, setChats] = useState<any>([]);
 
   useEffect(() => {
     getChatMessages();
@@ -208,16 +208,17 @@ const TaskerChat = ({route}: any) => {
   };
 
   const sendContract = async () => {
-    console.log('ggg');
     try {
       const payload = JSON.stringify({
         buyerId: content._id,
-        service: content.service,
+        service: chats[0]?.service,
+        task: chats[0]?.task,
         sellerId: user._id,
         startDate: offer.taskStartDate,
         rate: offer.price,
         additionalInfo: offer.additionalInfo,
       });
+
       const response = await createOffer(payload).unwrap();
 
       console.log(response);

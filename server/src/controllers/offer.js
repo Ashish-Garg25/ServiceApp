@@ -16,7 +16,6 @@ export const createOffer = async (req, res) => {
     } = req.body;
 
     console.log(req.body);
-
     if (
       !buyerId ||
       !service ||
@@ -47,8 +46,9 @@ export const createOffer = async (req, res) => {
       const chatMessage = new ChatModel({
         sender: buyerId,
         receiver: sellerId,
-        type: 'Offer',
-        content: '',
+        task,
+        type: "Offer",
+        content: "",
         offer: newOffer._id,
         service: null
       });
