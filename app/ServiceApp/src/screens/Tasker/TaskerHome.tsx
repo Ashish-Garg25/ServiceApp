@@ -21,11 +21,13 @@ import {LineChart} from 'react-native-chart-kit';
 import {StackNavigation} from '../../helpers/interfaces';
 import {Calendar} from 'react-native-calendars';
 import {useGetMyServiceMutation} from '../../redux/services';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import service from '../../redux/slices/service';
 
 const screenWidth = Dimensions.get('window').width;
 
 const TaskerHome = () => {
+  const dispatch = useDispatch();
   const navigation = useNavigation<StackNavigation>();
   const [date] = useState(new Date());
 
@@ -37,11 +39,13 @@ const TaskerHome = () => {
       try {
         const response = await getMyService({id: user._id}).unwrap();
         console.log('res ==', response);
+        dispatch(service.actions.setService(response[0]));
       } catch (err) {
         console.log('err ==', err);
       }
     })();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getMyService, user._id]);
 
   return (
     <SafeAreaView style={styles.container}>

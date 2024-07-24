@@ -120,9 +120,9 @@ export const getChatWithUser = async (req, res) => {
 
 export const sendMessage = async(req, res) => {
   try{
-    const {sender, receiver, content} = req.body;
+    const {sender, receiver, type, content, offer} = req.body;
 
-    if(!sender || !receiver || !content){
+    if(!sender || !receiver || !type ){
       return res.status(400).json({
         message: `All Fields are required`,
         variant: "error"
@@ -132,7 +132,9 @@ export const sendMessage = async(req, res) => {
     const chatMessage = new ChatModel({
       sender,
       receiver,
-      content
+      type,
+      content,
+      offer
     })
 
     await chatMessage.save();

@@ -68,6 +68,7 @@ export const MoreInfo = ({
 const TaskerTaskDetails = ({route}: any) => {
   const navigation = useNavigation<StackNavigation>();
   const user = useSelector((state: any) => state.user);
+  const {currentService} = useSelector((state: any) => state.service);
   const [sendMessage] = useSendMessageMutation();
 
   const {content} = route?.params;
@@ -77,7 +78,9 @@ const TaskerTaskDetails = ({route}: any) => {
       const payload = JSON.stringify({
         sender: user._id,
         receiver: content.user,
+        type: 'Offer',
         content: "Hi! I saw your post and I'm interested",
+        offer: currentService?._id,
       });
 
       const response = await sendMessage(payload).unwrap();
