@@ -79,7 +79,9 @@ const Sender = ({content, user}: any) => {
               ]}>
               {content.content}
             </Text>
-            {content.service && <SmallServiceCard content={content.service} />}
+            {content.service && (
+              <SmallServiceCard content={content.serviceDetails} />
+            )}
           </View>
         </View>
         {user?.profilePic ? (

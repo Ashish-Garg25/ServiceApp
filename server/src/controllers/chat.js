@@ -89,7 +89,7 @@ export const getChatWithUser = async (req, res) => {
       },
       {
         $lookup: {
-          from: "users", // The name of the Users collection in your database
+          from: "users",
           localField: "sender",
           foreignField: "_id",
           as: "senderDetails"
@@ -104,17 +104,53 @@ export const getChatWithUser = async (req, res) => {
         }
       },
       {
+        $facet: {
+          serviceChats: [
+            { $match: { type: "Service" } },
+            {
+              $lookup: {
+                from: "services",
+                localField: "service",
+                foreignField: "_id",
+                as: "serviceDetails"
+              }
+            }
+          ],
+          offerChats: [
+            { $match: { type: "Offer" } },
+            {
+              $lookup: {
+                from: "offers",
+                localField: "offer",
+                foreignField: "_id",
+                as: "offerDetails"
+              }
+            }
+          ]
+        }
+      },
+      {
+        $project: {
+          chats: { $setUnion: ["$serviceChats", "$offerChats"] }
+        }
+      },
+      { $unwind: "$chats" },
+      {
+        $replaceRoot: { newRoot: "$chats" }
+      },
+      {
         $unwind: "$senderDetails"
       },
       {
         $unwind: "$receiverDetails"
       },
       {
-        $sort: { createdAt: 1 } // Optionally, you can sort the messages based on timestamp
+        $sort: { createdAt: 1 }
       }
     ]);
 
     if (chat.length > 0) {
+
       res.status(200).json({ chat });
     } else {
       res.status(404).json({ msg: "No chat found with the specified user!" });
