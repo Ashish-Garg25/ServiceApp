@@ -1,4 +1,6 @@
 import { Schema, model } from "mongoose";
+import offer from "../models/offer.js";
+import ServiceModel from "../models/serivce.js";
 
 // const messageSchema = new Schema(
 //   {
@@ -39,14 +41,19 @@ const chats = new Schema(
     type: {
       type: String,
       enum: {
-        values: ["Chat", "Offer"],
+        values: ["Chat", "Offer", "Service"],
         message: "{VALUE} is not supported"
       },
       required: true
     },
+    service: {
+      type: ServiceModel,
+      required: function () {
+        return this.type === "Service";
+      }
+    },
     offer: {
-      type: Schema.Types.ObjectId,
-      ref: "Offers",
+      type: offer,
       required: function () {
         return this.type === "Offer";
       }

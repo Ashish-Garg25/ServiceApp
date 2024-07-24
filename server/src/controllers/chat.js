@@ -1,5 +1,6 @@
 import ChatModel from "../models/chat.js";
 import UserModel from "../models/user.js";
+import ServiceModel from "../models/serivce.js";
 import { Types } from "mongoose";
 
 export const getAllChats = async (req, res) => {
@@ -42,8 +43,8 @@ export const getAllChats = async (req, res) => {
         }
       }
     ]);
-    
-    console.log('ddd', userChats);
+
+    console.log("ddd", userChats);
 
     if (userChats.length > 0) {
       // Extract user IDs from the result
@@ -67,16 +68,21 @@ export const getAllChats = async (req, res) => {
 
 export const getChatWithUser = async (req, res) => {
   try {
-
-    const {userId} = req.user;
-    const {otherUserId} = req.params;
+    const { userId } = req.user;
+    const { otherUserId } = req.params;
 
     const chat = await ChatModel.aggregate([
       {
         $match: {
           $or: [
-            { sender: new Types.ObjectId(userId), receiver: new Types.ObjectId(otherUserId) },
-            { sender: new Types.ObjectId(otherUserId), receiver: new Types.ObjectId(userId) }
+            {
+              sender: new Types.ObjectId(userId),
+              receiver: new Types.ObjectId(otherUserId)
+            },
+            {
+              sender: new Types.ObjectId(otherUserId),
+              receiver: new Types.ObjectId(userId)
+            }
           ]
         }
       },
@@ -118,11 +124,11 @@ export const getChatWithUser = async (req, res) => {
   }
 };
 
-export const sendMessage = async(req, res) => {
-  try{
-    const {sender, receiver, type, content, offer} = req.body;
+export const sendMessage = async (req, res) => {
+  try {
+    const { sender, receiver, type, content, service, offer } = req.body;
 
-    if(!sender || !receiver || !type ){
+    if (!sender || !receiver || !type) {
       return res.status(400).json({
         message: `All Fields are required`,
         variant: "error"
@@ -134,8 +140,9 @@ export const sendMessage = async(req, res) => {
       receiver,
       type,
       content,
-      offer
-    })
+      offer,
+      service
+    });
 
     await chatMessage.save();
 
@@ -144,9 +151,8 @@ export const sendMessage = async(req, res) => {
       variant: "success",
       data: chatMessage
     });
-
-  }catch(err){
+  } catch (err) {
     console.error(err);
     res.status(500).json({ msg: "Something went wrong!" });
   }
-}
+};
