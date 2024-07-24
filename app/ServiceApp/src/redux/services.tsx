@@ -200,6 +200,14 @@ export const api = createApi({
       }),
       invalidatesTags: ['Offer'],
     }),
+    updateOffer: builder.mutation({
+      query: payload => ({
+        url: '/offer/',
+        method: 'PUT',
+        body: payload,
+      }),
+      invalidatesTags: ['Offer'],
+    }),
   }),
 });
 
@@ -226,4 +234,5 @@ export const {
   useSendMessageMutation,
   useCreateOfferMutation,
   useGetOfferMutation,
+  useUpdateOfferMutation,
 } = api;

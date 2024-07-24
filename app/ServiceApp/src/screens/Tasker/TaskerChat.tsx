@@ -74,9 +74,7 @@ const Sender = ({content, user}: any) => {
             {content.service && (
               <SmallServiceCard content={content.serviceDetails[0]} />
             )}
-            {content.offer && (
-              <SmallOfferCard content={content.offerDetails[0]} />
-            )}
+            {content.offer && <SmallOfferCard content={content} />}
           </View>
         </View>
         {user?.profilePic ? (
@@ -113,7 +111,7 @@ const Receiver = ({content, user}: any) => {
         />
         <View style={{flexGrow: 1}}>
           <Text style={[styles.name, {fontSize: hp('1.6%')}]}>
-            {`${user.firstName} ${user.lastName}`}{' '}
+            {`${user?.firstName} ${user?.lastName}`}{' '}
             <Text style={{fontWeight: '400', fontSize: hp('1.4%')}}>
               {' '}
               {moment(content.createdAt).format('hh:mm a')}
@@ -129,9 +127,7 @@ const Receiver = ({content, user}: any) => {
           {content.service && (
             <SmallServiceCard content={content.serviceDetails[0]} />
           )}
-          {content.offer && (
-            <SmallOfferCard content={content.offerDetails[0]} />
-          )}
+          {content.offer && <SmallOfferCard content={content} />}
         </View>
       </View>
     </View>
@@ -169,7 +165,6 @@ const TaskerChat = ({route}: any) => {
   const getChatMessages = async () => {
     try {
       const response = await getChat({id: content._id}).unwrap();
-      console.log(response.chat);
       setChats(response.chat);
     } catch (err) {
       console.log(err);
@@ -210,13 +205,14 @@ const TaskerChat = ({route}: any) => {
   const sendContract = async () => {
     try {
       const payload = JSON.stringify({
-        buyerId: content._id,
+        buyerId: user._id,
         service: chats[0]?.service,
         task: chats[0]?.task,
-        sellerId: user._id,
+        sellerId: content._id,
         startDate: offer.taskStartDate,
         rate: offer.price,
         additionalInfo: offer.additionalInfo,
+        isSellerMaking: true,
       });
 
       const response = await createOffer(payload).unwrap();
@@ -225,7 +221,7 @@ const TaskerChat = ({route}: any) => {
 
       if (response.variant === 'success') {
         setShow(false);
-        console.log(response.data);
+        getChatMessages();
       }
     } catch (err) {
       console.log(err);
@@ -254,15 +250,17 @@ const TaskerChat = ({route}: any) => {
               {moment(Date()).format('hh:mm a')}
             </Text>
           </View>
-          <Button
-            title="Propose Contract"
-            btnStyles={{
-              width: wp('36%'),
-              marginRight: wp('8%'),
-              paddingVertical: wp('2%'),
-            }}
-            onPress={() => setShow(true)}
-          />
+          {chats[0]?.offerDetails?.length > 0 && (
+            <Button
+              title="Propose Contract"
+              btnStyles={{
+                width: wp('36%'),
+                marginRight: wp('8%'),
+                paddingVertical: wp('2%'),
+              }}
+              onPress={() => setShow(true)}
+            />
+          )}
         </View>
       </View>
 

@@ -12,7 +12,8 @@ export const createOffer = async (req, res) => {
       sellerId,
       startDate,
       rate,
-      additionalInfo
+      additionalInfo,
+      isSellerMaking
     } = req.body;
 
     console.log(req.body);
@@ -44,8 +45,8 @@ export const createOffer = async (req, res) => {
 
     if (newOffer) {
       const chatMessage = new ChatModel({
-        sender: buyerId,
-        receiver: sellerId,
+        sender: isSellerMaking ? sellerId : buyerId,
+        receiver: isSellerMaking ? buyerId : sellerId,
         task,
         type: "Offer",
         content: "",
@@ -113,6 +114,34 @@ export const getAllOfferByUser = async (req, res) => {
     }
   } catch (err) {
     console.log("err", err);
+    res.json({ status: res.status, message: "Something went wrong" });
+  }
+};
+
+export const reschedule = async (req, res) => {
+  try {
+    const { offerId, startDate, rate, additionalInfo } = req.body;
+    const fetchedOffer = await Offers.findById(offerId);
+
+    if (fetchedOffer.status !== 1) {
+      return res.status(400).json({
+        status: 400,
+        error: "Contract in Progress"
+      });
+    }
+
+    if (startDate) fetchedOffer.startDate = startDate;
+    if (rate) fetchedOffer.rate = rate;
+    if (additionalInfo) fetchedOffer.additionalInfo = additionalInfo;
+
+    await fetchedOffer.save();
+
+    return res.json({
+      data: fetchedOffer,
+      variant: "success"
+    });
+  } catch (err) {
+    console.log(err);
     res.json({ status: res.status, message: "Something went wrong" });
   }
 };

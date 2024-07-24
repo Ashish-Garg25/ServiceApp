@@ -3,6 +3,7 @@ import {
   createOffer,
   getAllOfferByUser,
   getOfferDetails,
+  reschedule,
   updateOffer
 } from "../controllers/offer.js";
 import { authencateToken } from "../middlewares/auth.js";
@@ -13,5 +14,6 @@ router.get("/:offerId", authencateToken, getOfferDetails);
 router.get('/offerByUser/:sellerId', authencateToken, getAllOfferByUser);
 router.post("/", authencateToken, createOffer);
 router.put("/", authencateToken, updateOffer);
+router.put("/reschedule", authencateToken, reschedule);
 
 export default router;
