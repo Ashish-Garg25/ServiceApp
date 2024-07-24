@@ -1,4 +1,4 @@
-import offer from "../models/offer.js";
+import Offers from "../models/offer.js";
 import task from "../models/task.js";
 import user from "../models/user.js";
 
@@ -28,7 +28,7 @@ export const createOffer = async (req, res) => {
       return res.json({ msg: "All fields are required" });
     }
 
-    const newOffer = new offer({
+    const newOffer = new Offers({
       buyerId,
       service,
       task,
@@ -60,7 +60,7 @@ export const getOfferDetails = async (req, res) => {
       return res.json({ msg: "All fields are required" });
     }
 
-    const response = await offer.findById(offerId);
+    const response = await Offers.findById(offerId);
 
     if (!response) {
       return res.json({ msg: "No offer found!" });
@@ -90,7 +90,7 @@ export const getAllOfferByUser = async (req, res) => {
       });
     }
 
-    const allOffers = await offer.find({ buyerId: userId, sellerId });
+    const allOffers = await Offers.find({ buyerId: userId, sellerId });
 
     if (allOffers.length > 0) {
       return res.json(allOffers);
@@ -107,7 +107,7 @@ export const updateOffer = async (req, res) => {
   try {
     const { offerId, status } = req.body;
 
-    const fetchedOffer = await offer.findById(offerId);
+    const fetchedOffer = await Offers.findById(offerId);
     const fetchedPost = await task.findById(fetchedOffer.task);
 
     if (!fetchedOffer) {

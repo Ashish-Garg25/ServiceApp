@@ -1,4 +1,4 @@
-import ServiceModel from "../models/serivce.js";
+import Services from "../models/serivce.js";
 import UserModel from "../models/user.js";
 
 export const createService = async (req, res) => {
@@ -6,7 +6,7 @@ export const createService = async (req, res) => {
     const { userId } = req.user;
     const { name, image, serviceCategory, about, availaility, rate } = req.body;
 
-    const service = await ServiceModel.find({ user: userId });
+    const service = await Services.find({ user: userId });
 
     if (service?.length > 2) {
       return res
@@ -14,7 +14,7 @@ export const createService = async (req, res) => {
         .json({ msg: "You have reached the service limit!" });
     }
 
-    const newService = new ServiceModel({
+    const newService = new Services({
       user: userId,
       name,
       image,
@@ -39,7 +39,7 @@ export const createService = async (req, res) => {
 
 export const getServices = async (req, res) => {
   try {
-    const services = await ServiceModel.find({});
+    const services = await Services.find({});
     if (services.length > 0) {
       res.status(201).json({ services });
     } else {
@@ -54,7 +54,7 @@ export const getServices = async (req, res) => {
 export const getServiceBySellerId = async (req, res) => {
   try {
     const { userId } = req.user;
-    const service = await ServiceModel.find({ user: userId });
+    const service = await Services.find({ user: userId });
 
     if (!service) {
       res.status(404).json({ msg: "No service found for this user!" });
@@ -70,7 +70,7 @@ export const getServicesByCategory = async (req, res) => {
   try {
     const { category } = req.params;
 
-    const services = await ServiceModel.find({ serviceCategory: category });
+    const services = await Services.find({ serviceCategory: category });
     if (services.length > 0) {
       const serviceWithDetails = await Promise.all(
         services.map(async (service) => {
@@ -96,7 +96,7 @@ export const getFilteredService = async (req, res) => {
 
     console.log(req.query);
 
-    const services = await ServiceModel.find({ serviceCategory: Category });
+    const services = await Services.find({ serviceCategory: Category });
     if (services.length > 0) {
       let serviceWithDetails = await Promise.all(
         services.map(async (service) => {
@@ -165,7 +165,7 @@ export const getSingleService = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const service = await ServiceModel.findById(id);
+    const service = await Services.findById(id);
     if (service) {
       const originalPoster = await UserModel.findById(service.user);
       const serviceDetails = { service, originalPoster };
@@ -185,13 +185,13 @@ export const updateService = async (req, res) => {
     const { _id, name, image, serviceCategory, about, availaility, rate } =
       req.body;
 
-    const service = await ServiceModel.updateOne(
+    const service = await Services.updateOne(
       { _id: _id },
       { $set: { name, image, serviceCategory, about, availaility, rate } }
     );
 
     if (service.matchedCount > 0) {
-      const updatedService = await ServiceModel.findById(_id);
+      const updatedService = await Services.findById(_id);
       return res.json({
         message: "Service updated successfully",
         variant: "success",
@@ -210,7 +210,7 @@ export const deleteService = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const response = await ServiceModel.deleteOne({ _id });
+    const response = await Services.deleteOne({ _id });
 
     if (response.deletedCount > 0) {
       return res.json({

@@ -1,6 +1,6 @@
 import ChatModel from "../models/chat.js";
 import UserModel from "../models/user.js";
-import ServiceModel from "../models/serivce.js";
+import Services from "../models/serivce.js";
 import OfferModel from "../models/offer.js";
 import { Types } from "mongoose";
 
@@ -161,7 +161,7 @@ export const sendMessage = async (req, res) => {
     }
 
     if(type === 'Service'){
-      myService = await ServiceModel.findById(service);
+      myService = await Services.findById(service);
     }
     
     if(type === 'Offer'){
