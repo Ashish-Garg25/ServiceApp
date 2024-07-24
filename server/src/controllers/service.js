@@ -1,4 +1,4 @@
-import Services from "../models/serivce.js";
+import {Services} from "../models/serivce.js";
 import UserModel from "../models/user.js";
 
 export const createService = async (req, res) => {

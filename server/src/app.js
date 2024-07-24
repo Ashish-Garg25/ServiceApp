@@ -23,10 +23,10 @@ import chatRouter from "./routes/chat.js";
 import user from "./models/user.js";
 import category from "./models/category.js";
 import review from "./models/review.js";
-import Services from "./models/serivce.js";
+import {Services} from "./models/serivce.js";
 import chat from "./models/chat.js";
 import task from "./models/task.js";
-import Offers from "./models/offer.js";
+import {Offers} from "./models/offer.js";
 
 const app = express();
 app.use(express.json());

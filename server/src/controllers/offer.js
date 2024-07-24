@@ -1,4 +1,4 @@
-import Offers from "../models/offer.js";
+import {Offers} from "../models/offer.js";
 import task from "../models/task.js";
 import user from "../models/user.js";
 
