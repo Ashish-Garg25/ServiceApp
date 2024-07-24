@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 import offer from "./offer.js";
-import ServiceModel from "./serivce.js";
+import ServiceModel from "../models/serivce.js";
 
 // const messageSchema = new Schema(
 //   {

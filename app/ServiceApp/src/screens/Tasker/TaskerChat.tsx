@@ -29,6 +29,20 @@ import {useSelector} from 'react-redux';
 import Toast from 'react-native-toast-message';
 import PlaceholderProfilePic from '../../components/PlaceholderProfilePic';
 
+const SmallServiceCard = ({content}: any) => {
+  return (
+    <View>
+      <Image source={{uri: content.image}} style={styles.cardImage} />
+      <Text>{content.name}</Text>
+      <Text numberOfLines={2}>{content.about}</Text>
+      <View>
+        <Text>*****</Text>
+        <Text>{content.rate}</Text>
+      </View>
+    </View>
+  );
+};
+
 const Sender = ({content, user}: any) => {
   return (
     <View
@@ -65,6 +79,7 @@ const Sender = ({content, user}: any) => {
               ]}>
               {content.content}
             </Text>
+            {content.service && <SmallServiceCard content={content.service} />}
           </View>
         </View>
         {user?.profilePic ? (
@@ -400,5 +415,11 @@ const styles = StyleSheet.create({
     bottom: wp('0%'),
     width: wp('100%'),
     alignItems: 'center',
+  },
+  cardImage: {
+    width: wp('60%'),
+    height: hp('10%'),
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
   },
 });

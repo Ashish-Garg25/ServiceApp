@@ -1,6 +1,7 @@
 import ChatModel from "../models/chat.js";
 import UserModel from "../models/user.js";
 import ServiceModel from "../models/serivce.js";
+import OfferModel from "../models/offer.js";
 import { Types } from "mongoose";
 
 export const getAllChats = async (req, res) => {
@@ -128,6 +129,9 @@ export const sendMessage = async (req, res) => {
   try {
     const { sender, receiver, type, content, service, offer } = req.body;
 
+    let myService = {};
+    let myOffer = {};
+
     if (!sender || !receiver || !type) {
       return res.status(400).json({
         message: `All Fields are required`,
@@ -156,13 +160,21 @@ export const sendMessage = async (req, res) => {
       });
     }
 
+    if(type === 'Service'){
+      myService = await ServiceModel.findById(service);
+    }
+    
+    if(type === 'Offer'){
+      myOffer = await OfferModel.findById(service);
+    }
+
     const chatMessage = new ChatModel({
       sender,
       receiver,
       type,
       content,
-      offer,
-      service
+      offer: myOffer,
+      service: myService
     });
 
     await chatMessage.save();
