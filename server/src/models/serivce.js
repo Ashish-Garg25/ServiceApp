@@ -44,5 +44,5 @@ const services = new Schema(
   { timestamps: true }
 );
 
-const Services = model("Services", serviceSchema);
-export { serviceSchema, Services };
+const Services = model("Services", services);
+export { services, Services };

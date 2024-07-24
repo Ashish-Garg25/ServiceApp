@@ -53,5 +53,5 @@ const offers = new Schema(
   { timestamps: true }
 );
 
-const Offers = model("Offers", offerSchema);
-export { offerSchema, Offers };
+const Offers = model("Offers", offers);
+export { offers, Offers };
