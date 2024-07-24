@@ -80,7 +80,7 @@ const TaskerTaskDetails = ({route}: any) => {
         receiver: content.user,
         type: 'Offer',
         content: "Hi! I saw your post and I'm interested",
-        offer: currentService?._id,
+        service: currentService?._id,
       });
 
       const response = await sendMessage(payload).unwrap();

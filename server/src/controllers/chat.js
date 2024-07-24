@@ -135,6 +135,27 @@ export const sendMessage = async (req, res) => {
       });
     }
 
+    if(type === 'Chat' && !content){
+      return res.status(400).json({
+        message: `Content is required`,
+        variant: "error"
+      });
+    }
+
+    if(type === 'Service' && !service){
+      return res.status(400).json({
+        message: `Service is required`,
+        variant: "error"
+      });
+    }
+
+    if(type === 'Offer' && !offer){
+      return res.status(400).json({
+        message: `Offer is required`,
+        variant: "error"
+      });
+    }
+
     const chatMessage = new ChatModel({
       sender,
       receiver,
