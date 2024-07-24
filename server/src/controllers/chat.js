@@ -173,8 +173,8 @@ export const sendMessage = async (req, res) => {
       receiver,
       type,
       content,
-      offer: myOffer ?? null,
-      service: myService ?? null
+      offer: offer ?? null,
+      service: service ?? null
     });
 
     await chatMessage.save();
@@ -182,7 +182,7 @@ export const sendMessage = async (req, res) => {
     return res.json({
       message: "Message sent successfully",
       variant: "success",
-      data: chatMessage
+      data: {...chatMessage, service: myService, offer: myOffer}
     });
   } catch (err) {
     console.error(err);

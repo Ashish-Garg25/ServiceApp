@@ -1,6 +1,4 @@
 import { Schema, model } from "mongoose";
-import { offers } from "./offer.js";
-import { services } from "./serivce.js";
 
 // const messageSchema = new Schema(
 //   {
@@ -47,18 +45,20 @@ const chats = new Schema(
       required: true
     },
     service: {
-      type: services,
+      type: Schema.Types.ObjectId,
+      ref: "Services",
       required: function () {
         return this.type === "Service";
       },
-      default: null
+      default: null,
     },
     offer: {
-      type: offers,
+      type: Schema.Types.ObjectId,
+      ref: "Offers",
       required: function () {
         return this.type === "Offer";
       },
-      default: null
+      default: null,
     },
     content: {
       type: String,
