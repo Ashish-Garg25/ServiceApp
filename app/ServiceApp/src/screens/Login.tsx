@@ -19,13 +19,14 @@ import {useDispatch} from 'react-redux';
 import {setUserDetails} from '../redux/slices/user';
 import Toast from 'react-native-toast-message';
 import Lock from '../assets/icons/Lock';
+import Loading from '../components/Loading';
 
 const Login = () => {
   const navigation = useNavigation<StackNavigation>();
   const [email, setEmail] = useState('Test3@gmail.com');
   const [password, setPassword] = useState('Pass@123');
 
-  const [loginM] = useLoginMutation();
+  const [loginM, {isLoading}] = useLoginMutation();
   const dispatch = useDispatch();
 
   const login = async () => {
@@ -46,7 +47,7 @@ const Login = () => {
         text1: 'Error',
         text2: 'Incorrect Email or Password',
       });
-      console.log(err);
+      console.log('errr ====', err);
     }
   };
 
@@ -77,7 +78,7 @@ const Login = () => {
           Forgot Password?
         </Text>
         <Button
-          title={'Log In'}
+          title={isLoading ? <Loading color={COLORS.white} /> : 'Log In'}
           onPress={login}
           btnStyles={{marginTop: wp('6%')}}
           disabled={emptyString(email) || emptyString(password)}

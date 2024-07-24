@@ -6,10 +6,10 @@ import {
 } from 'react-native-responsive-screen';
 import {COLORS} from '../utils/color';
 
-const Loading = ({text}: any) => {
+const Loading = ({text, color}: any) => {
   return (
     <View style={styles.container}>
-      <ActivityIndicator size={'small'} color={COLORS.primary} />
+      <ActivityIndicator size={'small'} color={color ?? COLORS.primary} />
       {text && <Text style={styles.text}>{text}</Text>}
     </View>
   );

@@ -100,6 +100,8 @@ const ProviderDetails = ({route}: any) => {
 
   const {id} = route.params;
 
+  console.log('ID ========', route.params);
+
   useEffect(() => {
     (async () => {
       const response = await getServiceDetails({id}).unwrap();
