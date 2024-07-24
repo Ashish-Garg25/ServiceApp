@@ -46,18 +46,8 @@ const chats = new Schema(
       },
       required: true
     },
-    service: {
-      type: ServiceModel,
-      required: function () {
-        return this.type === "Service";
-      }
-    },
-    offer: {
-      type: offer,
-      required: function () {
-        return this.type === "Offer";
-      }
-    },
+    service: ServiceModel,
+    offer: offer,
     content: {
       type: String,
       required: function () {
