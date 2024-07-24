@@ -78,7 +78,7 @@ const TaskerTaskDetails = ({route}: any) => {
       const payload = JSON.stringify({
         sender: user._id,
         receiver: content.user,
-        type: 'Offer',
+        type: 'Service',
         content: "Hi! I saw your post and I'm interested",
         service: currentService?._id,
       });

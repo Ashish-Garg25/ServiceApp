@@ -1,7 +1,7 @@
 import ChatModel from "../models/chat.js";
 import UserModel from "../models/user.js";
-import {Services} from "../models/serivce.js";
-import {Offers} from "../models/offer.js";
+import { Services } from "../models/serivce.js";
+import { Offers } from "../models/offer.js";
 import { Types } from "mongoose";
 
 export const getAllChats = async (req, res) => {
@@ -139,32 +139,32 @@ export const sendMessage = async (req, res) => {
       });
     }
 
-    if(type === 'Chat' && !content){
+    if (type === "Chat" && !content) {
       return res.status(400).json({
         message: `Content is required`,
         variant: "error"
       });
     }
 
-    if(type === 'Service' && !service){
+    if (type === "Service" && !service) {
       return res.status(400).json({
         message: `Service is required`,
         variant: "error"
       });
     }
 
-    if(type === 'Offer' && !offer){
+    if (type === "Offer" && !offer) {
       return res.status(400).json({
         message: `Offer is required`,
         variant: "error"
       });
     }
 
-    if(type === 'Service'){
+    if (type === "Service") {
       myService = await Services.findById(service);
     }
-    
-    if(type === 'Offer'){
+
+    if (type === "Offer") {
       myOffer = await Offers.findById(service);
     }
 
@@ -173,8 +173,8 @@ export const sendMessage = async (req, res) => {
       receiver,
       type,
       content,
-      offer: myOffer,
-      service: myService
+      offer: myOffer ?? null,
+      service: myService ?? null
     });
 
     await chatMessage.save();

@@ -50,13 +50,15 @@ const chats = new Schema(
       type: services,
       required: function () {
         return this.type === "Service";
-      }
+      },
+      default: null
     },
     offer: {
       type: offers,
       required: function () {
         return this.type === "Offer";
-      }
+      },
+      default: null
     },
     content: {
       type: String,
