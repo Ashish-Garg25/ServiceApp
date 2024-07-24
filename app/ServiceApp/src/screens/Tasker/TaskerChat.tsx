@@ -24,24 +24,16 @@ import DatePicker from 'react-native-date-picker';
 import Dollar from '../../assets/icons/Dollar';
 import Time from '../../assets/icons/Time';
 import Close from '../../assets/icons/Close';
-import {useGetChatMutation, useSendMessageMutation} from '../../redux/services';
+import {
+  useCreateOfferMutation,
+  useGetChatMutation,
+  useSendMessageMutation,
+} from '../../redux/services';
 import {useSelector} from 'react-redux';
 import Toast from 'react-native-toast-message';
 import PlaceholderProfilePic from '../../components/PlaceholderProfilePic';
-
-const SmallServiceCard = ({content}: any) => {
-  return (
-    <View>
-      <Image source={{uri: content.image}} style={styles.cardImage} />
-      <Text>{content.name}</Text>
-      <Text numberOfLines={2}>{content.about}</Text>
-      <View>
-        <Text>*****</Text>
-        <Text>{content.rate}</Text>
-      </View>
-    </View>
-  );
-};
+import SmallServiceCard from '../../components/SmallServiceCard';
+import SmallOfferCard from '../../components/SmallOfferCard';
 
 const Sender = ({content, user}: any) => {
   return (
@@ -80,7 +72,10 @@ const Sender = ({content, user}: any) => {
               {content.content}
             </Text>
             {content.service && (
-              <SmallServiceCard content={content.serviceDetails} />
+              <SmallServiceCard content={content.serviceDetails[0]} />
+            )}
+            {content.offer && (
+              <SmallOfferCard content={content.offerDetails[0]} />
             )}
           </View>
         </View>
@@ -131,6 +126,12 @@ const Receiver = ({content, user}: any) => {
             ]}>
             {content.content}
           </Text>
+          {content.service && (
+            <SmallServiceCard content={content.serviceDetails[0]} />
+          )}
+          {content.offer && (
+            <SmallOfferCard content={content.offerDetails[0]} />
+          )}
         </View>
       </View>
     </View>
@@ -140,6 +141,7 @@ const Receiver = ({content, user}: any) => {
 const TaskerChat = ({route}: any) => {
   const [getChat] = useGetChatMutation();
   const [sendMessage] = useSendMessageMutation();
+  const [createOffer] = useCreateOfferMutation();
 
   const navigation = useNavigation();
 
@@ -206,8 +208,24 @@ const TaskerChat = ({route}: any) => {
   };
 
   const sendContract = async () => {
+    console.log('ggg');
     try {
-      console.log('www');
+      const payload = JSON.stringify({
+        buyerId: content._id,
+        service: content.service,
+        sellerId: user._id,
+        startDate: offer.taskStartDate,
+        rate: offer.price,
+        additionalInfo: offer.additionalInfo,
+      });
+      const response = await createOffer(payload).unwrap();
+
+      console.log(response);
+
+      if (response.variant === 'success') {
+        setShow(false);
+        console.log(response.data);
+      }
     } catch (err) {
       console.log(err);
     }
@@ -354,7 +372,7 @@ const TaskerChat = ({route}: any) => {
               />
 
               <View style={{marginBottom: wp('4%')}} />
-              <Button title="Propose Contract" onPress={() => sendContract} />
+              <Button title="Propose Contract" onPress={sendContract} />
             </View>
           </View>
         </View>
@@ -379,7 +397,7 @@ const styles = StyleSheet.create({
   wrapper: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
   image: {
     width: wp('9%'),
@@ -420,8 +438,9 @@ const styles = StyleSheet.create({
   },
   cardImage: {
     width: wp('60%'),
-    height: hp('10%'),
+    height: hp('20%'),
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
+    marginVertical: wp('2%'),
   },
 });

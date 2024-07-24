@@ -1,6 +1,7 @@
-import {Offers} from "../models/offer.js";
+import { Offers } from "../models/offer.js";
 import task from "../models/task.js";
 import user from "../models/user.js";
+import ChatModel from "../models/chat.js";
 
 export const createOffer = async (req, res) => {
   try {
@@ -41,11 +42,24 @@ export const createOffer = async (req, res) => {
     });
 
     await newOffer.save();
-    return res.json({
-      data: newOffer,
-      message: "Offer created successfully",
-      variant: "success"
-    });
+
+    if (newOffer) {
+      const chatMessage = new ChatModel({
+        sender: buyerId,
+        receiver: sellerId,
+        type: 'Offer',
+        content: '',
+        offer: newOffer._id,
+        service: null
+      });
+
+      await chatMessage.save();
+
+      return res.json({
+        message: "Offer created successfully",
+        variant: "success"
+      });
+    }
   } catch (err) {
     console.log("err", err);
     res.json({ status: res.status, message: "Something went wrong" });

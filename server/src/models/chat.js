@@ -36,6 +36,11 @@ const chats = new Schema(
       required: true,
       trim: true
     },
+    task: {
+      type: Schema.Types.ObjectId,
+      ref: "Tasks",
+      required: true,
+    },
     type: {
       type: String,
       enum: {

@@ -163,7 +163,7 @@ export const getChatWithUser = async (req, res) => {
 
 export const sendMessage = async (req, res) => {
   try {
-    const { sender, receiver, type, content, service, offer } = req.body;
+    const { sender, receiver, task, type, content, service, offer } = req.body;
 
     let myService = {};
     let myOffer = {};
@@ -207,6 +207,7 @@ export const sendMessage = async (req, res) => {
     const chatMessage = new ChatModel({
       sender,
       receiver,
+      task,
       type,
       content,
       offer: offer ?? null,
