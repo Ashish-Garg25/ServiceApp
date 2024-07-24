@@ -97,7 +97,7 @@ export const api = createApi({
     }),
     getMyService: builder.mutation({
       query: () => ({
-        url: '/service/seller',
+        url: '/service/seller/id',
         method: 'GET',
       }),
       invalidatesTags: ['Service'],

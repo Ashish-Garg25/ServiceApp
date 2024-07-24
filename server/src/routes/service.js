@@ -17,7 +17,7 @@ router.get("/", getServices);
 router.get("/:id", getSingleService);
 router.get("/category/:category", getServicesByCategory);
 router.post("/filter/", getFilteredService);
-router.get('/seller/', authencateToken, getServiceBySellerId);
+router.get('/seller/id', authencateToken, getServiceBySellerId);
 router.post("/create", authencateToken, createService);
 router.put("/update", authencateToken, updateService);
 router.delete("/delete/:id", authencateToken, deleteService);

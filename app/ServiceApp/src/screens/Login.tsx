@@ -81,7 +81,7 @@ const Login = () => {
           title={isLoading ? <Loading color={COLORS.white} /> : 'Log In'}
           onPress={login}
           btnStyles={{marginTop: wp('6%')}}
-          disabled={emptyString(email) || emptyString(password)}
+          disabled={isLoading || emptyString(email) || emptyString(password)}
         />
         <Text style={commonStyle.text}>
           Don't have an account yet?{' '}
