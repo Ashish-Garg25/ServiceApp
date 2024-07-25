@@ -1,5 +1,6 @@
 import {Services} from "../models/serivce.js";
 import UserModel from "../models/user.js";
+import review from "../models/review.js";
 
 export const createService = async (req, res) => {
   try {
@@ -104,8 +105,6 @@ export const getFilteredService = async (req, res) => {
           return { service, originalPoster };
         })
       );
-
-      console.log("rrr", serviceWithDetails);
       // Filter services based on Rating
       if (Rating) {
         serviceWithDetails = serviceWithDetails.filter(
@@ -113,16 +112,12 @@ export const getFilteredService = async (req, res) => {
         );
       }
 
-      console.log("eee", serviceWithDetails);
-
       // Filter services based on Earning
       if (Earning) {
         serviceWithDetails = serviceWithDetails.filter(
           (item) => item.originalPoster.earning >= Earning
         );
       }
-
-      console.log("rara", serviceWithDetails);
 
       // Filter services based on Radius
       if (Radius) {
@@ -224,6 +219,50 @@ export const deleteService = async (req, res) => {
     console.log(err);
   }
 };
+
+export const rateService = async(req, res) => {
+  try{
+    const { userId } = req.user;
+    const {service, rating, content} = req.body;
+
+    if(!service || !rating || !content){
+      return res.status(400).json({ msg: "Service does not exist!" });
+    }
+
+    const response = await Services.findById(service);
+
+    if(!response){
+      return res.status(400).json({ msg: "Service does not exist!" });
+    }
+
+    const reviewContent = await review.find({service})
+
+    if(reviewContent?.length > 0 && reviewContent?.some(item => item.user === userId)){
+      return res.status(400).json({ msg: "You have already given a review!" });
+    }
+
+    const newReview = new review({
+      service,
+      rating,
+      content
+    })
+    const data = await newReview.save();
+
+    if(data){
+      response.reviews = data._id;
+
+      await response.save();
+
+      return res.json({
+        message: "Review saved successfully",
+        variant: "success"
+      });
+    }
+
+  }catch(err){
+    console.log(err)
+  }
+}
 
 function calculateDistance(lat1, lon1, lat2, lon2) {
   const R = 6371; // Radius of the Earth in kilometers

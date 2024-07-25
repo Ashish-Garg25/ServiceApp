@@ -150,8 +150,35 @@ const PostCard = ({content, isProvider}: any) => {
   const user = useSelector((state: any) => state.user);
   const navigation = useNavigation<StackNavigation>();
 
+  const getBg = () => {
+    return status === 'Submitted'
+      ? COLORS.primaryLight1
+      : status === 'In Progress'
+      ? COLORS.lightYellow
+      : status === 'Complete'
+      ? COLORS.lightGreen
+      : COLORS.lightRed;
+  };
+
+  const getBorderColor = () => {
+    return status === 'Submitted'
+      ? COLORS.primary
+      : status === 'In Progress'
+      ? COLORS.yellow
+      : status === 'Complete'
+      ? COLORS.green
+      : COLORS.red;
+  };
+
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: getBg(),
+          borderColor: getBorderColor(),
+        },
+      ]}>
       <View>
         {isProvider && (
           <Text
@@ -224,8 +251,10 @@ const PostCard = ({content, isProvider}: any) => {
               btnStyles={{
                 width: wp('30%'),
                 transform: [{scale: 0.9}],
-                backgroundColor: COLORS.primaryLight1,
+                backgroundColor: getBorderColor(),
+                borderColor: getBorderColor(),
               }}
+              textStyles={{color: COLORS.white}}
               outline
             />
           </>
@@ -248,10 +277,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   container: {
-    backgroundColor: COLORS.primaryLight1,
     borderRadius: 12,
     borderLeftWidth: 4,
-    borderColor: COLORS.primary,
     padding: wp('4%'),
     marginHorizontal: wp('2%'),
     width: wp('92%'),

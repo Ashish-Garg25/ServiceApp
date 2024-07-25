@@ -7,6 +7,7 @@ import {
   getServices,
   getServicesByCategory,
   getSingleService,
+  rateService,
   updateService
 } from "../controllers/service.js";
 import { authencateToken } from "../middlewares/auth.js";
@@ -21,5 +22,6 @@ router.get('/seller/id', authencateToken, getServiceBySellerId);
 router.post("/create", authencateToken, createService);
 router.put("/update", authencateToken, updateService);
 router.delete("/delete/:id", authencateToken, deleteService);
+router.post("/rate", authencateToken, rateService);
 
 export default router;

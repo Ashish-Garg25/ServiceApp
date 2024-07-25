@@ -1,6 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
 import {
-  Alert,
   Image,
   SafeAreaView,
   ScrollView,
@@ -26,6 +25,7 @@ import {StackNavigation} from '../helpers/interfaces';
 import ScreenHeader from '../components/ScreenHeader';
 import Back from '../assets/icons/Back';
 import Button from '../components/Button';
+import ConfirmationPopup from '../components/ConfirmationPopup';
 
 export const MoreInfo = ({label, title, right, fullWidth, pill}: any) => {
   return (
@@ -69,6 +69,9 @@ const PostDetails = ({route}: any) => {
   const [taskDetails, {isLoading}] = useGetTaskDetailsMutation();
   const [updateTask] = useUpdateTaskMutation();
 
+  const [isVisible, setIsVisible] = useState(false);
+  const [value, setValue] = useState(0);
+
   const [details, setDetails] = useState<any>({});
 
   useEffect(() => {
@@ -85,13 +88,17 @@ const PostDetails = ({route}: any) => {
 
   const updateTaskDetails = async (status: number) => {
     try {
-      const payload = JSON.stringify({
-        id: route?.params?.id,
-        status: status,
-      });
+      if (status === 3 || status === 4) {
+        const payload = JSON.stringify({
+          id: route?.params?.id,
+          status: status === 3 ? 'Cancelled' : 'Complete',
+        });
 
-      const response = await updateTask(payload).unwrap();
-      console.log('response ===', response);
+        const response = await updateTask(payload).unwrap();
+        console.log('response ===', response);
+      } else {
+        throw 'Status can only be 3 or 4';
+      }
     } catch (err) {
       console.log(err);
     }
@@ -171,68 +178,50 @@ const PostDetails = ({route}: any) => {
             <>
               <Button
                 title={'Complete Task'}
-                onPress={() =>
-                  Alert.alert(
-                    'Complete Task ?',
-                    'Mark this task as complete?',
-                    [
-                      {
-                        text: 'No',
-                        onPress: () => {
-                          console.log('cancel');
-                        },
-                        style: 'default',
-                      },
-                      {
-                        text: 'Confirm',
-                        onPress: () => updateTaskDetails(4),
-                        style: 'destructive',
-                      },
-                    ],
-                  )
-                }
+                onPress={() => {
+                  setIsVisible(true);
+                  setValue(4);
+                }}
                 btnStyles={{
                   width: wp('90%'),
                   backgroundColor: COLORS.green,
-                  marginBottom: wp('4%'),
+                  marginTop: wp('4%'),
                 }}
               />
 
               <Button
                 title={'Cancel Task'}
-                onPress={() =>
-                  Alert.alert(
-                    'Cancel Task ?',
-                    'Are you sure you want to cancel this task?',
-                    [
-                      {
-                        text: 'No',
-                        onPress: () => {
-                          console.log('cancel');
-                        },
-                        style: 'default',
-                      },
-                      {
-                        text: 'Confirm',
-                        onPress: () => updateTaskDetails(3),
-                        style: 'destructive',
-                      },
-                    ],
-                  )
-                }
+                onPress={() => {
+                  setIsVisible(true);
+                  setValue(3);
+                }}
                 outline
                 textStyles={{color: COLORS.red}}
                 btnStyles={{
                   width: wp('90%'),
                   backgroundColor: 'transparent',
-                  marginVertical: wp('2%'),
+                  marginVertical: wp('4%'),
                   borderColor: COLORS.red,
+                  paddingVertical: wp('3%'),
                 }}
               />
             </>
           )}
         </ScrollView>
       </SafeAreaView>
+
+      <ConfirmationPopup
+        visible={isVisible}
+        onClose={() => setIsVisible(false)}
+        onConfirm={() => updateTaskDetails(value)}
+        title={'Are you sure?'}
+        message={
+          value === 3
+            ? 'Are you sure you want to cancel this task? This action cannot be undone.'
+            : 'Are you sure you want to mark this task as complete? This action cannot be undone.'
+        }
+        danger={value === 3}
+      />
     </SafeAreaView>
   );
 };

@@ -34,6 +34,7 @@ import Toast from 'react-native-toast-message';
 import PlaceholderProfilePic from '../components/PlaceholderProfilePic';
 import SmallServiceCard from '../components/SmallServiceCard';
 import SmallOfferCard from '../components/SmallOfferCard';
+import GiveRating from '../components/GiveRating';
 
 const Sender = ({content, user}: any) => {
   return (
@@ -296,13 +297,19 @@ const Chat = ({route}: any) => {
           <FlatList
             data={chats}
             keyExtractor={(item: any) => item._id}
-            renderItem={({item}) =>
-              item.sender === user._id ? (
-                <Sender content={item} user={user} />
-              ) : (
-                <Receiver content={item} />
-              )
-            }
+            renderItem={({item}) => (
+              <>
+                {item.sender === user._id ? (
+                  <Sender content={item} user={user} />
+                ) : (
+                  <Receiver content={item} />
+                )}
+                {item.offerDetails?.length > 0 &&
+                  item.offerDetails[0]?.status === '4' && (
+                    <GiveRating item={item} />
+                  )}
+              </>
+            )}
           />
         </View>
 

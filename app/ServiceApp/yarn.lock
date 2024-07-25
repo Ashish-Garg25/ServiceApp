@@ -5996,6 +5996,35 @@ react-is@^17.0.1:
   resolved "https://registry.npmjs.org/react-is/-/react-is-17.0.2.tgz"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
+react-native-calendars@^1.1304.1:
+  version "1.1306.0"
+  resolved "https://registry.yarnpkg.com/react-native-calendars/-/react-native-calendars-1.1306.0.tgz#6dbd2c117f2c2d5999a0cf0a72eb8031d7b98473"
+  integrity sha512-q+RQsti8Y+sYuCzL8avh/zF5hswZLYBF9ja8eSBhqhluh0Uszyf7xobgurimi1FUXZNM0NoL1G/J3f0V46HE/Q==
+  dependencies:
+    hoist-non-react-statics "^3.3.1"
+    lodash "^4.17.15"
+    memoize-one "^5.2.1"
+    prop-types "^15.5.10"
+    react-native-swipe-gestures "^1.0.5"
+    recyclerlistview "^4.0.0"
+    xdate "^0.8.0"
+  optionalDependencies:
+    moment "^2.29.4"
+
+react-native-chart-kit@^6.12.0:
+  version "6.12.0"
+  resolved "https://registry.yarnpkg.com/react-native-chart-kit/-/react-native-chart-kit-6.12.0.tgz#187a4987a668a85b7e93588c248ed2c33b3a06f6"
+  integrity sha512-nZLGyCFzZ7zmX0KjYeeSV1HKuPhl1wOMlTAqa0JhlyW62qV/1ZPXHgT8o9s8mkFaGxdqbspOeuaa6I9jUQDgnA==
+  dependencies:
+    lodash "^4.17.13"
+    paths-js "^0.4.10"
+    point-in-polygon "^1.0.1"
+
+react-native-collapsible@^1.6.1:
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/react-native-collapsible/-/react-native-collapsible-1.6.1.tgz#27e289831a6955aebde98abff2424a7710f36f02"
+  integrity sha512-orF4BeiXd2hZW7fu9YcqIJXzN6TJcFcddY807D3MAOVktLuW9oQ+RIkrTJ5DR3v9ZOFfREkOjEmS79qeUTvkBQ==
+
 react-native-date-picker@^4.3.4:
   version "4.3.4"
   resolved "https://registry.npmjs.org/react-native-date-picker/-/react-native-date-picker-4.3.4.tgz"
@@ -6052,6 +6081,11 @@ react-native-screens@^3.26.0:
   dependencies:
     react-freeze "^1.0.0"
     warn-once "^0.1.0"
+
+react-native-star-rating-widget@^1.8.0:
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/react-native-star-rating-widget/-/react-native-star-rating-widget-1.8.0.tgz#5e46f3e5fdb4a028e1259ecb4e8a5f3c7fc903cb"
+  integrity sha512-6YzfOWz0NMLXoYJeCuiiflTYJkdp9Lu1/FHF+hO+y03srIoEJwjkuieNFO8zwSa4GtMBEUME6ebsZ5t8IZ2noA==
 
 react-native-svg@^13.14.0:
   version "13.14.0"
