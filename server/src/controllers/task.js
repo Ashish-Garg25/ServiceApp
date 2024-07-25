@@ -148,16 +148,16 @@ export const updateTask = async (req, res) => {
 
     const fetchedOffer = await Offers.find({ task: id });
 
-    if (fetchedOffer) {
+    if (fetchedOffer?.length > 0) {
       if (status === "Cancelled") {
-        fetchedOffer.status = 3;
-        fetchedOffer.statusText = "Cancelled";
+        fetchedOffer[0].status = 3;
+        fetchedOffer[0].statusText = "Cancelled";
       } else if (status === "Complete") {
-        fetchedOffer.status = 4;
-        fetchedOffer.statusText = "Completed";
+        fetchedOffer[0].status = 4;
+        fetchedOffer[0].statusText = "Completed";
       }
 
-      await fetchedOffer.save();
+      await fetchedOffer[0].save();
     }
 
     if (status) taskExist.status = status;

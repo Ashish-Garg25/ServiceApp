@@ -164,7 +164,7 @@ export const api = createApi({
     }),
     updateTask: builder.mutation({
       query: payload => ({
-        url: '/task/',
+        url: `/task/${payload.id}`,
         method: 'PUT',
         body: payload,
       }),
