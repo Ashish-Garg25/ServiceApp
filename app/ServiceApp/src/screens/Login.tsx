@@ -23,7 +23,7 @@ import Loading from '../components/Loading';
 
 const Login = () => {
   const navigation = useNavigation<StackNavigation>();
-  const [email, setEmail] = useState('Test3@gmail.com');
+  const [email, setEmail] = useState('Test2@gmail.com');
   const [password, setPassword] = useState('Pass@123');
 
   const [loginM, {isLoading}] = useLoginMutation();

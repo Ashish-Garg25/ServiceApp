@@ -46,6 +46,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: wp('2%'),
+    width: wp('60%'),
   },
   rate: {
     fontWeight: '700',

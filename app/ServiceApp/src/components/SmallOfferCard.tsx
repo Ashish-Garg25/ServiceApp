@@ -45,7 +45,7 @@ const SmallOfferCard = ({content}: any) => {
       });
 
       const response = await updateOffer(payload).unwrap();
-
+      console.log(response);
       if (response?.variant === 'success') {
         Toast.show({
           type: 'success',
@@ -82,28 +82,29 @@ const SmallOfferCard = ({content}: any) => {
         Rate -{' '}
         <Text style={styles.main}>${content?.offerDetails[0]?.rate}</Text>
       </Text>
-      {contentUser?._id === user?._id && (
-        <>
-          <Button
-            title={'Accept'}
-            onPress={acceptOffer}
-            btnStyles={{
-              width: wp('60%'),
-              transform: [{scale: 0.9}],
-              backgroundColor: COLORS.green,
-              marginBottom: wp('2%'),
-              marginTop: wp('4%'),
-            }}
-          />
-          <Button
-            title={'Decline'}
-            onPress={declineOffer}
-            outline
-            textStyles={{color: COLORS.red}}
-            btnStyles={styles.declineBtn}
-          />
-        </>
-      )}
+      {contentUser?._id === user?._id &&
+        content?.offerDetails[0]?.status === '1' && (
+          <>
+            <Button
+              title={'Accept'}
+              onPress={acceptOffer}
+              btnStyles={{
+                width: wp('60%'),
+                transform: [{scale: 0.9}],
+                backgroundColor: COLORS.green,
+                marginBottom: wp('2%'),
+                marginTop: wp('4%'),
+              }}
+            />
+            <Button
+              title={'Decline'}
+              onPress={declineOffer}
+              outline
+              textStyles={{color: COLORS.red}}
+              btnStyles={styles.declineBtn}
+            />
+          </>
+        )}
     </View>
   );
 };

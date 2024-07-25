@@ -1,5 +1,6 @@
 import task from "../models/task.js";
 import user from "../models/user.js";
+import { Offers } from "../models/offer.js";
 
 export const createTask = async (req, res) => {
   try {
@@ -66,19 +67,20 @@ export const getMyTasks = async (req, res) => {
 
 export const getAllTasks = async (req, res) => {
   try {
+    const { type } = req.params;
 
-    const {type} = req.params;
-
-    if(type === 'all'){
-      const allTasks = await task.find({ status: ["Submitted", "In Progress"] });
+    if (type === "all") {
+      const allTasks = await task.find({
+        status: ["Submitted", "In Progress"]
+      });
       if (allTasks.length > 0) {
         return res.json(allTasks);
       } else {
         return res.json([]);
       }
-    } 
-    
-    if(type === 'completed') {
+    }
+
+    if (type === "completed") {
       const completedTasks = await task.find({ status: "Complete" });
       if (completedTasks.length > 0) {
         return res.json(completedTasks);
@@ -86,7 +88,6 @@ export const getAllTasks = async (req, res) => {
         return res.json([]);
       }
     }
-
   } catch (err) {
     console.log("err", err);
     res.json({ status: res.status, message: "Something went wrong" });
@@ -143,6 +144,20 @@ export const updateTask = async (req, res) => {
         message: `No task found with provided ID`,
         variant: "error"
       });
+    }
+
+    const fetchedOffer = await Offers.find({ task: id });
+
+    if (fetchedOffer) {
+      if (status === "Cancelled") {
+        fetchedOffer.status = 3;
+        fetchedOffer.statusText = "Cancelled";
+      } else if (status === "Complete") {
+        fetchedOffer.status = 4;
+        fetchedOffer.statusText = "Completed";
+      }
+
+      await fetchedOffer.save();
     }
 
     if (status) taskExist.status = status;

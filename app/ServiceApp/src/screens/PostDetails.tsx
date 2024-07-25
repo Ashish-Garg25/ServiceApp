@@ -14,7 +14,10 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {useGetTaskDetailsMutation} from '../redux/services';
+import {
+  useGetTaskDetailsMutation,
+  useUpdateTaskMutation,
+} from '../redux/services';
 import Loading from '../components/Loading';
 import moment from 'moment';
 import Pills from '../components/Pills';
@@ -64,6 +67,7 @@ export const MoreInfo = ({label, title, right, fullWidth, pill}: any) => {
 const PostDetails = ({route}: any) => {
   const navigation = useNavigation<StackNavigation>();
   const [taskDetails, {isLoading}] = useGetTaskDetailsMutation();
+  const [updateTask] = useUpdateTaskMutation();
 
   const [details, setDetails] = useState<any>({});
 
@@ -79,8 +83,18 @@ const PostDetails = ({route}: any) => {
     })();
   }, [route.params.id, taskDetails]);
 
-  const cancelTask = async () => {
-    console.log('Delete Task');
+  const updateTaskDetails = async (status: number) => {
+    try {
+      const payload = JSON.stringify({
+        id: route?.params?.id,
+        status: status,
+      });
+
+      const response = await updateTask(payload).unwrap();
+      console.log('response ===', response);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   if (isLoading) {
@@ -154,34 +168,68 @@ const PostDetails = ({route}: any) => {
           </View>
 
           {details?.status === 'In Progress' && (
-            <Button
-              title={'Cancel Task'}
-              onPress={() =>
-                Alert.alert(
-                  'Cancel Task ?',
-                  'Are you sure you want to cancel this task?',
-                  [
-                    {
-                      text: 'No',
-                      onPress: () => {
-                        console.log('cancel');
+            <>
+              <Button
+                title={'Complete Task'}
+                onPress={() =>
+                  Alert.alert(
+                    'Complete Task ?',
+                    'Mark this task as complete?',
+                    [
+                      {
+                        text: 'No',
+                        onPress: () => {
+                          console.log('cancel');
+                        },
+                        style: 'default',
                       },
-                      style: 'default',
-                    },
-                    {
-                      text: 'Confirm',
-                      onPress: () => cancelTask(),
-                      style: 'destructive',
-                    },
-                  ],
-                )
-              }
-              btnStyles={{
-                width: wp('90%'),
-                backgroundColor: COLORS.danger,
-                marginVertical: wp('4%'),
-              }}
-            />
+                      {
+                        text: 'Confirm',
+                        onPress: () => updateTaskDetails(4),
+                        style: 'destructive',
+                      },
+                    ],
+                  )
+                }
+                btnStyles={{
+                  width: wp('90%'),
+                  backgroundColor: COLORS.green,
+                  marginBottom: wp('4%'),
+                }}
+              />
+
+              <Button
+                title={'Cancel Task'}
+                onPress={() =>
+                  Alert.alert(
+                    'Cancel Task ?',
+                    'Are you sure you want to cancel this task?',
+                    [
+                      {
+                        text: 'No',
+                        onPress: () => {
+                          console.log('cancel');
+                        },
+                        style: 'default',
+                      },
+                      {
+                        text: 'Confirm',
+                        onPress: () => updateTaskDetails(3),
+                        style: 'destructive',
+                      },
+                    ],
+                  )
+                }
+                outline
+                textStyles={{color: COLORS.red}}
+                btnStyles={{
+                  width: wp('90%'),
+                  backgroundColor: 'transparent',
+                  marginVertical: wp('2%'),
+                  borderColor: COLORS.red,
+                }}
+              />
+            </>
           )}
         </ScrollView>
       </SafeAreaView>

@@ -27,13 +27,15 @@ import Close from '../assets/icons/Close';
 import {
   useCreateOfferMutation,
   useGetChatMutation,
-  useGetOfferMutation,
   useSendMessageMutation,
 } from '../redux/services';
 import {useSelector} from 'react-redux';
 import Toast from 'react-native-toast-message';
+import PlaceholderProfilePic from '../components/PlaceholderProfilePic';
+import SmallServiceCard from '../components/SmallServiceCard';
+import SmallOfferCard from '../components/SmallOfferCard';
 
-const Sender = ({content}: any) => {
+const Sender = ({content, user}: any) => {
   return (
     <View
       style={{
@@ -69,21 +71,31 @@ const Sender = ({content}: any) => {
               ]}>
               {content.content}
             </Text>
+            {content.service && (
+              <SmallServiceCard content={content.serviceDetails[0]} />
+            )}
+            {content.offer && <SmallOfferCard content={content} />}
           </View>
         </View>
-        <Image
-          source={{
-            uri: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-          }}
-          style={[styles.image, {marginRight: wp(0), marginLeft: wp('4%')}]}
-          resizeMode="cover"
-        />
+        {user?.profilePic ? (
+          <Image
+            source={{
+              uri: user?.profilePic,
+            }}
+            style={[styles.image, {marginRight: wp(0), marginLeft: wp('4%')}]}
+            resizeMode="cover"
+          />
+        ) : (
+          <View>
+            <PlaceholderProfilePic name={user?.firstName} position={0} />
+          </View>
+        )}
       </View>
     </View>
   );
 };
 
-const Receiver = ({content, user}: any) => {
+const Receiver = ({content}: any) => {
   return (
     <View
       style={{
@@ -93,13 +105,13 @@ const Receiver = ({content, user}: any) => {
       <View style={styles.wrapper}>
         <Image
           source={{
-            uri: 'https://images.unsplash.com/flagged/photo-1570612861542-284f4c12e75f?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+            uri: content.receiverDetails?.profilePic,
           }}
           style={styles.image}
         />
         <View style={{flexGrow: 1}}>
           <Text style={[styles.name, {fontSize: hp('1.6%')}]}>
-            {`${user.firstName} ${user.lastName}`}{' '}
+            {`${content?.receiverDetails?.firstName} ${content?.receiverDetails?.lastName}`}{' '}
             <Text style={{fontWeight: '400', fontSize: hp('1.4%')}}>
               {' '}
               {moment(content.createdAt).format('hh:mm a')}
@@ -112,54 +124,12 @@ const Receiver = ({content, user}: any) => {
             ]}>
             {content.content}
           </Text>
+          {content.service && (
+            <SmallServiceCard content={content.serviceDetails[0]} />
+          )}
+          {content.offer && <SmallOfferCard content={content} />}
         </View>
       </View>
-    </View>
-  );
-};
-
-const SentOffer = ({user, offerSent}: any) => {
-  return (
-    <View
-      style={{
-        backgroundColor: COLORS.lightGreen,
-        padding: wp('2%'),
-        borderRadius: wp('2%'),
-        alignSelf: 'flex-end',
-        marginTop: wp('1%'),
-        marginBottom: wp('4%'),
-        marginLeft: wp('13%'),
-      }}>
-      <Text
-        style={[
-          styles.subText,
-          {
-            fontSize: hp('1.7%'),
-            color: '#000',
-          },
-        ]}>
-        {user.firstName} would like to hire you for their project -{' '}
-        <Text style={styles.boldText}>Need Home Cleaning Service</Text>
-      </Text>
-      <Text style={styles.boldText}>Fixed Price - ${offerSent.rate}</Text>
-      <Text style={styles.boldText}>
-        Time - {moment(offerSent.startDate).format('MMMM Do YYYY, h:mm:ss a')}
-      </Text>
-      <Button
-        outline
-        title="Cancel Offer"
-        btnStyles={{
-          paddingVertical: wp('2%'),
-          width: wp('30%'),
-          marginTop: wp('4%'),
-          marginBottom: wp('2%'),
-          alignSelf: 'flex-end',
-          borderColor: COLORS.red,
-          backgroundColor: COLORS.red,
-        }}
-        textStyles={{color: COLORS.white}}
-        onPress={() => console.log('www')}
-      />
     </View>
   );
 };
@@ -168,7 +138,6 @@ const Chat = ({route}: any) => {
   const [getChat] = useGetChatMutation();
   const [sendMessage] = useSendMessageMutation();
   const [createOffer] = useCreateOfferMutation();
-  const [getOffer] = useGetOfferMutation();
 
   const navigation = useNavigation();
 
@@ -185,24 +154,11 @@ const Chat = ({route}: any) => {
     price: '0',
     additionalInfo: '',
   });
-  const [offerSent, setOfferSent] = useState<any>({});
 
-  const [chats, setChats] = useState([]);
+  const [chats, setChats] = useState<any>([]);
 
   useEffect(() => {
     getChatMessages();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const response = await getOffer({sellerId: content._id}).unwrap();
-        setOfferSent(response[0]);
-      } catch (err) {
-        console.log(err);
-      }
-    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -246,24 +202,26 @@ const Chat = ({route}: any) => {
     }
   };
 
-  const sendOffer = async () => {
-    console.log('ggg');
+  const sendContract = async () => {
     try {
       const payload = JSON.stringify({
         buyerId: user._id,
-        service: '657f3b13cc9feb5f8a36779d',
+        service: chats[0]?.service,
+        task: chats[0]?.task,
         sellerId: content._id,
         startDate: offer.taskStartDate,
         rate: offer.price,
         additionalInfo: offer.additionalInfo,
+        isSellerMaking: true,
       });
+
       const response = await createOffer(payload).unwrap();
 
       console.log(response);
 
       if (response.variant === 'success') {
         setShow(false);
-        setOfferSent(response.data);
+        getChatMessages();
       }
     } catch (err) {
       console.log(err);
@@ -292,16 +250,37 @@ const Chat = ({route}: any) => {
               {moment(Date()).format('hh:mm a')}
             </Text>
           </View>
-          {Object.values(offerSent).length === 0 && (
+
+          {chats?.some(
+            (item: any) =>
+              item?.offerDetails && item?.offerDetails?.status === 1,
+          ) ? (
             <Button
-              title="Hire"
+              title="Reschedule"
               btnStyles={{
-                width: wp('20%'),
+                width: wp('36%'),
                 marginRight: wp('8%'),
                 paddingVertical: wp('2%'),
               }}
-              onPress={() => setShow(true)}
+              onPress={() => {
+                // Handle reschedule logic
+              }}
             />
+          ) : (
+            chats?.some(
+              (item: any) =>
+                item?.offerDetails && item?.offerDetails?.status === 1,
+            ) && (
+              <Button
+                title="Propose Contract"
+                btnStyles={{
+                  width: wp('36%'),
+                  marginRight: wp('8%'),
+                  paddingVertical: wp('2%'),
+                }}
+                onPress={() => setShow(true)}
+              />
+            )
           )}
         </View>
       </View>
@@ -314,18 +293,14 @@ const Chat = ({route}: any) => {
           flexGrow: 1,
         }}>
         <View style={{flexGrow: 1}}>
-          {Object.values(offerSent).length > 0 && (
-            <SentOffer user={user} offerSent={offerSent} />
-          )}
-
           <FlatList
             data={chats}
             keyExtractor={(item: any) => item._id}
             renderItem={({item}) =>
               item.sender === user._id ? (
-                <Sender content={item} />
+                <Sender content={item} user={user} />
               ) : (
-                <Receiver content={item} user={content} />
+                <Receiver content={item} />
               )
             }
           />
@@ -417,7 +392,7 @@ const Chat = ({route}: any) => {
               />
 
               <View style={{marginBottom: wp('4%')}} />
-              <Button title="Send Offer" onPress={sendOffer} />
+              <Button title="Propose Contract" onPress={sendContract} />
             </View>
           </View>
         </View>
@@ -434,7 +409,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primaryLight1,
     justifyContent: 'flex-start',
     alignItems: 'center',
-    paddingTop: wp('16%'),
+    paddingTop: wp('4%'),
   },
   main: {
     paddingVertical: wp('2%'),
@@ -442,7 +417,7 @@ const styles = StyleSheet.create({
   wrapper: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
   image: {
     width: wp('9%'),
@@ -480,5 +455,12 @@ const styles = StyleSheet.create({
     bottom: wp('0%'),
     width: wp('100%'),
     alignItems: 'center',
+  },
+  cardImage: {
+    width: wp('60%'),
+    height: hp('20%'),
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    marginVertical: wp('2%'),
   },
 });

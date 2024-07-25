@@ -162,7 +162,14 @@ export const api = createApi({
       }),
       invalidatesTags: ['Task'],
     }),
-
+    updateTask: builder.mutation({
+      query: payload => ({
+        url: '/task/',
+        method: 'PUT',
+        body: payload,
+      }),
+      invalidatesTags: ['Offer'],
+    }),
     getChatList: builder.mutation({
       query: () => ({
         url: '/chat/',
@@ -229,6 +236,7 @@ export const {
   useGetTaskDetailsMutation,
   useGetTaskByTypeMutation,
   useGetInvitedTasksMutation,
+  useUpdateTaskMutation,
   useGetChatListMutation,
   useGetChatMutation,
   useSendMessageMutation,
