@@ -29,6 +29,7 @@ const RegisterNext = () => {
   const navigation = useNavigation<StackNavigation>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   const dispatch = useDispatch();
 
@@ -68,6 +69,25 @@ const RegisterNext = () => {
                 icon={<Lock />}
                 secureTextEntry
               />
+              <Input
+                label="Confirm Password"
+                placeholder="Confirm Password"
+                value={confirmPassword}
+                onChangeText={(e: string) => setConfirmPassword(e)}
+                icon={<Lock />}
+                secureTextEntry
+              />
+
+              {password !== confirmPassword && (
+                <Text
+                  style={{
+                    fontSize: hp('1.6%'),
+                    fontWeight: '400',
+                    color: COLORS.red,
+                  }}>
+                  Password do not match
+                </Text>
+              )}
             </View>
           </View>
           <Button
@@ -78,7 +98,10 @@ const RegisterNext = () => {
               width: wp('90%'),
               alignSelf: 'center',
             }}
-            disabled={[email, password].some(item => emptyString(item))}
+            disabled={
+              [email, password].some(item => emptyString(item)) ||
+              password !== confirmPassword
+            }
           />
         </ScrollView>
       </KeyboardAvoidingView>

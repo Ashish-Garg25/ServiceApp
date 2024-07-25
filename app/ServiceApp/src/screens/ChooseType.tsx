@@ -16,6 +16,7 @@ import {useNavigation} from '@react-navigation/native';
 import {StackNavigation} from '../helpers/interfaces';
 import {setUserDetails} from '../redux/slices/user';
 import Loading from '../components/Loading';
+import Checkbox from '../components/Checkbox';
 
 const ChooseType = () => {
   const [userType, setUserType] = useState(0);
@@ -28,6 +29,9 @@ const ChooseType = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation<StackNavigation>();
 
+  const [isPrivacyChecked, setIsPrivacyChecked] = useState(false);
+  const [isPromotionalChecked, setIsPromotionalChecked] = useState(false);
+
   const submit = async () => {
     try {
       const payload = {
@@ -38,6 +42,8 @@ const ChooseType = () => {
         phone,
         address,
         userType: userType === 1 ? 'Buyer' : userType === 2 ? 'Seller' : 'Both',
+        isPrivacyChecked,
+        isPromotionalChecked,
       };
 
       const res = await createUser(payload).unwrap();
@@ -99,12 +105,35 @@ const ChooseType = () => {
             selected={userType === 3}
           />
         </View>
+        <View style={{marginTop: wp('4%'), marginLeft: wp('2%')}}>
+          <Checkbox
+            label={
+              <Text>
+                I have read and agree to the{' '}
+                <Text style={styles.fw600}>Privacy Policy</Text> and{' '}
+                <Text style={styles.fw600}>Terms of Service</Text>
+              </Text>
+            }
+            onPress={() => setIsPrivacyChecked(!isPrivacyChecked)}
+            isChecked={isPrivacyChecked}
+          />
+          <Checkbox
+            label={
+              <Text>
+                I agree to receive general emails and promotional offers from
+                Mr. Tasker
+              </Text>
+            }
+            onPress={() => setIsPromotionalChecked(!isPromotionalChecked)}
+            isChecked={isPromotionalChecked}
+          />
+        </View>
       </View>
       <Button
         title={isLoading ? <Loading /> : 'Submit'}
         onPress={submit}
         btnStyles={{marginVertical: wp('4%'), width: wp('90%')}}
-        disabled={isLoading || !userType || userType === 0}
+        disabled={isLoading || !userType || userType === 0 || !isPrivacyChecked}
       />
     </SafeAreaView>
   );
@@ -138,4 +167,5 @@ const styles = StyleSheet.create({
     marginLeft: wp('4%'),
     width: wp('90%'),
   },
+  fw600: {fontWeight: '600', color: COLORS.primary},
 });

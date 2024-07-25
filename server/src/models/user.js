@@ -75,10 +75,10 @@ const users = new Schema(
       enum: {
         values: ["Male", "Female", "Others"],
         message: "{VALUE} is not supported"
-      },
+      }
     },
     dob: {
-      type: String,
+      type: String
     },
     userType: {
       type: String,
@@ -115,7 +115,14 @@ const users = new Schema(
       },
       default: null
     },
-    address: [addressSchema]
+    address: [addressSchema],
+    isPrivacyChecked: {
+      type: Boolean,
+      required: true
+    },
+    isPromotionalChecked: {
+      type: Boolean
+    }
   },
   { timestamps: true }
 );

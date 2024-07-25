@@ -5,7 +5,16 @@ import { checkIfExist } from "../helpers/helpers.js";
 
 export const register = async (req, res) => {
   try {
-    const { email, password, firstName, lastName, phone, userType } = req.body;
+    const {
+      email,
+      password,
+      firstName,
+      lastName,
+      phone,
+      userType,
+      isPrivacyChecked,
+      isPromotionalChecked
+    } = req.body;
 
     const { exist } = await checkIfExist(phone);
 
@@ -24,7 +33,9 @@ export const register = async (req, res) => {
       firstName,
       lastName,
       phone,
-      userType
+      userType,
+      isPrivacyChecked,
+      isPromotionalChecked
     });
 
     const token = jwt.sign(
@@ -52,11 +63,11 @@ export const register = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  console.log("gggg")
+  console.log("gggg");
   try {
     const { email, password } = req.body;
 
-    console.log(req.body)
+    console.log(req.body);
 
     const { userFound, exist } = await checkIfExist(email);
 
@@ -132,23 +143,22 @@ function generateUniqueCode() {
   const currentDate = new Date();
 
   const year = currentDate.getFullYear().toString().slice(-2);
-  const month = ('0' + (currentDate.getMonth() + 1)).slice(-2); 
-  const day = ('0' + currentDate.getDate()).slice(-2);
-  const hours = ('0' + currentDate.getHours()).slice(-2);
+  const month = ("0" + (currentDate.getMonth() + 1)).slice(-2);
+  const day = ("0" + currentDate.getDate()).slice(-2);
+  const hours = ("0" + currentDate.getHours()).slice(-2);
 
   const firstFourDigits = year + month + day + hours;
 
-  const randomDigits = ('0' + Math.floor(Math.random() * 100)).slice(-2);
+  const randomDigits = ("0" + Math.floor(Math.random() * 100)).slice(-2);
 
   const uniqueCode = firstFourDigits + randomDigits;
 
   return uniqueCode;
 }
 
-export const sendCode = async(req, res) => {
-  try{
-
-    const {email} = req.body;
+export const sendCode = async (req, res) => {
+  try {
+    const { email } = req.body;
 
     const { userFound, exist } = await checkIfExist(email);
 
@@ -164,35 +174,33 @@ export const sendCode = async(req, res) => {
     const transporter = nodemailer.createTransport({
       // Setup your email transporter (e.g., SMTP, SendGrid, etc.)
       // Example for Gmail:
-      service: 'gmail',
+      service: "gmail",
       auth: {
-        user: '--',
-        pass: '--',
-      },
+        user: "--",
+        pass: "--"
+      }
     });
 
     const mailOptions = {
-      from: '--',
+      from: "--",
       to: email,
-      subject: 'Password Reset',
-      text: `Please enter the code ${code} in app to proceed with password reset.`,
+      subject: "Password Reset",
+      text: `Please enter the code ${code} in app to proceed with password reset.`
     };
-  
+
     await transporter.sendMail(mailOptions);
 
     userFound.code = code;
 
     userFound.save();
-
-  }catch(err){
+  } catch (err) {
     console.log(err);
     res.json({ status: res.status, message: "Something went wrong" });
   }
-}
+};
 
 export const forgotPassword = async (req, res) => {
   try {
-
     const { code, newPassword } = req.body;
     const { userId } = req.user;
 
@@ -205,7 +213,7 @@ export const forgotPassword = async (req, res) => {
       });
     }
 
-    if(userFound.code !== code){
+    if (userFound.code !== code) {
       return res.json({ status: res.status, message: "Incorrect Code" });
     }
 
@@ -215,7 +223,6 @@ export const forgotPassword = async (req, res) => {
     userFound.save();
 
     return res.json({ variant: "success", msg: "Password reset successfully" });
-
   } catch (err) {
     console.log(err);
     res.json({ status: res.status, message: "Something went wrong" });
@@ -258,9 +265,9 @@ export const updateProfile = async (req, res) => {
     }
 
     if (profilePic) userExist.profilePic = profilePic;
-    if(businessName) userExist.businessName = businessName;
-    if(gender) userExist.gender = gender;
-    if(dob) userExist.dob = dob;
+    if (businessName) userExist.businessName = businessName;
+    if (gender) userExist.gender = gender;
+    if (dob) userExist.dob = dob;
     if (phone) userExist.phone = phone;
 
     // ADDRESS UPDATE

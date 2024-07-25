@@ -57,28 +57,28 @@ const ManageAddress = ({route}: any) => {
 
       <View style={styles.wrapper}>
         <Input
-          label={'Address'}
+          label={'Street Address'}
           onChangeText={text => setAddress({...address, address: text})}
-          placeholder={'Enter Address'}
+          placeholder={'Enter Street Address'}
           value={address.address}
-        />
-        <Input
-          label={'Country'}
-          onChangeText={text => setAddress({...address, country: text})}
-          placeholder={'Enter Country'}
-          value={address.country}
-        />
-        <Input
-          label={'State'}
-          onChangeText={text => setAddress({...address, state: text})}
-          placeholder={'Enter State'}
-          value={address.state}
         />
         <Input
           label={'City'}
           onChangeText={text => setAddress({...address, city: text})}
           placeholder={'Enter City'}
           value={address.city}
+        />
+        <Input
+          label={'Province'}
+          onChangeText={text => setAddress({...address, state: text})}
+          placeholder={'Enter State'}
+          value={address.state}
+        />
+        <Input
+          label={'Country'}
+          onChangeText={text => setAddress({...address, country: text})}
+          placeholder={'Enter Country'}
+          value={address.country}
         />
         <Input
           label={'Postal Code'}
