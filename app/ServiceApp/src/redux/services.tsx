@@ -215,6 +215,14 @@ export const api = createApi({
       }),
       invalidatesTags: ['Offer'],
     }),
+    rateService: builder.mutation({
+      query: payload => ({
+        url: '/rate',
+        method: 'POST',
+        body: payload,
+      }),
+      invalidatesTags: ['Service'],
+    }),
   }),
 });
 
@@ -243,4 +251,5 @@ export const {
   useCreateOfferMutation,
   useGetOfferMutation,
   useUpdateOfferMutation,
+  useRateServiceMutation,
 } = api;

@@ -9,11 +9,31 @@ import {
 import StarRating from 'react-native-star-rating-widget';
 import Input from './Input';
 import Button from './Button';
+import {useRateServiceMutation} from '../redux/services';
 
-const GiveRating = () => {
+const GiveRating = ({item}: any) => {
   const [show, setShow] = useState(false);
   const [rating, setRating] = useState(0);
   const [content, setContent] = useState('');
+
+  const [rateService] = useRateServiceMutation();
+
+  const rate = async () => {
+    try {
+      if (item.serviceDetails) {
+        const payload = JSON.stringify({
+          service: item?.serviceDetails[0]?._id,
+          rating,
+          content,
+        });
+
+        const response = await rateService(payload).unwrap();
+        console.log(response);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -61,14 +81,13 @@ const GiveRating = () => {
             />
             <Button
               title={'Rate Service'}
-              onPress={() => {
-                console.log('ggg');
-              }}
+              onPress={rate}
               btnStyles={{
                 width: wp('90%'),
                 backgroundColor: COLORS.green,
                 marginTop: wp('4%'),
               }}
+              disabled={rating === 0 || content === ''}
             />
           </View>
         </View>
