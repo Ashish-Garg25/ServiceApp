@@ -229,6 +229,28 @@ export const forgotPassword = async (req, res) => {
   }
 };
 
+export const updateUser = async(req, res) => {
+  try{
+    const {userId} = req.user;
+
+    const {registrationToken} = req.body;
+    const userExist = await user.findById(userId);
+
+    if (registrationToken) userExist.registrationToken = registrationToken;
+    await userExist.save();
+
+    return res.json({
+      message: "Details updated successfully",
+      variant: "success",
+      data: userExist
+    });
+
+  }catch(err){
+    console.log("err", err);
+    res.json({ status: res.status, message: "Something went wrong" });
+  }
+}
+
 export const updateProfile = async (req, res) => {
   try {
     const { userId } = req.user;

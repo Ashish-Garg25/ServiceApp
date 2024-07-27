@@ -28,6 +28,11 @@ import chat from "./models/chat.js";
 import task from "./models/task.js";
 import {Offers} from "./models/offer.js";
 
+// Firebase
+import { initializeApp } from 'firebase-admin/app';
+
+const firebaseApp = initializeApp();
+
 const app = express();
 app.use(express.json());
 

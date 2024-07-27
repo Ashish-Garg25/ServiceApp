@@ -50,6 +50,9 @@ const users = new Schema(
       required: true,
       trim: true
     },
+    registrationToken: {
+      type: String
+    },
     token: {
       type: String,
       trim: true

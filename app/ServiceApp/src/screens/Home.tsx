@@ -2,6 +2,7 @@
 import {
   FlatList,
   Image,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -23,6 +24,11 @@ import MainHeader from '../components/MainHeader';
 import SearchWrapper from '../components/SearchWrapper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import PushNotification from 'react-native-push-notification';
+import PushNotificationIOS from '@react-native-community/push-notification-ios';
+import notification from '../redux/slices/notification';
+import messaging from '@react-native-firebase/messaging';
+import {getDeviceToken, triggerLocalNotification} from '../helpers/helpers';
 
 const Home = () => {
   const navigation = useNavigation<any>();
@@ -32,9 +38,67 @@ const Home = () => {
 
   const [getCategory] = useGetCategoryMutation();
 
+  // NOTIFICATION HANDLER ====
+
+  useEffect(() => {
+    triggerLocalNotification();
+
+    messaging().setBackgroundMessageHandler(async (remoteMessage: any) => {
+      console.log('Message handled in the background!', remoteMessage);
+    });
+
+    const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
+      console.log('A new FCM message arrived!', JSON.stringify(remoteMessage));
+
+      dispatch(notification.actions.addToUnreadCount());
+
+      let localNotification;
+
+      if (Platform.OS === 'android') {
+        PushNotification.createChannel(
+          {
+            channelId: '1', // (required)
+            channelName: 'Healthpapaya Notifications', // (required)
+            channelDescription: 'Remote Notifications',
+            playSound: true,
+            soundName: 'default',
+            importance: 4,
+            vibrate: true,
+          },
+          () => {
+            PushNotification.localNotification({
+              channelId: '1', // (required) channelId, if the channel doesn't exist, notification will not trigger.
+              ticker: 'My Notification Ticker',
+              playSound: true,
+              soundName: 'default',
+              vibration: 300,
+              priority: 'high',
+              /* Android properties */
+              title: remoteMessage.notification?.title,
+              message: remoteMessage.notification?.body, // (required)
+            });
+          },
+        );
+      } else {
+        localNotification = {
+          id: remoteMessage.messageId,
+          title: remoteMessage.notification.title,
+          body: remoteMessage.notification.body,
+        };
+
+        PushNotificationIOS.addNotificationRequest(localNotification);
+      }
+    });
+
+    return unsubscribe;
+  }, []);
+
   useEffect(() => {
     (async () => {
       try {
+        const fcmToken = await getDeviceToken();
+        console.log('FCM ===', fcmToken);
+
         if (user._id) {
           await AsyncStorage.setItem('user', JSON.stringify(user));
           console.log('User data stored successfully');

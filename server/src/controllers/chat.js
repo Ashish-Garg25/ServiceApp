@@ -3,6 +3,7 @@ import UserModel from "../models/user.js";
 import { Services } from "../models/serivce.js";
 import { Offers } from "../models/offer.js";
 import { Types } from "mongoose";
+import { sendPushNotification } from "../helpers/helpers.js";
 
 export const getAllChats = async (req, res) => {
   try {
@@ -216,11 +217,18 @@ export const sendMessage = async (req, res) => {
 
     await chatMessage.save();
 
+    const receivingUser = await UserModel.findById(receiver);
+
+    if(receivingUser){
+      await sendPushNotification(receivingUser.registrationToken, "You have a new message")
+    }
+
     return res.json({
       message: "Message sent successfully",
       variant: "success",
       data: {...chatMessage, service: myService, offer: myOffer}
     });
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ msg: "Something went wrong!" });

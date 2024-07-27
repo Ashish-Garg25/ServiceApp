@@ -2,6 +2,7 @@ import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import PushNotification from 'react-native-push-notification';
 import {PermissionsAndroid, Platform} from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
+import messaging from '@react-native-firebase/messaging';
 
 navigator.geolocation = require('react-native-geolocation-service');
 
@@ -42,6 +43,20 @@ export function triggerLocalNotification() {
     popInitialNotification: true,
     requestPermissions: true,
   });
+}
+
+export async function getDeviceToken() {
+  try {
+    const fcmToken = await messaging().getToken();
+    if (fcmToken) {
+      return fcmToken;
+    } else {
+      return '';
+    }
+  } catch (err) {
+    console.log('err', err);
+    return '';
+  }
 }
 
 export async function requestLocation(callback: any) {
