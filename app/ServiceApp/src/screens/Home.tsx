@@ -16,7 +16,7 @@ import {
 } from 'react-native-responsive-screen';
 import ServiceCard from '../components/ServiceCard';
 import {COLORS} from '../utils/color';
-import {useGetCategoryMutation} from '../redux/services';
+import {useGetCategoryMutation, usePatchUserMutation} from '../redux/services';
 import {CommonActions, useNavigation} from '@react-navigation/native';
 import {setCategory} from '../redux/slices/category';
 import {useDispatch, useSelector} from 'react-redux';
@@ -37,6 +37,7 @@ const Home = () => {
   const user = useSelector((state: any) => state.user);
 
   const [getCategory] = useGetCategoryMutation();
+  const [patchUser] = usePatchUserMutation();
 
   // NOTIFICATION HANDLER ====
 
@@ -74,8 +75,8 @@ const Home = () => {
               vibration: 300,
               priority: 'high',
               /* Android properties */
-              title: remoteMessage.notification?.title,
-              message: remoteMessage.notification?.body, // (required)
+              title: remoteMessage.data?.title,
+              message: remoteMessage.data?.body, // (required)
             });
           },
         );
@@ -91,13 +92,14 @@ const Home = () => {
     });
 
     return unsubscribe;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     (async () => {
       try {
         const fcmToken = await getDeviceToken();
-        console.log('FCM ===', fcmToken);
+        await patchUser({registrationToken: fcmToken});
 
         if (user._id) {
           await AsyncStorage.setItem('user', JSON.stringify(user));
@@ -114,7 +116,7 @@ const Home = () => {
         console.log(err);
       }
     })();
-  }, [navigation, user]);
+  }, [navigation, patchUser, user]);
 
   useEffect(() => {
     (async () => {

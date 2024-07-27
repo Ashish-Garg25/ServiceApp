@@ -66,6 +66,14 @@ export const api = createApi({
       }),
       invalidatesTags: ['Users'],
     }),
+    patchUser: builder.mutation({
+      query: payload => ({
+        url: '/user',
+        method: 'PATCH',
+        body: payload,
+      }),
+      invalidatesTags: ['Users'],
+    }),
     getAddress: builder.mutation({
       query: () => ({
         url: '/address/',
@@ -231,6 +239,7 @@ export const {
   useLoginMutation,
   useResetPasswordMutation,
   useUpdateUserMutation,
+  usePatchUserMutation,
   useGetAddressMutation,
   useGetCategoryMutation,
   useGetCategoryByNameMutation,

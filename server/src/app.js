@@ -1,5 +1,4 @@
-
-import http from 'http'
+import http from "http";
 import AdminJS from "adminjs";
 import AdminJSExpress from "@adminjs/express";
 import express from "express";
@@ -23,15 +22,22 @@ import chatRouter from "./routes/chat.js";
 import user from "./models/user.js";
 import category from "./models/category.js";
 import review from "./models/review.js";
-import {Services} from "./models/serivce.js";
+import { Services } from "./models/serivce.js";
 import chat from "./models/chat.js";
 import task from "./models/task.js";
-import {Offers} from "./models/offer.js";
+import { Offers } from "./models/offer.js";
 
 // Firebase
-import { initializeApp } from 'firebase-admin/app';
+import admin from "firebase-admin";
 
-const firebaseApp = initializeApp();
+admin.initializeApp({
+  credential: admin.credential.cert({
+    project_id: process.env.PROJECT_ID,
+    private_key_id: process.env.PRIVATE_KEY_ID,
+    private_key: process.env.PRIVATE_KEY,
+    client_email: process.env.CLIENT_EMAIL
+  })
+});
 
 const app = express();
 app.use(express.json());
@@ -78,7 +84,7 @@ const start = async () => {
                 edit: true,
                 show: false,
                 list: false,
-                filter: false,
+                filter: false
               }
             },
             token: {
@@ -86,7 +92,7 @@ const start = async () => {
                 edit: false,
                 show: true,
                 list: false,
-                filter: false,
+                filter: false
               }
             },
             createdAt: {
@@ -94,7 +100,7 @@ const start = async () => {
                 edit: false,
                 show: true,
                 list: true,
-                filter: false,
+                filter: false
               }
             },
             updatedAt: {
@@ -102,7 +108,7 @@ const start = async () => {
                 edit: false,
                 show: true,
                 list: true,
-                filter: false,
+                filter: false
               }
             }
           }
@@ -132,5 +138,5 @@ const start = async () => {
 start();
 
 http.createServer(app).listen(port, (req, res) => {
-  console.log(`SERVER STARTED ON PORT ${port}`)
-})
+  console.log(`SERVER STARTED ON PORT ${port}`);
+});

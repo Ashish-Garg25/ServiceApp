@@ -217,10 +217,11 @@ export const sendMessage = async (req, res) => {
 
     await chatMessage.save();
 
+    const senderDetails = await UserModel.findById(sender);
     const receivingUser = await UserModel.findById(receiver);
 
     if(receivingUser){
-      await sendPushNotification(receivingUser.registrationToken, "You have a new message")
+      await sendPushNotification(receivingUser.registrationToken, { title: `${senderDetails.firstName} sent a new message`, body: `${content}`})
     }
 
     return res.json({
