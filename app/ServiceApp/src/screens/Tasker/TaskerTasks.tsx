@@ -2,6 +2,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import {
   FlatList,
+  Modal,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -26,6 +27,7 @@ import {
 } from '../../redux/services';
 import Loading from '../../components/Loading';
 import ChevronRight from '../../assets/icons/ChevronRight';
+import Close from '../../assets/icons/Close';
 //import {useGetTaskMutation} from '../../redux/services';
 
 const TaskerTasks = () => {
@@ -37,6 +39,8 @@ const TaskerTasks = () => {
   const [tasks, setTasks] = useState([]);
   const [invitedTasks, setInvitedTasks] = useState([]);
   const [currentFilter, setCurrentFilter] = useState('all');
+
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     getTasks();
@@ -121,6 +125,44 @@ const TaskerTasks = () => {
           </TouchableOpacity>
         )}
       />
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showModal}
+        onRequestClose={() => {
+          setShowModal(!showModal);
+        }}>
+        <View style={styles.modalContainer}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              width: wp('92%'),
+              paddingVertical: wp('4%'),
+            }}>
+            <Text style={{fontSize: hp('2.4%'), color: COLORS.black}}>
+              View Invited Tasks
+            </Text>
+            <TouchableOpacity onPress={() => setShowModal(false)}>
+              <Close color={COLORS.black} />
+            </TouchableOpacity>
+          </View>
+
+          <FlatList
+            data={invitedTasks}
+            keyExtractor={(item: any) => item._id}
+            renderItem={({item}) => (
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('TaskerTaskDetails', {content: item})
+                }>
+                <PostCard content={item} isProvider={true} />
+              </TouchableOpacity>
+            )}
+          />
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -200,5 +242,23 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     color: COLORS.black,
     lineHeight: 14,
+  },
+  modalContainer: {
+    flex: 1,
+    marginTop: wp('90%'),
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    backgroundColor: COLORS.white,
+    borderTopLeftRadius: wp('2%'),
+    borderTopRightRadius: wp('2%'),
+    padding: wp('4%'),
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 8,
   },
 });
