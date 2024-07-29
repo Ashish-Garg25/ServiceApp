@@ -24,6 +24,8 @@ import {useNavigation} from '@react-navigation/native';
 import BottomSheet from '../components/BottomSheet';
 import {StackNavigation} from '../helpers/interfaces';
 import {triggerLocalNotification} from '../helpers/helpers';
+import {useDispatch} from 'react-redux';
+import task from '../redux/slices/task';
 
 export const MoreInfo = ({label, title, right}: any) => {
   return (
@@ -93,6 +95,8 @@ const Review = () => {
 
 const ProviderDetails = ({route}: any) => {
   const navigation = useNavigation<StackNavigation>();
+  const dispatch = useDispatch();
+
   const [getServiceDetails, {isLoading}] = useGetServiceDetailsMutation();
 
   const [serivce, setService] = useState<any>({});
@@ -176,13 +180,16 @@ const ProviderDetails = ({route}: any) => {
       <Button
         title={'Send Request'}
         btnStyles={{width: wp('92%'), marginBottom: wp('4%')}}
-        onPress={() => setOpenModal(true)}
+        onPress={() => {
+          setOpenModal(true);
+        }}
       />
       <BottomSheet
         isVisible={openModal}
         handleVisibility={() => setOpenModal(!openModal)}
         handleClick={() => {
           setOpenModal(false);
+          dispatch(task.actions.setInvited(serivce?.originalPoster?._id));
           triggerLocalNotification();
           navigation.navigate('Post', {screen: 'CreatePost'});
         }}

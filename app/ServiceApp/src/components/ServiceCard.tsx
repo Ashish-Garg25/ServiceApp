@@ -4,6 +4,8 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import {useDispatch} from 'react-redux';
+import category from '../redux/slices/category';
 
 type CategoryType = {
   item: {
@@ -15,12 +17,17 @@ type CategoryType = {
 };
 
 const ServiceCard = ({item, navigation}: CategoryType) => {
+  const dispatch = useDispatch();
+
   return (
     <TouchableOpacity
       style={{margin: wp('1.8%')}}
-      onPress={() =>
-        navigation.navigate('Providers', {id: item._id, name: item.name})
-      }>
+      onPress={() => {
+        dispatch(
+          category.actions.setSingleCategory({_id: item._id, name: item.name}),
+        );
+        navigation.navigate('Providers');
+      }}>
       <Image
         source={{
           uri: item.image,

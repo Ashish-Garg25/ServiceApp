@@ -22,6 +22,7 @@ import moment from 'moment';
 import {useCreateTaskMutation} from '../redux/services';
 import Toast from 'react-native-toast-message';
 import {StackNavigation} from '../helpers/interfaces';
+import {useSelector} from 'react-redux';
 
 const PostComplete = ({route}: any) => {
   const [isOpen, setIsOpen] = useState<null | number>(null);
@@ -31,16 +32,18 @@ const PostComplete = ({route}: any) => {
 
   const [createTask] = useCreateTaskMutation();
 
+  const {invited} = useSelector((state: any) => state.task);
+
   const {taskPost, images} = route.params;
 
   const postTask = async () => {
-    console.log('WPORKOING ==========');
     try {
       const payload = {
         ...taskPost,
         taskImages: images,
         categories: taskPost.categories?.map((item: {_id: any}) => item._id),
         taskDate,
+        invited: invited,
       };
 
       console.log('payload ====', payload, taskPost.categories);

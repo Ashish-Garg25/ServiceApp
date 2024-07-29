@@ -95,8 +95,6 @@ const ProviderListings = () => {
   const {singleCategory} = useSelector((state: any) => state.category);
   const [getServiceByCategory, {isLoading}] = useGetServiceByCategoryMutation();
 
-  console.log('SINGLE =====', singleCategory);
-
   const [providers, setProviders] = useState([]);
 
   // const {id, name} = route.params;

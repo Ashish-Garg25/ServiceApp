@@ -12,7 +12,8 @@ export const createTask = async (req, res) => {
       categories,
       taskLocation,
       taskImages,
-      taskDate
+      taskDate,
+      invited
     } = req.body;
 
     const userExist = await user.findById(userId);
@@ -33,10 +34,21 @@ export const createTask = async (req, res) => {
       taskLocation,
       taskImages,
       taskDate,
-      status: "In Progress"
+      status: "In Progress",
+      invited
     });
 
     await newTask.save();
+
+    if (invited) {
+      const userDetails = await user.findById(invited);
+
+      const content = `${userExist.firstName} invited you to apply on their job posting`;
+      await sendPushNotification(userDetails.registrationToken, {
+        title: `You received an Invitation`,
+        body: `${content}`
+      });
+    }
 
     return res.json({
       message: "Task created successfully",
