@@ -9,6 +9,6 @@ router.get('/details/:id', getTaskDetails);
 router.post('/', authencateToken, createTask);
 router.put('/:id', authencateToken, updateTask);
 router.get('/:type', authencateToken, getAllTasks);
-router.get('/invited', authencateToken, getInvitedTasks);
+router.get('/invited/all', authencateToken, getInvitedTasks);
 
 export default router;

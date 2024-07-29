@@ -110,12 +110,16 @@ export const getAllTasks = async (req, res) => {
 export const getInvitedTasks = async (req, res) => {
   try {
     const { userId } = req.user;
+
     const invitedTasks = await task.find({
       $and: [
         { $or: [{ status: "Submitted" }, { status: "In Progress" }] },
         { invited: { $in: [userId] } }
       ]
     });
+
+    // console.log("INVITED ===", invitedTasks)
+
     if (invitedTasks.length > 0) {
       return res.json(invitedTasks);
     } else {
