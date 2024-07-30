@@ -20,6 +20,7 @@ import {setUserDetails} from '../redux/slices/user';
 import Toast from 'react-native-toast-message';
 import Lock from '../assets/icons/Lock';
 import Loading from '../components/Loading';
+import {getCountry} from 'react-native-localize';
 
 const Login = () => {
   const navigation = useNavigation<StackNavigation>();
@@ -36,7 +37,16 @@ const Login = () => {
 
       console.log('rrrr', res);
       dispatch(setUserDetails(res.userFound));
-      if (res?.userFound?.userType === 'Buyer') {
+
+      const country = getCountry();
+
+      console.log(res?.userFound?.userType, country);
+
+      if (res?.userFound?.userType !== 'Buyer' && country !== 'CA') {
+        console.log(res?.userFound?.userType, country);
+
+        navigation.navigate('NotHiring');
+      } else if (res?.userFound?.userType === 'Buyer') {
         navigation.navigate('Home');
       } else {
         navigation.navigate('TaskerRoutes', {screen: 'TaskerBottomTab'});

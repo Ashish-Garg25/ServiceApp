@@ -6,9 +6,9 @@ function Lock(props: IconInterface) {
   return (
     <Svg
       viewBox="0 0 24 24"
-      fill="#000"
-      width={20}
-      height={20}
+      fill={props.color ?? '#000'}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       {...props}>
       <Path
         fillRule="evenodd"

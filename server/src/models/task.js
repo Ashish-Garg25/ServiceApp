@@ -53,7 +53,7 @@ const tasks = new Schema(
         type: Schema.Types.ObjectId,
         ref: "Users",
       }
-    ]
+    ],
   },
   { timestamps: true }
 );

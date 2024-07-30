@@ -9,8 +9,8 @@ function Logout(props: any) {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="#000"
-      width={20}
-      height={20}
+      width={props.size ?? 20}
+      height={props.size ?? 20}
       {...props}>
       <Path
         strokeLinecap="round"

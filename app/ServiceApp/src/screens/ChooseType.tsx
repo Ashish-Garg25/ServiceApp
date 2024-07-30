@@ -17,6 +17,7 @@ import {StackNavigation} from '../helpers/interfaces';
 import {setUserDetails} from '../redux/slices/user';
 import Loading from '../components/Loading';
 import Checkbox from '../components/Checkbox';
+import {getCountry} from 'react-native-localize';
 
 const ChooseType = () => {
   const [userType, setUserType] = useState(0);
@@ -55,8 +56,13 @@ const ChooseType = () => {
           text2: 'Account created successfully!',
         });
 
+        const country = getCountry();
+
         dispatch(setUserDetails(res.data));
-        if (res?.data?.userType === 'Buyer') {
+
+        if (userType !== 1 && country !== 'CA') {
+          navigation.navigate('NotHiring');
+        } else if (res?.data?.userType === 'Buyer') {
           navigation.navigate('Home');
         } else {
           navigation.navigate('TaskerRoutes');
@@ -105,7 +111,8 @@ const ChooseType = () => {
             selected={userType === 3}
           />
         </View>
-        <View style={{marginTop: wp('4%'), marginLeft: wp('2%')}}>
+        <View
+          style={{width: wp('92%'), marginTop: wp('4%'), marginLeft: wp('2%')}}>
           <Checkbox
             label={
               <Text>

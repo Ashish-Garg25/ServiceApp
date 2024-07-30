@@ -152,9 +152,10 @@ export const getTaskDetails = async (req, res) => {
 
 export const updateTask = async (req, res) => {
   try {
-    const { id, status } = req.body;
+    const { id, status, hasDeclined } = req.body;
 
     const taskExist = await task.findById(id);
+    const userExist = await user.findById(taskExist[0].user);
 
     if (!taskExist) {
       return res.status(400).json({
@@ -175,6 +176,17 @@ export const updateTask = async (req, res) => {
       }
 
       await fetchedOffer[0].save();
+    }
+
+    if (hasDeclined){
+      const tasker = await user.findById(taskExist[0].invited[0]);
+      const content = `${tasker.firstName} declined the invitation`;
+      await sendPushNotification(userExist.registrationToken, {
+        title: `Invitation Declined`,
+        body: `${content}`
+      });
+
+      taskExist.invited = [];
     }
 
     if (status) taskExist.status = status;

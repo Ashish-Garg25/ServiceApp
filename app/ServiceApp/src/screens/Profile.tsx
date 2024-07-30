@@ -22,7 +22,6 @@ import DocIcon from '../assets/icons/DocIcon';
 import {useNavigation} from '@react-navigation/native';
 import User from '../assets/icons/User';
 import {StackNavigation} from '../helpers/interfaces';
-import Order from '../assets/icons/Order';
 import Lock from '../assets/icons/Lock';
 import {useSelector} from 'react-redux';
 import PlaceholderProfilePic from '../components/PlaceholderProfilePic';
@@ -32,11 +31,6 @@ const ACTIONS = [
     icon: <User />,
     title: 'Edit Profile',
     link: 'EditProfile',
-  },
-  {
-    icon: <Order />,
-    title: 'My Orders',
-    link: 'MyOrders',
   },
   // {
   //   icon: <WalletIcon />,
@@ -100,7 +94,7 @@ const Profile = () => {
           <Text
             style={styles.name}>{`${user?.firstName} ${user?.lastName}`}</Text>
         </TouchableOpacity>
-        <View style={styles.wrapper}>
+        {/* <View style={styles.wrapper}>
           <View>
             <Text style={[styles.name, styles.value]}>$500.00</Text>
             <Text style={styles.label}>Last Spent</Text>
@@ -115,7 +109,7 @@ const Profile = () => {
             <Text style={[styles.name, styles.value]}>10+</Text>
             <Text style={styles.label}>Reviews</Text>
           </View>
-        </View>
+        </View> */}
 
         {ACTIONS.map(({title, icon, link}) => (
           <ActionCard

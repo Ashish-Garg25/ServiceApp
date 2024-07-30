@@ -105,7 +105,13 @@ export const getAllOfferByUser = async (req, res) => {
       });
     }
 
-    const allOffers = await Offers.find({ buyerId: userId, sellerId });
+    let allOffers;
+
+    if(sellerId){
+      allOffers = await Offers.find({ buyerId: userId, sellerId });
+    } else {
+      allOffers = await Offers.find({ buyerId: userId });
+    }
 
     if (allOffers.length > 0) {
       return res.json(allOffers);

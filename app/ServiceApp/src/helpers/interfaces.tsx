@@ -26,6 +26,7 @@ export type RootStackParamList = {
   TaskerTaskDetails: any;
   TaskerServiceOnboard: any;
   TaskerService: any;
+  NotHiring: any;
 };
 
 export type StackNavigation = NativeStackNavigationProp<RootStackParamList>;

@@ -30,6 +30,58 @@ import ChevronRight from '../../assets/icons/ChevronRight';
 import Close from '../../assets/icons/Close';
 //import {useGetTaskMutation} from '../../redux/services';
 
+const RenderHeader = ({
+  navigation,
+  handleFilter,
+  currentFilter,
+  invitedTasks,
+  handleModal,
+}: any) => {
+  return (
+    <>
+      <ScreenHeader
+        title={'My Tasks'}
+        renderPrefix={<Back size={24} />}
+        navigation={navigation}
+      />
+      {/* My Task Filters Container Starts*/}
+      <View
+        style={{
+          flexDirection: 'row',
+          alignSelf: 'flex-start',
+          paddingHorizontal: 8,
+          marginVertical: hp('2%'),
+          width: wp('100%'),
+          justifyContent: 'space-evenly',
+        }}>
+        <Button
+          title="All Tasks"
+          onPress={() => handleFilter('all')}
+          outline={currentFilter === 'all' ? false : true}
+          btnStyles={{padding: 12, width: wp('40%'), borderRadius: 30}}
+        />
+        <Button
+          title="Completed"
+          onPress={() => handleFilter('completed')}
+          outline={currentFilter === 'completed' ? false : true}
+          btnStyles={{padding: 12, width: wp('40%'), borderRadius: 30}}
+        />
+      </View>
+      {/* My Task Filters Container Ends*/}
+
+      {invitedTasks > 0 && (
+        <TouchableOpacity style={styles.wrapper} onPress={() => handleModal()}>
+          <View>
+            <Text style={styles.text}>You have new invitation</Text>
+            <Text style={styles.smallText}>Click to view them</Text>
+          </View>
+          <ChevronRight />
+        </TouchableOpacity>
+      )}
+    </>
+  );
+};
+
 const TaskerTasks = () => {
   const navigation = useNavigation<StackNavigation>();
 
@@ -50,8 +102,10 @@ const TaskerTasks = () => {
   const getTasks = async () => {
     try {
       const response = await getTaskByType({type: currentFilter}).unwrap();
-      console.log('Response ===', response);
-      setTasks(response);
+      const filteredResponse = response?.filter(
+        (item: any) => item.invited.length === 0,
+      );
+      setTasks(filteredResponse);
     } catch (err) {
       console.log(err);
     }
@@ -60,7 +114,7 @@ const TaskerTasks = () => {
   const getInvited = async () => {
     try {
       const response = await getInvitedTasks({}).unwrap();
-      console.log("invited response ====", response)
+      console.log('INVITED ====', response);
       setInvitedTasks(response);
     } catch (err) {
       console.log(err);
@@ -73,46 +127,6 @@ const TaskerTasks = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScreenHeader
-        title={'My Tasks'}
-        renderPrefix={<Back size={24} />}
-        navigation={navigation}
-      />
-      {/* My Task Filters Container Starts*/}
-      <View
-        style={{
-          flexDirection: 'row',
-          alignSelf: 'flex-start',
-          paddingHorizontal: 8,
-          marginVertical: hp('2%'),
-          width: wp('100%'),
-          justifyContent: 'space-evenly',
-        }}>
-        <Button
-          title="All Tasks"
-          onPress={() => setCurrentFilter('all')}
-          outline={currentFilter === 'all' ? false : true}
-          btnStyles={{padding: 12, width: wp('40%'), borderRadius: 30}}
-        />
-        <Button
-          title="Completed"
-          onPress={() => setCurrentFilter('completed')}
-          outline={currentFilter === 'completed' ? false : true}
-          btnStyles={{padding: 12, width: wp('40%'), borderRadius: 30}}
-        />
-      </View>
-      {/* My Task Filters Container Ends*/}
-
-      {invitedTasks?.length > 0 && (
-        <TouchableOpacity style={styles.wrapper}>
-          <View>
-            <Text style={styles.text}>You have new invitation</Text>
-            <Text style={styles.smallText}>Click to view them</Text>
-          </View>
-          <ChevronRight />
-        </TouchableOpacity>
-      )}
-
       <FlatList
         data={tasks}
         extraData={currentFilter}
@@ -125,6 +139,15 @@ const TaskerTasks = () => {
             <PostCard content={item} isProvider={true} />
           </TouchableOpacity>
         )}
+        ListHeaderComponent={
+          <RenderHeader
+            navigation={navigation}
+            handleFilter={(val: string) => setCurrentFilter(val)}
+            currentFilter={currentFilter}
+            invitedTasks={invitedTasks.length}
+            handleModal={() => setShowModal(true)}
+          />
+        }
       />
       <Modal
         animationType="slide"
@@ -158,7 +181,7 @@ const TaskerTasks = () => {
                 onPress={() =>
                   navigation.navigate('TaskerTaskDetails', {content: item})
                 }>
-                <PostCard content={item} isProvider={true} />
+                <PostCard content={item} isProvider={true} invited={true} />
               </TouchableOpacity>
             )}
           />
@@ -227,6 +250,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    alignSelf: 'center',
     padding: wp('6%'),
     backgroundColor: COLORS.lightGreen,
     width: wp('92%'),
@@ -246,7 +270,7 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     flex: 1,
-    marginTop: wp('90%'),
+    marginTop: wp('30%'),
     justifyContent: 'flex-start',
     alignItems: 'center',
     backgroundColor: COLORS.white,

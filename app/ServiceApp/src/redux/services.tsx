@@ -165,7 +165,7 @@ export const api = createApi({
 
     getInvitedTasks: builder.mutation({
       query: () => ({
-        url: '/task/invited',
+        url: '/task/invited/all',
         method: 'GET',
       }),
       invalidatesTags: ['Task'],
@@ -209,8 +209,8 @@ export const api = createApi({
       invalidatesTags: ['Offer'],
     }),
     getOffer: builder.mutation({
-      query: payload => ({
-        url: `/offer/offerByUser/${payload.sellerId}`,
+      query: ({sellerId}) => ({
+        url: sellerId ? `/offer/user/all/${sellerId}` : '/offer/user/all/',
         method: 'GET',
       }),
       invalidatesTags: ['Offer'],

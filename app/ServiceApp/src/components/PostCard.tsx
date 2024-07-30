@@ -135,9 +135,11 @@ import {useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigation} from '../helpers/interfaces';
 import PlaceholderProfilePic from './PlaceholderProfilePic';
+import {useSendMessageMutation, useUpdateTaskMutation} from '../redux/services';
 
-const PostCard = ({content, isProvider}: any) => {
+const PostCard = ({content, isProvider, invited}: any) => {
   const {
+    _id,
     createdAt,
     description,
     status,
@@ -149,6 +151,10 @@ const PostCard = ({content, isProvider}: any) => {
 
   const user = useSelector((state: any) => state.user);
   const navigation = useNavigation<StackNavigation>();
+
+  const {currentService} = useSelector((state: any) => state.service);
+  const [sendMessage] = useSendMessageMutation();
+  const [updateTask] = useUpdateTaskMutation();
 
   const getBg = () => {
     return status === 'Submitted'
@@ -170,13 +176,47 @@ const PostCard = ({content, isProvider}: any) => {
       : COLORS.red;
   };
 
+  const createChat = async () => {
+    try {
+      const payload = JSON.stringify({
+        sender: user._id,
+        receiver: content.user,
+        task: content._id,
+        type: 'Service',
+        content: "Hi! I saw your post and I'm interested",
+        service: currentService?._id,
+      });
+
+      const response = await sendMessage(payload).unwrap();
+      console.log(response);
+      navigation.navigate('TaskerBottomTab', {screen: 'Messages'});
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const declineTask = async () => {
+    try {
+      const payload = JSON.stringify({
+        id: _id,
+        status: status,
+        hasDeclined: true,
+      });
+
+      const response = await updateTask(payload).unwrap();
+      console.log('response ===', response);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <View
       style={[
         styles.container,
         {
-          backgroundColor: getBg(),
-          borderColor: getBorderColor(),
+          backgroundColor: isProvider ? COLORS.primaryLight1 : getBg(),
+          borderColor: isProvider ? COLORS.black : getBorderColor(),
         },
       ]}>
       <View>
@@ -187,7 +227,7 @@ const PostCard = ({content, isProvider}: any) => {
               {
                 fontSize: hp('2.4%'),
                 paddingBottom: wp('4%'),
-                color: COLORS.primary,
+                color: COLORS.black,
               },
             ]}>
             Request from {clientName}
@@ -211,14 +251,35 @@ const PostCard = ({content, isProvider}: any) => {
       <View style={styles.flex}>
         {isProvider ? (
           <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
-            {(status === 'Submitted' || 'In Progress') && (
+            {status === 'Submitted' && invited ? (
+              <View style={styles.btnWrapper}>
+                <Button
+                  title={'Decline'}
+                  onPress={declineTask}
+                  btnStyles={{
+                    width: wp('40%'),
+                    transform: [{scale: 0.9}],
+                    backgroundColor: COLORS.danger,
+                  }}
+                />
+                <Button
+                  title={'Accept'}
+                  onPress={createChat}
+                  btnStyles={{
+                    width: wp('40%'),
+                    transform: [{scale: 0.9}],
+                    backgroundColor: COLORS.primary,
+                  }}
+                />
+              </View>
+            ) : (
               <Button
                 title={'Apply'}
-                onPress={() => navigation.navigate('Message')}
+                onPress={createChat}
                 btnStyles={{
                   width: wp('84%'),
                   transform: [{scale: 0.9}],
-                  backgroundColor: COLORS.green,
+                  backgroundColor: isProvider ? COLORS.primary : COLORS.green,
                 }}
               />
             )}
@@ -314,5 +375,10 @@ const styles = StyleSheet.create({
     marginTop: wp('2%'),
     paddingTop: wp('3%'),
     width: wp('83%'),
+  },
+  btnWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
 });

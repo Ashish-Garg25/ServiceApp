@@ -8,7 +8,7 @@ function Tick(props: any) {
       fill="none"
       viewBox="0 0 24 24"
       strokeWidth={1.5}
-      stroke="#000"
+      stroke={props.color ?? '#000'}
       width={20}
       height={20}
       {...props}>
