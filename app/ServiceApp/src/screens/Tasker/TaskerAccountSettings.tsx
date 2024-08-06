@@ -16,6 +16,7 @@ import ScreenHeader from '../../components/ScreenHeader';
 import Back from '../../assets/icons/Back';
 import Logout from '../../assets/icons/Logout';
 import Delete from '../../assets/icons/Delete';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ACTIONS = [
   {
@@ -26,7 +27,7 @@ const ACTIONS = [
   {
     icon: <PaymentIcon />,
     title: 'Add Bank Account',
-    link: 'Payment',
+    subTitle: 'Comming Soon',
   },
   {
     icon: <Logout />,
@@ -43,8 +44,18 @@ const ACTIONS = [
 const TaskerAccountSettings = () => {
   const navigation = useNavigation<StackNavigation>();
 
-  const handleLogout = () => {
-    console.log('logout');
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem('user');
+
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [
+          {name: 'Login'},
+          // Add more routes here if necessary
+        ],
+      }),
+    );
   };
 
   const handleDelete = () => {
@@ -90,9 +101,10 @@ const TaskerAccountSettings = () => {
         }}
         selected={false}
       />
-      {ACTIONS.map(({title, icon, link}) => (
+      {ACTIONS.map(({title, subTitle, icon, link}) => (
         <ActionCard
           title={title}
+          subTitle={subTitle}
           icon={icon}
           onPress={() =>
             link === 'logout'

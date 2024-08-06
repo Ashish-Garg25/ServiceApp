@@ -9,11 +9,12 @@ import {COLORS} from '../utils/color';
 
 type ActionCardType = {
   title: string;
-  icon: React.ReactElement;
+  subTitle?: string | undefined;
+  icon: React.ReactElement | null;
   onPress: () => void;
 };
 
-const ActionCard = ({title, icon, onPress}: ActionCardType) => {
+const ActionCard = ({title, subTitle, icon, onPress}: ActionCardType) => {
   return (
     <TouchableOpacity style={styles.actionWrapper} onPress={onPress}>
       <View style={styles.action}>
@@ -23,7 +24,7 @@ const ActionCard = ({title, icon, onPress}: ActionCardType) => {
             styles.name,
             {color: title === 'Delete Account' ? COLORS.red : COLORS.black},
           ]}>
-          {title}
+          {title} <Text style={styles.subTitle}>{subTitle}</Text>
         </Text>
       </View>
       <ChevronRight
@@ -55,5 +56,10 @@ const styles = StyleSheet.create({
     fontSize: hp('1.8%'),
     fontWeight: '500',
     paddingLeft: wp('2%'),
+  },
+  subTitle: {
+    fontSize: hp('1.5%'),
+    fontWeight: '400',
+    color: COLORS.grey,
   },
 });

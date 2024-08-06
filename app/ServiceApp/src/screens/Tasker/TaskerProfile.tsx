@@ -35,12 +35,12 @@ const ACTIONS = [
   {
     icon: <WalletIcon />,
     title: 'Wallet',
-    link: 'Wallet',
+    subTitle: 'Comming Soon',
   },
   {
     icon: <DocIcon />,
     title: 'About',
-    link: 'Terms',
+    link: 'About',
   },
   {
     icon: <Lock />,
@@ -106,11 +106,12 @@ const TaskerProfile = () => {
           </View>
         </View>
 
-        {ACTIONS.map(({title, icon, link}) => (
+        {ACTIONS.map(({title, subTitle, icon, link}) => (
           <ActionCard
             title={title}
+            subTitle={subTitle}
             icon={icon}
-            onPress={() => navigation.navigate(link as never)}
+            onPress={() => link && navigation.navigate(link as never)}
           />
         ))}
       </ScrollView>

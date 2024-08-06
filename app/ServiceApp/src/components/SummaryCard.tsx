@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 20,
     margin: 10,
-    width: '44%',
+    width: '96%',
   },
   label: {
     fontSize: 16,

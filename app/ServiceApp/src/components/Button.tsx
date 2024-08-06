@@ -51,7 +51,8 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
   },
   btnText: {
-    color: 'white',
+    fontFamily: 'Lato-Bold',
+    color: COLORS.white,
     textAlign: 'center',
     fontWeight: '600',
   },
@@ -59,6 +60,6 @@ const styles = StyleSheet.create({
     color: COLORS.primary,
   },
   primaryText: {
-    color: COLORS.white,
+    color: COLORS.black,
   },
 });

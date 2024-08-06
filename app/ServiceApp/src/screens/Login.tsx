@@ -42,7 +42,7 @@ const Login = () => {
 
       console.log(res?.userFound?.userType, country);
 
-      if (res?.userFound?.userType !== 'Buyer' && country !== 'CA') {
+      if (res?.userFound?.userType !== 'Buyer' && country === 'CA') {
         console.log(res?.userFound?.userType, country);
 
         navigation.navigate('NotHiring');

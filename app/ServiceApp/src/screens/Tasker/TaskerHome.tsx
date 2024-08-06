@@ -23,6 +23,7 @@ import {Calendar} from 'react-native-calendars';
 import {useGetMyServiceMutation} from '../../redux/services';
 import {useDispatch, useSelector} from 'react-redux';
 import service from '../../redux/slices/service';
+import Dropdown from '../../components/Dropdown';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -47,6 +48,14 @@ const TaskerHome = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getMyService, user._id]);
 
+  const fetchStats = async (type: string) => {
+    try {
+      console.log(type);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={{width: wp('96%')}}>
@@ -66,15 +75,18 @@ const TaskerHome = () => {
             totalPayment={200}
             bg={COLORS.lightGreen}
           />
-          <SummaryCard
-            label={'Total Revenue'}
-            totalPayment={5000}
-            bg={COLORS.lightRed}
-          />
         </View>
 
         <View>
-          <Text style={styles.label}>Earnings</Text>
+          <View style={styles.flexWrapper}>
+            <Text style={styles.label}>Earnings</Text>
+            <Dropdown
+              dropdownListContent={['Today', 'Weekly', 'Monthly', 'Yearly']}
+              handleDropdown={(value: string) => {
+                fetchStats(value.toLowerCase());
+              }}
+            />
+          </View>
           <LineChart
             data={{
               labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
@@ -189,5 +201,10 @@ const styles = StyleSheet.create({
     marginBottom: wp('4%'),
     marginTop: wp('6%'),
     marginLeft: wp('2%'),
+  },
+  flexWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
 });

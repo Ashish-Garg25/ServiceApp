@@ -13,7 +13,7 @@ export const commonStyle = StyleSheet.create({
     backgroundColor: 'white',
   },
   text: {
-    fontWeight: '500',
+    fontWeight: '400',
     fontSize: hp('1.6%'), // 16
     lineHeight: hp('3%'), // 24
     color: COLORS.secondary,
@@ -21,8 +21,9 @@ export const commonStyle = StyleSheet.create({
     paddingTop: wp('3%'), // 14,
   },
   boldText: {
-    fontWeight: '600',
-    color: COLORS.primary,
+    fontFamily: 'Lato-Bold',
+    fontSize: hp('1.8%'),
+    color: COLORS.black,
   },
   heading: {
     fontWeight: '600',

@@ -41,8 +41,7 @@ const Landing = () => {
   }
 
   return (
-    <View
-      style={[commonStyle.container, {backgroundColor: COLORS.primaryLight}]}>
+    <View style={[commonStyle.container, {backgroundColor: COLORS.white}]}>
       <View style={styles.push}>
         <Logo />
       </View>

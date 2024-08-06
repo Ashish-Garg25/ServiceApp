@@ -15,7 +15,7 @@ const HelpCenter = () => {
 
   const openUrl = async () => {
     try {
-      await Linking.openURL('mailto:serviceApp@gmail.com');
+      await Linking.openURL('mailto:sales@mrtasker.com');
     } catch (err) {
       console.log(err);
     }
@@ -47,7 +47,7 @@ const HelpCenter = () => {
         <Text style={styles.text}>
           Email Us at{' '}
           <Text style={styles.fwBold} onPress={openUrl}>
-            serviceApp@gmail.com
+            sales@mrtasker.com
           </Text>
         </Text>
         <Text style={styles.text} onPress={openCall}>

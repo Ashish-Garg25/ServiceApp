@@ -2,6 +2,7 @@ import { Offers } from "../models/offer.js";
 import task from "../models/task.js";
 import user from "../models/user.js";
 import ChatModel from "../models/chat.js";
+import moment from "moment";
 
 export const createOffer = async (req, res) => {
   try {
@@ -201,6 +202,88 @@ export const updateOffer = async (req, res) => {
     return res.json({
       data: updatedOffer,
       variant: "success"
+    });
+  } catch (err) {
+    console.log(err);
+    res.json({ status: res.status, message: "Something went wrong" });
+  }
+};
+
+export const getCompletedOfferStats = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const { type } = req.query; // Get filter type from query parameters
+    const fetchedOffers = await Offers.find({ sellerId: userId, status: 4 });
+
+    if (fetchedOffers.length === 0) {
+      return res.status(400).json({
+        status: 400,
+        error: "No Stats Available",
+      });
+    }
+
+    const now = moment();
+    let stats = {};
+
+    if (type === "today") {
+      stats = { today: 0 };
+      fetchedOffers.forEach((offer) => {
+        const { rate, startDate } = offer;
+        if (moment(startDate).isSame(now, 'day')) {
+          stats.today += rate;
+        }
+      });
+    } else if (type === "weekly") {
+      stats = {};
+      for (let i = 0; i < 7; i++) {
+        stats[now.clone().subtract(i, 'days').format('YYYY-MM-DD')] = 0;
+      }
+      fetchedOffers.forEach((offer) => {
+        const { rate, startDate } = offer;
+        const dateStr = moment(startDate).format('YYYY-MM-DD');
+        if (stats.hasOwnProperty(dateStr)) {
+          stats[dateStr] += rate;
+        }
+      });
+    } else if (type === "monthly") {
+      stats = {};
+      for (let i = 0; i < 12; i++) {
+        stats[now.clone().subtract(i, 'months').format('YYYY-MM')] = 0;
+      }
+      fetchedOffers.forEach((offer) => {
+        const { rate, startDate } = offer;
+        const monthStr = moment(startDate).format('YYYY-MM');
+        if (stats.hasOwnProperty(monthStr)) {
+          stats[monthStr] += rate;
+        }
+      });
+    } else if (type === "yearly") {
+      stats = {};
+      const currentYear = now.year();
+      for (let i = 0; i < 10; i++) {
+        stats[currentYear - i] = 0;
+      }
+      fetchedOffers.forEach((offer) => {
+        const { rate, startDate } = offer;
+        const year = moment(startDate).year();
+        if (stats.hasOwnProperty(year)) {
+          stats[year] += rate;
+        }
+      });
+    } else {
+      return res.status(400).json({
+        status: 400,
+        error: "Invalid filter type",
+      });
+    }
+
+    // Calculate total rate
+    const total = fetchedOffers.reduce((acc, offer) => acc + offer.rate, 0);
+
+    return res.json({
+      data: stats,
+      total: total,
+      variant: "success",
     });
   } catch (err) {
     console.log(err);

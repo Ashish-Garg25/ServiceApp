@@ -70,7 +70,7 @@ export async function requestLocation(callback: any) {
       const permission = await PermissionsAndroid.request(
         'android.permission.ACCESS_FINE_LOCATION',
       );
-      console.log(permission)
+      console.log(permission);
     }
 
     Geolocation.getCurrentPosition(

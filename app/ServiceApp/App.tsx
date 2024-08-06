@@ -52,6 +52,7 @@ import CustomImage from './src/components/CustomImage';
 import TaskerServiceOnboard from './src/screens/Tasker/TaskerServiceOnboard';
 import TaskerService from './src/screens/Tasker/TaskerService';
 import NotHiring from './src/screens/NotHiring';
+import About from './src/screens/Tasker/About';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -221,6 +222,8 @@ const TaskerProfileStack = () => {
         name={'TaskerAccountSettings'}
         component={TaskerAccountSettings}
       />
+      <Stack.Screen name={'About'} component={About} />
+      <Stack.Screen name={'Terms'} component={Terms} />
     </Stack.Navigator>
   );
 };
