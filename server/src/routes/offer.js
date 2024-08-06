@@ -3,6 +3,7 @@ import {
   createOffer,
   getAllOfferByUser,
   getCompletedOfferStats,
+  getInProgressOffers,
   getOfferDetails,
   reschedule,
   updateOffer
@@ -14,6 +15,7 @@ const router = express.Router();
 router.get("/:offerId", authencateToken, getOfferDetails);
 router.get('/user/all/:sellerId?', authencateToken, getAllOfferByUser);
 router.get('/stats/all/', authencateToken, getCompletedOfferStats);
+router.get('/stats/inProgress/', authencateToken, getInProgressOffers);
 router.post("/", authencateToken, createOffer);
 router.put("/", authencateToken, updateOffer);
 router.put("/reschedule", authencateToken, reschedule);

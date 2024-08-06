@@ -108,7 +108,7 @@ export const getAllOfferByUser = async (req, res) => {
 
     let allOffers;
 
-    if(sellerId){
+    if (sellerId) {
       allOffers = await Offers.find({ buyerId: userId, sellerId });
     } else {
       allOffers = await Offers.find({ buyerId: userId });
@@ -218,7 +218,7 @@ export const getCompletedOfferStats = async (req, res) => {
     if (fetchedOffers.length === 0) {
       return res.status(400).json({
         status: 400,
-        error: "No Stats Available",
+        error: "No Stats Available"
       });
     }
 
@@ -229,18 +229,18 @@ export const getCompletedOfferStats = async (req, res) => {
       stats = { today: 0 };
       fetchedOffers.forEach((offer) => {
         const { rate, startDate } = offer;
-        if (moment(startDate).isSame(now, 'day')) {
+        if (moment(startDate).isSame(now, "day")) {
           stats.today += rate;
         }
       });
     } else if (type === "weekly") {
       stats = {};
       for (let i = 0; i < 7; i++) {
-        stats[now.clone().subtract(i, 'days').format('YYYY-MM-DD')] = 0;
+        stats[now.clone().subtract(i, "days").format("YYYY-MM-DD")] = 0;
       }
       fetchedOffers.forEach((offer) => {
         const { rate, startDate } = offer;
-        const dateStr = moment(startDate).format('YYYY-MM-DD');
+        const dateStr = moment(startDate).format("YYYY-MM-DD");
         if (stats.hasOwnProperty(dateStr)) {
           stats[dateStr] += rate;
         }
@@ -252,15 +252,15 @@ export const getCompletedOfferStats = async (req, res) => {
 
       // Generate stats for each month of the current year
       for (let i = 0; i < currentMonth; i++) {
-        stats[now.clone().year(currentYear).month(i).format('YYYY-MM')] = 0;
+        stats[now.clone().year(currentYear).month(i).format("YYYY-MM")] = 0;
       }
-    
+
       // Aggregate the rates from fetchedOffers
       fetchedOffers.forEach((offer) => {
         const { rate, startDate } = offer;
-        const monthStr = moment(startDate).format('YYYY-MM');
+        const monthStr = moment(startDate).format("YYYY-MM");
         const offerYear = moment(startDate).year();
-    
+
         // Only include offers from the current year
         if (offerYear === currentYear && stats.hasOwnProperty(monthStr)) {
           stats[monthStr] += rate;
@@ -282,7 +282,7 @@ export const getCompletedOfferStats = async (req, res) => {
     } else {
       return res.status(400).json({
         status: 400,
-        error: "Invalid filter type",
+        error: "Invalid filter type"
       });
     }
 
@@ -292,10 +292,89 @@ export const getCompletedOfferStats = async (req, res) => {
     return res.json({
       data: stats,
       total: total,
-      variant: "success",
+      variant: "success"
     });
   } catch (err) {
     console.log(err);
     res.json({ status: res.status, message: "Something went wrong" });
+  }
+};
+
+export const getInProgressOffers = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const { month } = req.query; // Expect month in 'YYYY-MM' format
+
+    // If month is not provided or invalid, default to the current month
+    const now = month ? moment(`${month}`, "YYYY-MM") : moment();
+    const startOfMonth = now.startOf("month").toDate();
+    const endOfMonth = now.endOf("month").toDate();
+
+    // Fetch offers within the specified month
+    const fetchedOffers = await Offers.find({
+      sellerId: userId,
+      status: { $in: [2, 3] },
+      startDate: { $gte: startOfMonth, $lte: endOfMonth }
+    });
+
+    if (fetchedOffers.length === 0) {
+      return res.status(400).json({
+        status: 400,
+        error: "No Stats Available"
+      });
+    }
+
+    const offersWithDetails = await Promise.all(
+      fetchedOffers.map(async (offer) => {
+        let taskDetails = await task.findById(offer.task);
+        delete taskDetails.taskImages;
+        return {
+          _id: offer._id,
+          buyerId: offer.buyerId,
+          sellerId: offer.sellerId,
+          startDate: offer.startDate,
+          rate: offer.rate,
+          status: offer.status,
+          statusText: offer.statusText,
+          task: {
+            _id: taskDetails._id,
+            title: taskDetails.title,
+            description: taskDetails.description,
+            taskType: taskDetails.taskType,
+            taskLocation: taskDetails.taskLocation,
+            taskDate: taskDetails.taskDate,
+            createdAt: taskDetails.createdAt,
+            updatedAt: taskDetails.updatedAt
+          }
+        };
+      })
+    );
+
+    // Group offers by date
+    const groupedOffers = await offersWithDetails.reduce(async (acc, offer) => {
+      const date = moment(offer.startDate).format("YYYY-MM-DD"); // Format the date as 'YYYY-MM-DD'
+
+      // Initialize the date key if it doesn't exist
+      if (!acc[date]) {
+        acc[date] = [];
+      }
+
+      // Add offer to the corresponding date
+      acc[date].push(offer);
+      return acc;
+    }, {});
+
+    console.log(groupedOffers);
+
+    return res.status(200).json({
+      status: 200,
+      data: groupedOffers
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      status: 500,
+      error: "Internal Server Error"
+    });
   }
 };

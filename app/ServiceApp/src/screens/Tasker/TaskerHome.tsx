@@ -19,7 +19,6 @@ import {COLORS} from '../../utils/color';
 import SummaryCard from '../../components/SummaryCard';
 import {LineChart} from 'react-native-chart-kit';
 import {StackNavigation} from '../../helpers/interfaces';
-import {Calendar} from 'react-native-calendars';
 import {
   useGetMyServiceMutation,
   useGetStatsMutation,
@@ -31,13 +30,13 @@ import {formatDate} from '../../helpers/helpers';
 import Empty from '../../components/Empty';
 import Loading from '../../components/Loading';
 import Button from '../../components/Button';
+import MyCalendar from '../../components/MyCalendar';
 
 const screenWidth = Dimensions.get('window').width;
 
 const TaskerHome = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation<StackNavigation>();
-  const [date] = useState(new Date());
 
   const user = useSelector((state: any) => state.user);
 
@@ -136,7 +135,6 @@ const TaskerHome = () => {
                       fetchStats(value?.name?.toLowerCase());
                       setOpenDropdown(false);
                     }}
-
                     customStyles={{left: -80, width: wp('50%')}}
                   />
                 )}
@@ -185,18 +183,7 @@ const TaskerHome = () => {
 
         <View style={{marginVertical: wp('4%')}}>
           <Text style={styles.label}>Calendar</Text>
-          <Calendar
-            // Initially visible month. Default = Date()
-            current={String(date)}
-            // Handler which gets executed on day press. Default = undefined
-            onDayPress={(day: any) => {
-              console.log('selected day', day);
-            }}
-            // Month format in calendar title. Formatting values: http://arshaw.com/xdate/#Formatting
-            monthFormat={'yyyy MM'}
-            // Do not show days of other months in month page. Default = false
-            hideExtraDays={true}
-          />
+          <MyCalendar />
         </View>
         <Image
           source={{
