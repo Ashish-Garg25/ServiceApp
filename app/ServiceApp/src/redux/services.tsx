@@ -231,6 +231,13 @@ export const api = createApi({
       }),
       invalidatesTags: ['Service'],
     }),
+    getStats: builder.mutation({
+      query: ({type}) => ({
+        url: `/offer/stats/all/?type=${type}`,
+        method: 'GET',
+      }),
+      invalidatesTags: ['Service'],
+    }),
   }),
 });
 
@@ -261,4 +268,5 @@ export const {
   useGetOfferMutation,
   useUpdateOfferMutation,
   useRateServiceMutation,
+  useGetStatsMutation,
 } = api;

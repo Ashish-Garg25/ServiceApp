@@ -102,3 +102,43 @@ const getAddress = async (latitude: number, longitude: number) => {
   // setLocation(formattedAddress);
   // handleLocation(formattedAddress);
 };
+
+export function formatDate(dateString: any) {
+  // Split the date string into parts
+  const parts = dateString.split('-');
+
+  if (parts.length === 3) {
+    // Format YYYY-MM-DD
+    const year = parts[0];
+    const month = parseInt(parts[1], 10);
+    const day = parseInt(parts[2], 10);
+
+    // Create a new Date object
+    const date = new Date(year, month - 1, day);
+
+    // Get day and month names
+    const dayName = date.toLocaleDateString('en-US', {day: 'numeric'});
+    const monthName = date.toLocaleDateString('en-US', {month: 'short'});
+
+    // Return formatted date
+    return `${dayName} ${monthName}`;
+  } else if (parts.length === 2) {
+    // Format YYYY-MM
+    const month = parseInt(parts[1], 10);
+
+    // Create a new Date object
+    const date = new Date(2000, month - 1, 1); // The day is arbitrary
+
+    // Get month name
+    const monthName = date.toLocaleDateString('en-US', {month: 'short'});
+
+    // Return formatted month
+    return monthName;
+  } else if (parts.length === 1) {
+    // Format YYYY
+    return dateString;
+  } else {
+    // Handle unexpected format
+    return 'Invalid date format';
+  }
+}

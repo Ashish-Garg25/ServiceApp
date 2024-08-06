@@ -64,5 +64,6 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: 'Inter-Medium',
     fontSize: hp('1.6%'),
+    color: COLORS.black,
   },
 });

@@ -20,10 +20,17 @@ import SummaryCard from '../../components/SummaryCard';
 import {LineChart} from 'react-native-chart-kit';
 import {StackNavigation} from '../../helpers/interfaces';
 import {Calendar} from 'react-native-calendars';
-import {useGetMyServiceMutation} from '../../redux/services';
+import {
+  useGetMyServiceMutation,
+  useGetStatsMutation,
+} from '../../redux/services';
 import {useDispatch, useSelector} from 'react-redux';
 import service from '../../redux/slices/service';
 import Dropdown from '../../components/Dropdown';
+import {formatDate} from '../../helpers/helpers';
+import Empty from '../../components/Empty';
+import Loading from '../../components/Loading';
+import Button from '../../components/Button';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -33,11 +40,22 @@ const TaskerHome = () => {
   const [date] = useState(new Date());
 
   const user = useSelector((state: any) => state.user);
+
   const [getMyService] = useGetMyServiceMutation();
+  const [getStats, {isLoading}] = useGetStatsMutation();
+
+  const [openDropdown, setOpenDropdown] = useState(false);
+  const [dropdownValue, setDropdownValue] = useState('Today');
+
+  const [total, setTotal] = useState(0);
+  const [labels, setLabels] = useState<any>([]);
+  const [values, setValues] = useState<any>([]);
 
   useEffect(() => {
     (async () => {
       try {
+        await fetchStats('today');
+
         const response = await getMyService({id: user._id}).unwrap();
         console.log('res ==', response);
         dispatch(service.actions.setService(response[0]));
@@ -51,6 +69,18 @@ const TaskerHome = () => {
   const fetchStats = async (type: string) => {
     try {
       console.log(type);
+      const response = await getStats({type}).unwrap();
+      if (response.variant === 'success') {
+        setTotal(response.total);
+
+        const labelDatas = Object.keys(response.data);
+
+        const formattedLabels = labelDatas.map(formatDate);
+        const data = Object.values(response.data);
+
+        setLabels(formattedLabels);
+        setValues(data);
+      }
     } catch (err) {
       console.log(err);
     }
@@ -69,61 +99,90 @@ const TaskerHome = () => {
             </Text>
           </View>
         </TouchableOpacity>
+
         <View style={[styles.flex, {marginTop: wp('4%')}]}>
           <SummaryCard
             label={'Profits'}
-            totalPayment={200}
+            totalPayment={total}
             bg={COLORS.lightGreen}
           />
         </View>
 
-        <View>
-          <View style={styles.flexWrapper}>
-            <Text style={styles.label}>Earnings</Text>
-            <Dropdown
-              dropdownListContent={['Today', 'Weekly', 'Monthly', 'Yearly']}
-              handleDropdown={(value: string) => {
-                fetchStats(value.toLowerCase());
+        {isLoading ? (
+          <Loading />
+        ) : labels?.length > 0 && values?.length > 0 ? (
+          <View>
+            <View style={styles.flexWrapper}>
+              <Text style={styles.label}>Earnings</Text>
+              <View>
+                <Button
+                  title={dropdownValue}
+                  outline
+                  onPress={() => setOpenDropdown(!openDropdown)}
+                  btnStyles={{width: wp('30%'), borderColor: COLORS.secondary}}
+                  textStyles={{color: COLORS.secondary}}
+                />
+                {openDropdown && (
+                  <Dropdown
+                    dropdownListContent={[
+                      {id: 1, name: 'Today'},
+                      {id: 2, name: 'Weekly'},
+                      {id: 3, name: 'Monthly'},
+                      {id: 4, name: 'Yearly'},
+                    ]}
+                    handleDropdown={(value: any) => {
+                      console.log(value);
+                      setDropdownValue(value.name ?? dropdownValue);
+                      fetchStats(value?.name?.toLowerCase());
+                      setOpenDropdown(false);
+                    }}
+
+                    customStyles={{left: -80, width: wp('50%')}}
+                  />
+                )}
+              </View>
+            </View>
+            <LineChart
+              data={{
+                labels: labels,
+                datasets: [
+                  {
+                    data: values, // Sample earnings data
+                  },
+                ],
+              }}
+              width={screenWidth - 30} // from react-native
+              height={220}
+              yAxisLabel="$"
+              yAxisSuffix="k"
+              yAxisInterval={1} // optional, defaults to 1
+              chartConfig={{
+                backgroundColor: COLORS.primary,
+                backgroundGradientFrom: COLORS.white,
+                backgroundGradientTo: COLORS.white,
+                decimalPlaces: 0, // optional, defaults to 2dp
+                color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                style: {
+                  borderRadius: 16,
+                },
+                propsForDots: {
+                  r: '6',
+                  strokeWidth: '2',
+                  stroke: '#ffa726',
+                },
+              }}
+              bezier
+              style={{
+                marginVertical: 8,
+                borderRadius: 16,
               }}
             />
           </View>
-          <LineChart
-            data={{
-              labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-              datasets: [
-                {
-                  data: [500, 800, 700, 900, 1000, 1200], // Sample earnings data
-                },
-              ],
-            }}
-            width={screenWidth - 30} // from react-native
-            height={220}
-            yAxisLabel="$"
-            yAxisSuffix="k"
-            yAxisInterval={1} // optional, defaults to 1
-            chartConfig={{
-              backgroundColor: COLORS.primary,
-              backgroundGradientFrom: COLORS.white,
-              backgroundGradientTo: COLORS.white,
-              decimalPlaces: 0, // optional, defaults to 2dp
-              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-              labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-              style: {
-                borderRadius: 16,
-              },
-              propsForDots: {
-                r: '6',
-                strokeWidth: '2',
-                stroke: '#ffa726',
-              },
-            }}
-            bezier
-            style={{
-              marginVertical: 8,
-              borderRadius: 16,
-            }}
-          />
-        </View>
+        ) : (
+          <Empty />
+        )}
+
         <View style={{marginVertical: wp('4%')}}>
           <Text style={styles.label}>Calendar</Text>
           <Calendar

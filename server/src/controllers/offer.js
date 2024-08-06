@@ -247,20 +247,29 @@ export const getCompletedOfferStats = async (req, res) => {
       });
     } else if (type === "monthly") {
       stats = {};
-      for (let i = 0; i < 12; i++) {
-        stats[now.clone().subtract(i, 'months').format('YYYY-MM')] = 0;
+      const currentYear = now.year(); // Get the current year
+      const currentMonth = now.month();
+
+      // Generate stats for each month of the current year
+      for (let i = 0; i < currentMonth; i++) {
+        stats[now.clone().year(currentYear).month(i).format('YYYY-MM')] = 0;
       }
+    
+      // Aggregate the rates from fetchedOffers
       fetchedOffers.forEach((offer) => {
         const { rate, startDate } = offer;
         const monthStr = moment(startDate).format('YYYY-MM');
-        if (stats.hasOwnProperty(monthStr)) {
+        const offerYear = moment(startDate).year();
+    
+        // Only include offers from the current year
+        if (offerYear === currentYear && stats.hasOwnProperty(monthStr)) {
           stats[monthStr] += rate;
         }
       });
     } else if (type === "yearly") {
       stats = {};
       const currentYear = now.year();
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 5; i++) {
         stats[currentYear - i] = 0;
       }
       fetchedOffers.forEach((offer) => {
