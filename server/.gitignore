@@ -1,5 +1,7 @@
 /server/node_modules/
 node_modules/
+/.env
+.env
 /server/settings/service-app-efdfd-firebase-adminsdk-bid5z-e1f009944b.json
 /settings/service-app-efdfd-firebase-adminsdk-bid5z-e1f009944b.json
 service-app-efdfd-firebase-adminsdk-bid5z-e1f009944b.json
