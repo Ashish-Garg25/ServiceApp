@@ -50,6 +50,10 @@ const users = new Schema(
       required: true,
       trim: true
     },
+    phone_verified: {
+      type: Boolean,
+      default: false
+    },
     registrationToken: {
       type: String
     },

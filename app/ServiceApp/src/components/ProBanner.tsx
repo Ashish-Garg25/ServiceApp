@@ -29,8 +29,8 @@ export default ProBanner;
 const styles = StyleSheet.create({
   container: {
     borderWidth: 1,
-    borderColor: COLORS.primaryLight,
-    backgroundColor: COLORS.primaryLight,
+    borderColor: COLORS.lightGreen,
+    backgroundColor: COLORS.lightGreen,
     padding: wp('4%'),
     borderRadius: 16,
     marginTop: wp('4%'),

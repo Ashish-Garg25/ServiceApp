@@ -38,7 +38,7 @@ const ACTIONS = [
   {
     icon: <WalletIcon />,
     title: 'Wallet',
-    subTitle: 'Comming Soon',
+    subTitle: 'Coming Soon',
   },
   {
     icon: <DocIcon />,
@@ -113,14 +113,14 @@ const TaskerProfile = () => {
             style={styles.name}>{`${user.firstName} ${user.lastName}`}</Text>
         </TouchableOpacity>
         <View style={styles.wrapper}>
-          <View>
+          <View style={{alignItems: 'center'}}>
             <Text style={[styles.name, styles.value]}>
               ${stats?.total ?? 0}
             </Text>
             <Text style={styles.label}>Total Revenue</Text>
           </View>
           <View style={styles.hr} />
-          <View>
+          <View style={{alignItems: 'center'}}>
             <Text style={[styles.name, styles.value]}>{stats?.hired ?? 0}</Text>
             <Text style={styles.label}>Hired</Text>
           </View>

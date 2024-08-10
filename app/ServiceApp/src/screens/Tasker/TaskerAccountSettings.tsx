@@ -22,13 +22,13 @@ const ACTIONS = [
   {
     icon: <DocIcon />,
     title: 'Document Check',
-    subTitle: 'Comming Soon',
+    subTitle: 'Coming Soon',
     // link: 'Verification',
   },
   {
     icon: <PaymentIcon />,
     title: 'Add Bank Account',
-    subTitle: 'Comming Soon',
+    subTitle: 'Coming Soon',
   },
   {
     icon: <Logout />,

@@ -2,6 +2,10 @@ import user from "../models/user.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { checkIfExist } from "../helpers/helpers.js";
+import twilio from 'twilio';
+
+
+const client = twilio(process.env.ACCOUNT_SID, process.env.AUTH_TOKEN);
 
 export const register = async (req, res) => {
   try {
@@ -12,6 +16,7 @@ export const register = async (req, res) => {
       lastName,
       phone,
       userType,
+      phone_verified,
       isPrivacyChecked,
       isPromotionalChecked
     } = req.body;
@@ -34,6 +39,7 @@ export const register = async (req, res) => {
       lastName,
       phone,
       userType,
+      phone_verified,
       isPrivacyChecked,
       isPromotionalChecked
     });
@@ -102,6 +108,55 @@ export const login = async (req, res) => {
     res.json({ status: res.status, message: "Something went wrong" });
   }
 };
+
+export const sendOtp = async(req, res) => {
+  try{
+
+    const {phone} = req.body;
+
+    if(!phone){
+      return res.json({ status: res.status, message: "Phone number is required" });
+    }
+
+    const verification = await client.verify.v2
+    .services(process.env.SERVICE_ID)
+    .verifications.create({
+      channel: "sms",
+      to: phone,
+    });
+
+  console.log(verification.status);
+
+  return res.json(verification)
+  }catch(err){
+    console.log(err);
+    res.json({ status: res.status, message: "Something went wrong" });
+  }
+}
+
+export const verifyOtp = async(req, res) => {
+  try{
+
+    const {phone, code} = req.body;
+
+    if(!phone || !code){
+      return res.json({ status: res.status, message: "Phone number and code is required" });
+    }
+
+    const verification = await client.verify.v2
+    .services(process.env.SERVICE_ID)
+    .verificationChecks.create({
+      code: code,
+      to: phone,
+    });
+
+  console.log(verification.status);
+  return res.json(verification)
+  }catch(err){
+    console.log(err);
+    res.json({ status: res.status, message: "Something went wrong" });
+  }
+}
 
 export const resetPassword = async (req, res) => {
   try {

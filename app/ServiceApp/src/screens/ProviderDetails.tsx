@@ -90,7 +90,7 @@ const Review = ({content}: any) => {
             {moment(content?.createdAt).format('lll')}
           </Text>
           <Text style={[styles.text, {marginTop: wp('4%')}]}>
-            <StarRatingDisplay rating={4.5} />
+            <StarRatingDisplay rating={content?.rating} />
           </Text>
         </View>
       </View>

@@ -28,7 +28,7 @@ export default Search;
 
 const styles = StyleSheet.create({
   input: {
-    backgroundColor: COLORS.primaryLight,
+    backgroundColor: COLORS.lightGrey,
     paddingVertical: wp('4%'),
     paddingLeft: wp('12%'),
     flex: 1,

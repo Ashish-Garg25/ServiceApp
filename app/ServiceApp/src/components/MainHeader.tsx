@@ -22,8 +22,6 @@ const MainHeader = ({navigation}: ScreenHeaderType) => {
 
   const [show, setShow] = useState(false);
 
-  console.log('DATA =====', data);
-
   return (
     <View style={styles.headerWrapper}>
       <TouchableOpacity style={styles.wrapper} onPress={() => setShow(true)}>
@@ -59,7 +57,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: wp('4%'),
-    backgroundColor: COLORS.primaryLight1,
+    backgroundColor: COLORS.lightGrey,
     marginBottom: wp('4%'),
   },
   wrapper: {
