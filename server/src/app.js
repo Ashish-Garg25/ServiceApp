@@ -17,6 +17,7 @@ import serviceRouter from "./routes/service.js";
 import offerRouter from "./routes/offer.js";
 import taskRouter from "./routes/task.js";
 import chatRouter from "./routes/chat.js";
+import reviewRouter from "./routes/review.js";
 
 // Models
 import user from "./models/user.js";
@@ -53,6 +54,7 @@ app.use(`${appVersion}/service`, serviceRouter);
 app.use(`${appVersion}/offer`, offerRouter);
 app.use(`${appVersion}/task`, taskRouter);
 app.use(`${appVersion}/chat`, chatRouter);
+app.use(`${appVersion}/review`, reviewRouter);
 
 // app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 {

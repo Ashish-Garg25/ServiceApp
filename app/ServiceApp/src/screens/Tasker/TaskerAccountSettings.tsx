@@ -22,7 +22,8 @@ const ACTIONS = [
   {
     icon: <DocIcon />,
     title: 'Document Check',
-    link: 'Verification',
+    subTitle: 'Comming Soon',
+    // link: 'Verification',
   },
   {
     icon: <PaymentIcon />,

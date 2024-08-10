@@ -220,6 +220,32 @@ export const deleteService = async (req, res) => {
   }
 };
 
+export const reviewsByService = async(req, res) => {
+  try{
+    const {service_id} = req.query;
+
+    if(!service_id){
+      return res.status(400).json({ msg: "Service does not exist!" });
+    }
+
+    const allReviews = await review.find({service: service_id});
+    const filteredData = await Promise.all(allReviews.map(async(item) => {
+      const userData = await UserModel.findById(item.user);
+
+      return {
+        ...item._doc,
+        user: userData
+      };
+    })) 
+
+    return res.json(filteredData);
+
+  }catch(err){
+    console.log(err);
+    return res.status(400).json({ msg: "Something went wrong!" });
+  }
+}
+
 export const rateService = async(req, res) => {
   try{
     const { userId } = req.user;

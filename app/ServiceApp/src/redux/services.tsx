@@ -238,6 +238,20 @@ export const api = createApi({
       }),
       invalidatesTags: ['Service'],
     }),
+    getCalendarTasks: builder.mutation({
+      query: ({month}) => ({
+        url: `offer/stats/inProgress/?month=${month}`,
+        method: 'GET',
+      }),
+      invalidatesTags: ['Service'],
+    }),
+    getReviews: builder.mutation({
+      query: ({id}) => ({
+        url: `review/?service_id=${id}`,
+        method: 'GET',
+      }),
+      invalidatesTags: ['Service'],
+    }),
   }),
 });
 
@@ -269,4 +283,6 @@ export const {
   useUpdateOfferMutation,
   useRateServiceMutation,
   useGetStatsMutation,
+  useGetCalendarTasksMutation,
+  useGetReviewsMutation,
 } = api;

@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, Modal, TouchableOpacity} from 'react-native';
 import {Calendar} from 'react-native-calendars';
 import {
@@ -9,33 +9,57 @@ import {
 import {COLORS} from '../utils/color';
 import Close from '../assets/icons/Close';
 import moment from 'moment';
+import {useGetCalendarTasksMutation} from '../redux/services';
 
 const MyCalendar = () => {
+  const [calendarTasks] = useGetCalendarTasksMutation();
+
   const [selectedDate, setSelectedDate] = useState<any>(null);
   const [isModalVisible, setModalVisible] = useState<any>(false);
 
-  // Example items with start dates
-  const events: any = {
-    '2024-08-06': [
-      {name: 'Meeting with Bob', details: 'Discuss project updates'},
-    ],
-    '2024-08-07': [
-      {name: 'Lunch with Alice', details: 'Catch up on recent events'},
-    ],
-    '2024-08-10': [{name: 'Doctor Appointment', details: 'Annual check-up'}],
+  const [currentMonth, setCurrentMonth] = useState(moment().format('YYYY-MM'));
+  const [events, setEvents] = useState<any>(null);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await calendarTasks({month: currentMonth}).unwrap();
+        if (response.status === 200) {
+          setEvents(response.data);
+        } else {
+          setEvents(null);
+        }
+      } catch (err) {
+        console.log('err ====', err, currentMonth);
+      }
+    })();
+  }, [calendarTasks, currentMonth]);
+
+  const handleMonthChange = (month: any) => {
+    const formattedMonth = moment(month.dateString).format('YYYY-MM');
+    setCurrentMonth(formattedMonth);
   };
 
   // Highlight the days with events
-  const markedDates = Object.keys(events).reduce((acc: any, date) => {
-    acc[date] = {marked: true, dotColor: 'red'};
-    return acc;
-  }, {});
+  const markedDates =
+    events &&
+    Object.keys(events).reduce((acc: any, date) => {
+      const status = events[date][0].status;
+
+      acc[date] = {
+        marked: true,
+        dotColor: status === '2' ? COLORS.yellow : COLORS.red,
+      };
+      return acc;
+    }, {});
 
   const handleDayPress = (day: any) => {
-    const eventsForDate = events[day.dateString] || [];
-    if (eventsForDate.length > 0) {
-      setSelectedDate({...day, events: eventsForDate});
-      setModalVisible(true);
+    if (events) {
+      const eventsForDate = events[day.dateString] || [];
+      if (eventsForDate.length > 0) {
+        setSelectedDate({...day, events: eventsForDate});
+        setModalVisible(true);
+      }
     }
   };
 
@@ -54,6 +78,10 @@ const MyCalendar = () => {
   return (
     <View style={styles.container}>
       <Calendar
+        current={currentMonth}
+        onMonthChange={handleMonthChange}
+        pastScrollRange={12}
+        futureScrollRange={12}
         markedDates={markedDates}
         onDayPress={handleDayPress}
         style={styles.calendar}

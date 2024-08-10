@@ -16,8 +16,10 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import Button from '../components/Button';
-import Star from '../assets/icons/Star';
-import {useGetServiceDetailsMutation} from '../redux/services';
+import {
+  useGetReviewsMutation,
+  useGetServiceDetailsMutation,
+} from '../redux/services';
 import Loading from '../components/Loading';
 import moment from 'moment';
 import {useNavigation} from '@react-navigation/native';
@@ -26,6 +28,8 @@ import {StackNavigation} from '../helpers/interfaces';
 import {triggerLocalNotification} from '../helpers/helpers';
 import {useDispatch} from 'react-redux';
 import task from '../redux/slices/task';
+import {StarRatingDisplay} from 'react-native-star-rating-widget';
+import PlaceholderProfilePic from '../components/PlaceholderProfilePic';
 
 export const MoreInfo = ({label, title, right}: any) => {
   return (
@@ -57,7 +61,7 @@ export const MoreInfo = ({label, title, right}: any) => {
   );
 };
 
-const Review = () => {
+const Review = ({content}: any) => {
   return (
     <View
       style={{
@@ -66,29 +70,31 @@ const Review = () => {
         paddingBottom: wp('4%'),
       }}>
       <View style={[styles.wrapper, {alignItems: 'flex-start'}]}>
-        <Image
-          source={{
-            uri: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-          }}
-          style={[styles.dp, {width: wp('10%'), height: wp('10%')}]}
-          resizeMode="cover"
-        />
+        {content?.user?.profilePic ? (
+          <Image
+            source={{
+              uri: content?.user?.profilePic,
+            }}
+            style={[styles.dp, {width: wp('10%'), height: wp('10%')}]}
+            resizeMode="cover"
+          />
+        ) : (
+          <PlaceholderProfilePic name={content?.user?.firstName} position={0} />
+        )}
         <View style={{flex: 1}}>
-          <Text style={styles.name}>John Doe</Text>
-          <Text style={styles.text}>United States | 2 weeks ago</Text>
+          <Text
+            style={
+              styles.name
+            }>{`${content?.user?.firstName} ${content?.user?.lastName}`}</Text>
+          <Text style={styles.text}>
+            {moment(content?.createdAt).format('lll')}
+          </Text>
           <Text style={[styles.text, {marginTop: wp('4%')}]}>
-            <Star />
-            <Star />
-            <Star />
-            <Star />
-            <Star />
+            <StarRatingDisplay rating={4.5} />
           </Text>
         </View>
       </View>
-      <Text style={styles.text}>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua.
-      </Text>
+      <Text style={styles.text}>{content?.content}</Text>
     </View>
   );
 };
@@ -98,8 +104,11 @@ const ProviderDetails = ({route}: any) => {
   const dispatch = useDispatch();
 
   const [getServiceDetails, {isLoading}] = useGetServiceDetailsMutation();
+  const [getReviews] = useGetReviewsMutation();
 
   const [serivce, setService] = useState<any>({});
+  const [reviews, setReviews] = useState<any>([]);
+
   const [openModal, setOpenModal] = useState(false);
 
   const {id} = route.params;
@@ -111,6 +120,14 @@ const ProviderDetails = ({route}: any) => {
       const response = await getServiceDetails({id}).unwrap();
       console.log('res', response);
       setService(response);
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      const response = await getReviews({id}).unwrap();
+      console.log('res', response);
+      setReviews(response);
     })();
   }, []);
 
@@ -170,11 +187,9 @@ const ProviderDetails = ({route}: any) => {
         <View style={{padding: wp('4%'), paddingTop: wp('8%')}}>
           <Text style={styles.name}>Reviews </Text>
           {/* {serivce.service.reviews} */}
-          {serivce?.service?.reviews?.map(() => (
-            <Review />
+          {reviews?.map((item: any) => (
+            <Review content={item} />
           ))}
-          <Review />
-          <Review />
         </View>
       </ScrollView>
       <Button
