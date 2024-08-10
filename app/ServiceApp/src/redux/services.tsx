@@ -42,6 +42,25 @@ export const api = createApi({
       }),
       invalidatesTags: ['Users'],
     }),
+
+    sendOtp: builder.mutation({
+      query: payload => ({
+        url: '/sendOtp',
+        method: 'POST',
+        body: payload,
+      }),
+      invalidatesTags: ['Users'],
+    }),
+
+    verifyOtp: builder.mutation({
+      query: payload => ({
+        url: '/verifyOtp',
+        method: 'POST',
+        body: payload,
+      }),
+      invalidatesTags: ['Users'],
+    }),
+
     login: builder.mutation({
       query: payload => ({
         url: '/login/',
@@ -257,6 +276,8 @@ export const api = createApi({
 
 export const {
   useCreateUserMutation,
+  useSendOtpMutation,
+  useVerifyOtpMutation,
   useLoginMutation,
   useResetPasswordMutation,
   useUpdateUserMutation,

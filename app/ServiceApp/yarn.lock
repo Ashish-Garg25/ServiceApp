@@ -6127,6 +6127,11 @@ react-native-localize@^3.2.0:
   resolved "https://registry.yarnpkg.com/react-native-localize/-/react-native-localize-3.2.0.tgz#7d9beb38c9d08b2aa87ffd9d165a66f66531b3ae"
   integrity sha512-Wi486WdDoBcDKUNxzr2/8f64ZwkWExlIvn0lcfFhsRNP2CVXGkjLyXhr3h6jf3Utkv5EmoFKiNqcmZn9kjYDxQ==
 
+react-native-otp-textinput@^1.1.6:
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/react-native-otp-textinput/-/react-native-otp-textinput-1.1.6.tgz#4e3560e2e0a30849169cff4e40f3035c594a73fc"
+  integrity sha512-auj4etyrp8N2GWyWTDO2If3uMdSoMR9oSJweQYfNEYP8cJEoEHLtDJhNOBJMwTrkRG8YbYroHg3b30TOhLv9kw==
+
 react-native-push-notification@^8.1.1:
   version "8.1.1"
   resolved "https://registry.npmjs.org/react-native-push-notification/-/react-native-push-notification-8.1.1.tgz"
