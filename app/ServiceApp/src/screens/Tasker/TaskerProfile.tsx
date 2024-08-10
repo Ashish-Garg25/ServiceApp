@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -25,6 +25,9 @@ import Lock from '../../assets/icons/Lock';
 import WalletIcon from '../../assets/icons/WalletIcon';
 import {useSelector} from 'react-redux';
 import PlaceholderProfilePic from '../../components/PlaceholderProfilePic';
+import Verified from '../../assets/icons/Verified';
+import {useGetStatsMutation} from '../../redux/services';
+import Loading from '../../components/Loading';
 
 const ACTIONS = [
   {
@@ -64,6 +67,26 @@ const TaskerProfile = () => {
   const navigation = useNavigation<StackNavigation>();
   const user = useSelector((state: any) => state.user);
 
+  const [stats, setStats] = useState<any>({});
+
+  const [getStats, {isLoading}] = useGetStatsMutation();
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await getStats({type: 'today'}).unwrap();
+        setStats(response);
+      } catch (err) {
+        console.log(err);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
@@ -91,18 +114,20 @@ const TaskerProfile = () => {
         </TouchableOpacity>
         <View style={styles.wrapper}>
           <View>
-            <Text style={[styles.name, styles.value]}>$500.00</Text>
-            <Text style={styles.label}>Amount Spent</Text>
+            <Text style={[styles.name, styles.value]}>
+              ${stats?.total ?? 0}
+            </Text>
+            <Text style={styles.label}>Total Revenue</Text>
           </View>
           <View style={styles.hr} />
           <View>
-            <Text style={[styles.name, styles.value]}>05</Text>
+            <Text style={[styles.name, styles.value]}>{stats?.hired ?? 0}</Text>
             <Text style={styles.label}>Hired</Text>
           </View>
           <View style={styles.hr} />
-          <View>
-            <Text style={[styles.name, styles.value]}>10+</Text>
-            <Text style={styles.label}>Reviews</Text>
+          <View style={{alignItems: 'center'}}>
+            <Verified color={COLORS.green} />
+            <Text style={styles.label}>Verified</Text>
           </View>
         </View>
 

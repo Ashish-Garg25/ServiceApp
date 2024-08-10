@@ -286,12 +286,14 @@ export const getCompletedOfferStats = async (req, res) => {
       });
     }
 
-    // Calculate total rate
+    // Calculate total revenue
     const total = fetchedOffers.reduce((acc, offer) => acc + offer.rate, 0);
+    const hired = fetchedOffers?.length;
 
     return res.json({
       data: stats,
       total: total,
+      hired: hired,
       variant: "success"
     });
   } catch (err) {
