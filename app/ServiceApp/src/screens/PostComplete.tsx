@@ -43,7 +43,7 @@ const PostComplete = ({route}: any) => {
         taskImages: images,
         categories: taskPost.categories?.map((item: {_id: any}) => item._id),
         taskDate,
-        invited: invited,
+        invited: invited ?? [],
       };
 
       console.log('payload ====', payload, taskPost.categories);

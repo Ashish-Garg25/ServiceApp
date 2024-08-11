@@ -102,9 +102,11 @@ const TaskerTasks = () => {
   const getTasks = async () => {
     try {
       const response = await getTaskByType({type: currentFilter}).unwrap();
+      console.log('RESPONS ===', response);
       const filteredResponse = response?.filter(
-        (item: any) => item.invited.length === 0,
+        (item: any) => item.invited === null || item.invited.length === 0,
       );
+      console.log('FILTERED ===', filteredResponse);
       setTasks(filteredResponse);
     } catch (err) {
       console.log(err);
@@ -114,7 +116,7 @@ const TaskerTasks = () => {
   const getInvited = async () => {
     try {
       const response = await getInvitedTasks({}).unwrap();
-      console.log('INVITED ====', response);
+      // console.log('INVITED ====', response);
       setInvitedTasks(response);
     } catch (err) {
       console.log(err);
@@ -131,6 +133,7 @@ const TaskerTasks = () => {
         data={tasks}
         extraData={currentFilter}
         keyExtractor={(item: any) => item._id}
+        contentContainerStyle={{paddingBottom: wp('4%')}}
         renderItem={({item}) => (
           <TouchableOpacity
             onPress={() =>

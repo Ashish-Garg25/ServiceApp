@@ -30,7 +30,7 @@ const Post = () => {
       const response = await getTask({}).unwrap();
       setTasks(response);
     })();
-  }, [getTask]);
+  }, [getTask, navigation]);
 
   return (
     <SafeAreaView style={styles.container}>

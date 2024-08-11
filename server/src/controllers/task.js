@@ -35,7 +35,7 @@ export const createTask = async (req, res) => {
       taskLocation,
       taskImages,
       taskDate,
-      status: "In Progress",
+      status: "Submitted",
       invited
     });
 

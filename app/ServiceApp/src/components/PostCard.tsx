@@ -138,16 +138,8 @@ import PlaceholderProfilePic from './PlaceholderProfilePic';
 import {useSendMessageMutation, useUpdateTaskMutation} from '../redux/services';
 
 const PostCard = ({content, isProvider, invited}: any) => {
-  const {
-    _id,
-    createdAt,
-    description,
-    status,
-    taskDate,
-    taskType,
-    title,
-    clientName,
-  } = content;
+  const {_id, createdAt, description, status, taskDate, taskType, title} =
+    content;
 
   const user = useSelector((state: any) => state.user);
   const navigation = useNavigation<StackNavigation>();
@@ -158,7 +150,7 @@ const PostCard = ({content, isProvider, invited}: any) => {
 
   const getBg = () => {
     return status === 'Submitted'
-      ? COLORS.primaryLight1
+      ? COLORS.lightGrey
       : status === 'In Progress'
       ? COLORS.lightYellow
       : status === 'Complete'
@@ -168,7 +160,7 @@ const PostCard = ({content, isProvider, invited}: any) => {
 
   const getBorderColor = () => {
     return status === 'Submitted'
-      ? COLORS.primary
+      ? COLORS.grey
       : status === 'In Progress'
       ? COLORS.yellow
       : status === 'Complete'
@@ -215,12 +207,12 @@ const PostCard = ({content, isProvider, invited}: any) => {
       style={[
         styles.container,
         {
-          backgroundColor: isProvider ? COLORS.primaryLight1 : getBg(),
-          borderColor: isProvider ? COLORS.black : getBorderColor(),
+          backgroundColor: getBg(),
+          borderColor: getBorderColor(),
         },
       ]}>
       <View>
-        {isProvider && (
+        {isProvider && invited && (
           <Text
             style={[
               styles.mainText,
@@ -230,7 +222,7 @@ const PostCard = ({content, isProvider, invited}: any) => {
                 color: COLORS.black,
               },
             ]}>
-            Request from {clientName}
+            A new request
           </Text>
         )}
         <View style={styles.wrapper}>
@@ -251,37 +243,46 @@ const PostCard = ({content, isProvider, invited}: any) => {
       <View style={styles.flex}>
         {isProvider ? (
           <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
-            {status === 'Submitted' && invited ? (
-              <View style={styles.btnWrapper}>
-                <Button
-                  title={'Decline'}
-                  onPress={declineTask}
-                  btnStyles={{
-                    width: wp('40%'),
-                    transform: [{scale: 0.9}],
-                    backgroundColor: COLORS.danger,
-                  }}
-                />
-                <Button
-                  title={'Accept'}
-                  onPress={createChat}
-                  btnStyles={{
-                    width: wp('40%'),
-                    transform: [{scale: 0.9}],
-                    backgroundColor: COLORS.primary,
-                  }}
-                />
-              </View>
-            ) : (
-              <Button
-                title={'Apply'}
-                onPress={createChat}
-                btnStyles={{
-                  width: wp('84%'),
-                  transform: [{scale: 0.9}],
-                  backgroundColor: isProvider ? COLORS.primary : COLORS.green,
-                }}
-              />
+            {status === 'Submitted' && (
+              <>
+                {invited ? (
+                  <View style={styles.btnWrapper}>
+                    <Button
+                      title={'Decline'}
+                      onPress={declineTask}
+                      outline
+                      btnStyles={{
+                        width: wp('40%'),
+                        transform: [{scale: 0.9}],
+                        borderColor: COLORS.danger,
+                        backgroundColor: 'transparent',
+                      }}
+                      textStyles={{color: COLORS.danger}}
+                    />
+                    <Button
+                      title={'Accept'}
+                      onPress={createChat}
+                      btnStyles={{
+                        width: wp('40%'),
+                        transform: [{scale: 0.9}],
+                        backgroundColor: COLORS.primary,
+                      }}
+                    />
+                  </View>
+                ) : (
+                  <Button
+                    title={'Apply'}
+                    onPress={createChat}
+                    btnStyles={{
+                      width: wp('84%'),
+                      transform: [{scale: 0.9}],
+                      backgroundColor: isProvider
+                        ? COLORS.primary
+                        : COLORS.green,
+                    }}
+                  />
+                )}
+              </>
             )}
           </View>
         ) : (
