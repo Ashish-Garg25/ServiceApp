@@ -18,6 +18,7 @@ import {setUserDetails} from '../redux/slices/user';
 import Loading from '../components/Loading';
 import Checkbox from '../components/Checkbox';
 import {getCountry} from 'react-native-localize';
+import {getDeviceToken} from '../helpers/helpers';
 
 const ChooseType = () => {
   const [userType, setUserType] = useState(0);
@@ -34,6 +35,8 @@ const ChooseType = () => {
 
   const submit = async () => {
     try {
+      const registrationToken = await getDeviceToken();
+
       const payload = {
         firstName,
         lastName,
@@ -43,6 +46,7 @@ const ChooseType = () => {
         address,
         userType: userType === 1 ? 'Buyer' : userType === 2 ? 'Seller' : 'Both',
         phone_verified: phoneVerified ?? false,
+        registrationToken: registrationToken,
         isPrivacyChecked,
         isPromotionalChecked,
       };

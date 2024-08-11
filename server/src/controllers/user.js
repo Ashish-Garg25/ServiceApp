@@ -16,6 +16,7 @@ export const register = async (req, res) => {
       phone,
       userType,
       phone_verified,
+      registrationToken,
       isPrivacyChecked,
       isPromotionalChecked
     } = req.body;
@@ -39,6 +40,7 @@ export const register = async (req, res) => {
       phone,
       userType,
       phone_verified,
+      registrationToken,
       isPrivacyChecked,
       isPromotionalChecked
     });
@@ -55,6 +57,11 @@ export const register = async (req, res) => {
     await newUser.save();
 
     delete newUser.password;
+
+    await sendPushNotification(registrationToken, {
+      title: `Welcome to Mr. Tasker`,
+      body: `We're thrilled to have you on board. Explore all the features we offer and start managing your tasks with ease.`
+    });
 
     return res.json({
       message: "User created successfully",
@@ -294,11 +301,6 @@ export const updateUser = async (req, res) => {
 
     if (registrationToken) userExist.registrationToken = registrationToken;
     await userExist.save();
-
-    await sendPushNotification(registrationToken, {
-      title: `Welcome to Mr. Tasker`,
-      body: `We're thrilled to have you on board. Explore all the features we offer and start managing your tasks with ease.`
-    });
 
     return res.json({
       message: "Details updated successfully",

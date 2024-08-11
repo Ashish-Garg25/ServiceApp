@@ -3,6 +3,7 @@ import {
   SafeAreaView,
   StyleSheet,
   TouchableOpacity,
+  View,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import ScreenHeader from '../components/ScreenHeader';
@@ -16,6 +17,7 @@ import Add from '../assets/icons/Add';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigation} from '../helpers/interfaces';
 import {useGetTaskMutation} from '../redux/services';
+import Empty from '../components/Empty';
 
 const Post = () => {
   const navigation = useNavigation<StackNavigation>();
@@ -32,7 +34,7 @@ const Post = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScreenHeader title={'My Tasks'} />
+      <ScreenHeader renderPrefix={<View />} title={'My Tasks'} />
       <FlatList
         data={tasks}
         keyExtractor={(item: any) => item._id}
@@ -42,6 +44,7 @@ const Post = () => {
             <PostCard content={item} />
           </TouchableOpacity>
         )}
+        ListEmptyComponent={<Empty />}
       />
 
       <TouchableOpacity
