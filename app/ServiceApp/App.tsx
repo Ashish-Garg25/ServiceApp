@@ -53,6 +53,7 @@ import TaskerServiceOnboard from './src/screens/Tasker/TaskerServiceOnboard';
 import TaskerService from './src/screens/Tasker/TaskerService';
 import NotHiring from './src/screens/NotHiring';
 import About from './src/screens/Tasker/About';
+import Notifications from './src/screens/Notifications';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -326,6 +327,7 @@ const App = () => {
             <Stack.Screen name="RegisterNext" component={RegisterNext} />
             <Stack.Screen name="ChooseType" component={ChooseType} />
             <Stack.Screen name="Home" component={BottomTab} />
+            <Stack.Screen name={'Notification'} component={Notifications} />
             <Stack.Screen name={'SavedAddress'} component={SavedAddress} />
             <Stack.Screen name={'ManageAddress'} component={ManageAddress} />
             <Stack.Screen name={'Message'} component={Chat} />

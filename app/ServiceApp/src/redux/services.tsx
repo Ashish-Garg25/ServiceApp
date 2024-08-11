@@ -271,6 +271,14 @@ export const api = createApi({
       }),
       invalidatesTags: ['Service'],
     }),
+
+    getNotifications: builder.mutation({
+      query: ({token}) => ({
+        url: `notification/?token=${token}`,
+        method: 'GET',
+      }),
+      invalidatesTags: ['Users'],
+    }),
   }),
 });
 
@@ -306,4 +314,5 @@ export const {
   useGetStatsMutation,
   useGetCalendarTasksMutation,
   useGetReviewsMutation,
+  useGetNotificationsMutation,
 } = api;

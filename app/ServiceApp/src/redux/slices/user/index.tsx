@@ -13,6 +13,7 @@ const user = createSlice({
     phone: '',
     userType: '',
     token: '',
+    phoneVerified: false,
   },
   reducers: {
     setUserDetails: (state, action) => {
@@ -26,6 +27,7 @@ const user = createSlice({
         email,
         password,
         token,
+        phoneVerified,
       } = action.payload;
 
       if (_id) {
@@ -42,6 +44,9 @@ const user = createSlice({
       }
       if (phone) {
         state.phone = phone;
+      }
+      if (phoneVerified) {
+        state.phoneVerified = true;
       }
       if (address) {
         state.address = address;

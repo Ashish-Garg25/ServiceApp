@@ -41,9 +41,9 @@ const RegisterNext = () => {
   return (
     <SafeAreaView style={commonStyle.container}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'position'}
         style={{flex: 1}}
-        keyboardVerticalOffset={wp('8%')}>
+        keyboardVerticalOffset={wp('-40%')}>
         <ScrollView
           contentContainerStyle={{flexGrow: 1}}
           keyboardShouldPersistTaps={'handled'}>
@@ -94,7 +94,7 @@ const RegisterNext = () => {
             title={'Next'}
             onPress={handleNext}
             btnStyles={{
-              marginTop: wp('6%'),
+              marginBottom: wp('6%'),
               width: wp('90%'),
               alignSelf: 'center',
             }}

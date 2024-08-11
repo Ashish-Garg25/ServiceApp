@@ -18,14 +18,11 @@ const RadioBox = ({title, subTitle, onPress, selected}: RadioBoxType) => {
     <TouchableOpacity
       style={[
         styles.container,
-        {backgroundColor: selected ? COLORS.primary : COLORS.primaryLight},
+        {backgroundColor: selected ? COLORS.green : COLORS.lightGreen},
       ]}
       onPress={onPress}>
       <Text
-        style={[
-          styles.text,
-          {color: selected ? COLORS.white : COLORS.primary},
-        ]}>
+        style={[styles.text, {color: selected ? COLORS.white : COLORS.green}]}>
         {title}
       </Text>
       <Text

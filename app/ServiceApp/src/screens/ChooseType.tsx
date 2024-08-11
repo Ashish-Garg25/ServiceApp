@@ -23,9 +23,8 @@ const ChooseType = () => {
   const [userType, setUserType] = useState(0);
   const [createUser, {isLoading}] = useCreateUserMutation();
 
-  const {firstName, lastName, email, password, address, phone} = useSelector(
-    (state: any) => state.user,
-  );
+  const {firstName, lastName, email, password, address, phone, phoneVerified} =
+    useSelector((state: any) => state.user);
 
   const dispatch = useDispatch();
   const navigation = useNavigation<StackNavigation>();
@@ -43,6 +42,7 @@ const ChooseType = () => {
         phone,
         address,
         userType: userType === 1 ? 'Buyer' : userType === 2 ? 'Seller' : 'Both',
+        phone_verified: phoneVerified ?? false,
         isPrivacyChecked,
         isPromotionalChecked,
       };

@@ -222,6 +222,7 @@ export const sendMessage = async (req, res) => {
 
     if(receivingUser){
       await sendPushNotification(receivingUser.registrationToken, { title: `${senderDetails.firstName} sent a new message`, body: `${content}`})
+      
     }
 
     return res.json({

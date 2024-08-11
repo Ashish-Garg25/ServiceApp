@@ -30,6 +30,7 @@ import Phone from '../assets/icons/Phone';
 import {useSendOtpMutation, useVerifyOtpMutation} from '../redux/services';
 import OTPTextView from 'react-native-otp-textinput';
 import {COLORS} from '../utils/color';
+import Toast from 'react-native-toast-message';
 
 const Register = () => {
   const navigation = useNavigation<StackNavigation>();
@@ -44,6 +45,9 @@ const Register = () => {
 
   const [showModal, setShowModal] = useState(false);
   const [otpInput, setOtpInput] = useState<string>('');
+
+  const [isDisabled, setIsDisabled] = useState(false);
+  const [counter, setCounter] = useState(60);
 
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
@@ -71,26 +75,74 @@ const Register = () => {
     };
   }, []);
 
+  useEffect(() => {
+    let timer: any;
+    if (isDisabled) {
+      timer = setInterval(() => {
+        setCounter(prevCounter => {
+          if (prevCounter === 1) {
+            clearInterval(timer);
+            setIsDisabled(false);
+            return 60;
+          }
+          return prevCounter - 1;
+        });
+      }, 1000);
+    }
+
+    return () => clearInterval(timer);
+  }, [isDisabled]);
+
   const handleNext = async () => {
     dispatch(setUserDetails({firstName, lastName, phone, address}));
 
     try {
-      console.log('wwww');
       const response = await sendOtp({phone}).unwrap();
       console.log(response);
 
+      setIsDisabled(true);
       setShowModal(!showModal);
     } catch (err) {
       console.log('err', err);
     }
-
-    // navigation.navigate('RegisterNext');
   };
 
   const handleVerification = async () => {
     try {
       const response = await verifyOtp({phone: phone, code: otpInput}).unwrap();
       console.log(response);
+
+      setShowModal(false);
+
+      if (response.status === 'approved') {
+        dispatch(setUserDetails({phoneVerified: true}));
+
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: 'OTP verified successfully!',
+        });
+
+        navigation.navigate('RegisterNext');
+      } else if (response.status === 'expired') {
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'OTP Expired. Please try again',
+        });
+      } else if (response.status === 'max_attempts_reached') {
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'Max Attempts reached. Please try again later',
+        });
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'Failed to verify. Please try again later',
+        });
+      }
     } catch (err) {
       console.log(err);
     }
@@ -229,6 +281,18 @@ const Register = () => {
               }}
               disabled={otpInput === '' || otpInput.length < 6}
             />
+
+            <TouchableOpacity
+              onPress={() => {
+                setIsDisabled(true);
+                handleNext();
+              }}
+              disabled={isDisabled}
+              style={{opacity: isDisabled ? 0.5 : 1, marginTop: wp('2%')}}>
+              <Text style={{color: COLORS.green}}>
+                Resend OTP {isDisabled && `in ${counter}s`}
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>

@@ -34,7 +34,7 @@ const MainHeader = ({navigation}: ScreenHeaderType) => {
           <Text style={styles.label}>Home</Text>
         </View>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.goBack()}>
+      <TouchableOpacity onPress={() => navigation.navigate('Notification')}>
         <Bell />
       </TouchableOpacity>
       <SearchPlaces

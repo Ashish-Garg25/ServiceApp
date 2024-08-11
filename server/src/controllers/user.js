@@ -1,9 +1,8 @@
 import user from "../models/user.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { checkIfExist } from "../helpers/helpers.js";
-import twilio from 'twilio';
-
+import { checkIfExist, sendPushNotification } from "../helpers/helpers.js";
+import twilio from "twilio";
 
 const client = twilio(process.env.ACCOUNT_SID, process.env.AUTH_TOKEN);
 
@@ -109,54 +108,58 @@ export const login = async (req, res) => {
   }
 };
 
-export const sendOtp = async(req, res) => {
-  try{
+export const sendOtp = async (req, res) => {
+  try {
+    const { phone } = req.body;
 
-    const {phone} = req.body;
-
-    if(!phone){
-      return res.json({ status: res.status, message: "Phone number is required" });
+    if (!phone) {
+      return res.json({
+        status: res.status,
+        message: "Phone number is required"
+      });
     }
 
     const verification = await client.verify.v2
-    .services(process.env.SERVICE_ID)
-    .verifications.create({
-      channel: "sms",
-      to: phone,
-    });
+      .services(process.env.SERVICE_ID)
+      .verifications.create({
+        channel: "sms",
+        to: phone
+      });
 
-  console.log(verification.status);
+    console.log(verification.status);
 
-  return res.json(verification)
-  }catch(err){
+    return res.json(verification);
+  } catch (err) {
     console.log(err);
     res.json({ status: res.status, message: "Something went wrong" });
   }
-}
+};
 
-export const verifyOtp = async(req, res) => {
-  try{
+export const verifyOtp = async (req, res) => {
+  try {
+    const { phone, code } = req.body;
 
-    const {phone, code} = req.body;
-
-    if(!phone || !code){
-      return res.json({ status: res.status, message: "Phone number and code is required" });
+    if (!phone || !code) {
+      return res.json({
+        status: res.status,
+        message: "Phone number and code is required"
+      });
     }
 
     const verification = await client.verify.v2
-    .services(process.env.SERVICE_ID)
-    .verificationChecks.create({
-      code: code,
-      to: phone,
-    });
+      .services(process.env.SERVICE_ID)
+      .verificationChecks.create({
+        code: code,
+        to: phone
+      });
 
-  console.log(verification.status);
-  return res.json(verification)
-  }catch(err){
+    console.log(verification.status);
+    return res.json(verification);
+  } catch (err) {
     console.log(err);
     res.json({ status: res.status, message: "Something went wrong" });
   }
-}
+};
 
 export const resetPassword = async (req, res) => {
   try {
@@ -227,8 +230,6 @@ export const sendCode = async (req, res) => {
     const code = generateUniqueCode();
 
     const transporter = nodemailer.createTransport({
-      // Setup your email transporter (e.g., SMTP, SendGrid, etc.)
-      // Example for Gmail:
       service: "gmail",
       auth: {
         user: "--",
@@ -237,7 +238,7 @@ export const sendCode = async (req, res) => {
     });
 
     const mailOptions = {
-      from: "--",
+      from: '"Mr. Tasker" <sales@mrtasker.com>',
       to: email,
       subject: "Password Reset",
       text: `Please enter the code ${code} in app to proceed with password reset.`
@@ -284,27 +285,31 @@ export const forgotPassword = async (req, res) => {
   }
 };
 
-export const updateUser = async(req, res) => {
-  try{
-    const {userId} = req.user;
+export const updateUser = async (req, res) => {
+  try {
+    const { userId } = req.user;
 
-    const {registrationToken} = req.body;
+    const { registrationToken } = req.body;
     const userExist = await user.findById(userId);
 
     if (registrationToken) userExist.registrationToken = registrationToken;
     await userExist.save();
+
+    await sendPushNotification(registrationToken, {
+      title: `Welcome to Mr. Tasker`,
+      body: `We're thrilled to have you on board. Explore all the features we offer and start managing your tasks with ease.`
+    });
 
     return res.json({
       message: "Details updated successfully",
       variant: "success",
       data: userExist
     });
-
-  }catch(err){
+  } catch (err) {
     console.log("err", err);
     res.json({ status: res.status, message: "Something went wrong" });
   }
-}
+};
 
 export const updateProfile = async (req, res) => {
   try {

@@ -24,8 +24,8 @@ import {getCountry} from 'react-native-localize';
 
 const Login = () => {
   const navigation = useNavigation<StackNavigation>();
-  const [email, setEmail] = useState('Test2@gmail.com');
-  const [password, setPassword] = useState('Pass@123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const [loginM, {isLoading}] = useLoginMutation();
   const dispatch = useDispatch();
