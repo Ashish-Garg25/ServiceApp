@@ -32,8 +32,7 @@ const Notifications = () => {
     (async () => {
       try {
         const fcmToken = await getDeviceToken();
-        console.log(fcmToken)
-        // const response = await getNotifications({token: fcmToken}).unwrap();
+        const response = await getNotifications({token: fcmToken}).unwrap();
 
         setNotificationContent(response);
       } catch (err) {
